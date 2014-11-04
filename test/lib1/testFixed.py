@@ -18,6 +18,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version_info__ = ("0.5.4",)
+import math
+import unittest
 
-__version__ = ".".join(map(str, __version_info__))
+from titus.genpy import PFAEngine
+from titus.errors import *
+    
+class TestLib1Fixed(unittest.TestCase):
+    def testToBytes(self):
+        engine, = PFAEngine.fromYaml('''
+input: {type: fixed, name: Test, size: 10}
+output: bytes
+action:
+  fixed.toBytes: input
+''')
+        self.assertEqual(engine.action("0123456789"), "0123456789")
