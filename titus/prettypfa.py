@@ -251,7 +251,7 @@ class Section(object):
                 self.content, = self.content
             else:
                 raise PrettyPfaException("Only one item allowed in randseed section")
-        if not isinstance(self.content, MiniNumber) or not isinstance(self.content.value, (int, long)):
+        if not isinstance(self.content, MiniNumber) or not isinstance(self.content.value, int):
             raise PrettyPfaException("randseed must be an integer at PrettyPFA line {0}".format(self.lineno))
         return self.content.value
 
@@ -275,7 +275,7 @@ class Section(object):
                 self.content, = self.content
             else:
                 raise PrettyPfaException("Only one item allowed in version section")
-        if not isinstance(self.content, MiniNumber) or not isinstance(self.content.value, (int, long)):
+        if not isinstance(self.content, MiniNumber) or not isinstance(self.content.value, int):
             raise PrettyPfaException("version must be an integer at PrettyPFA line {0}".format(self.lineno))
         return self.content.value
 
@@ -333,7 +333,7 @@ class ResolvedSubs(Token, MiniAst):
     def asExpr(self, state):
         if isinstance(self.value, Ast):
             return self.value
-        elif isinstance(self.value, basestring):
+        elif isinstance(self.value, str):
             return ppfa(self.value)
         else:
             return pfa(self.value)
@@ -494,7 +494,7 @@ class MiniNumber(MiniAst):
     def __repr__(self):
         return "MiniNumber({0})".format(repr(self.value))
     def asExpr(self, state):
-        if isinstance(self.value, (int, long)):
+        if isinstance(self.value, int):
             return LiteralInt(self.value, self.pos)
         else:
             return LiteralDouble(self.value, self.pos)
@@ -639,7 +639,7 @@ class MiniCall(MiniAst):
             elif len(params) == 1:
                 if params[0].name != "code":
                     raise PrettyPfaException("error function has only 1 optional parameter, \"code\", not {0}, at {1}".format(params[0].name, self.pos))
-                if not isinstance(params[0].typeExpr, MiniNumber) and not isinstance(params[0].typeExpr.value, (int, long)):
+                if not isinstance(params[0].typeExpr, MiniNumber) and not isinstance(params[0].typeExpr.value, int):
                     raise PrettyPfaException("error function has optional parameter \"code\" must be an integer, not {0}, at {1}".format(params[0].typeExpr, self.pos))
                 code = params[0].typeExpr.value
             else:
@@ -707,7 +707,7 @@ class MiniCall(MiniAst):
             if len(self.args) < 1 or len(self.args) > 2:
                 raise PrettyPfaException("fixed type should have 1 or 2 arguments, not {0}, at {1}".format(len(self.args), self.pos))
 
-            if not isinstance(self.args[0], MiniNumber) or not isinstance(self.args[0].value, (int, long)) or self.args[0].value <= 0:
+            if not isinstance(self.args[0], MiniNumber) or not isinstance(self.args[0].value, int) or self.args[0].value <= 0:
                 raise PrettyPfaException("fixed type first argument should be a positive integer, not {0}, at {1}".format(self.args[0], self.pos))
             size = self.args[0].value
 
@@ -878,7 +878,7 @@ class MiniCellPool(MiniAst):
         if not isinstance(init, dict):
             raise PrettyPfaException("pool's init must be a JSON object, not {0}, at {1}".format(init, self.pos))
         return (self.name, Pool(state.avroTypeBuilder.makePlaceholder(jsonlib.dumps(self.objType.asType(state)), state.avroTypeMemo),
-                                dict((k, jsonlib.dumps(v)) for k, v in init.items()),
+                                dict((k, jsonlib.dumps(v)) for k, v in list(init.items())),
                                 self.shared,
                                 self.rollback,
                                 self.source,
@@ -1057,9 +1057,9 @@ class MiniFor(MiniAst):
         else:
             body = [self.body.asExpr(state)]
 
-        return For(dict((k, v.asExpr(state)) for k, v in self.init.pairs.items()),
+        return For(dict((k, v.asExpr(state)) for k, v in list(self.init.pairs.items())),
                    self.predicate.asExpr(state),
-                   dict((k, v.asExpr(state)) for k, v in self.step.pairs.items()),
+                   dict((k, v.asExpr(state)) for k, v in list(self.step.pairs.items())),
                    body)
 
 class MiniForeach(MiniAst):
@@ -1098,7 +1098,7 @@ class MiniTry(MiniAst):
         if self.filters is None:
             filters = None
         else:
-            if any(not isinstance(x, (MiniDotName, MiniString)) and not (isinstance(x, MiniNumber) and isinstance(x.value, (int, long))) for x in self.filters):
+            if any(not isinstance(x, (MiniDotName, MiniString)) and not (isinstance(x, MiniNumber) and isinstance(x.value, int)) for x in self.filters):
                 raise PrettyPfaException("try filters must all be strings or integers, not {0}, at {1}".format(self.filters, self.pos))
             filters = [x.name if isinstance(x, MiniDotName) else x.value for x in self.filters]
 
@@ -1132,12 +1132,12 @@ class MiniAssignment(MiniAst):
     def __repr__(self):
         return "MiniAssignment({0}, {1})".format(self.pairs, self.qualifier)
     def asExpr(self, state):
-        if self.qualifier is None and len(self.pairs) == 1 and "." in self.pairs.keys()[0]:
-            pieces = self.pairs.keys()[0].split(".")
+        if self.qualifier is None and len(self.pairs) == 1 and "." in list(self.pairs.keys())[0]:
+            pieces = list(self.pairs.keys())[0].split(".")
             base = pieces[0]
             path = [LiteralString(x, self.pos) for x in pieces[1:]]
 
-            to = self.pairs.values()[0].asExpr(state)
+            to = list(self.pairs.values())[0].asExpr(state)
             if isinstance(to, FcnRef):
                 raise PrettyPfaException("direct assignments (with an = sign) cannot refer to functions, such as {0} at {1}".format(to.name, to.pos))
             elif isinstance(to, FcnDef):
@@ -1146,12 +1146,12 @@ class MiniAssignment(MiniAst):
             if base in state.cellNames:
                 return CellTo(base, path, to, self.pos)
             elif base in state.poolNames:
-                return PoolTo(base, path, to, self.pairs.values()[0].asExpr(state), self.pos)
+                return PoolTo(base, path, to, list(self.pairs.values())[0].asExpr(state), self.pos)
             else:
                 return AttrTo(Ref(base, self.pos), path, to, self.pos)
 
         elif self.qualifier is None and len(self.pairs) == 1:
-            (name, to), = self.pairs.items()
+            (name, to), = list(self.pairs.items())
             
             to = to.asExpr(state)
             if isinstance(to, FcnRef):
@@ -1162,21 +1162,21 @@ class MiniAssignment(MiniAst):
             if name in state.cellNames:
                 return CellTo(name, [], to, self.pos)
             elif name in state.poolNames:
-                return PoolTo(name, [], to, self.pairs.values()[0].asExpr(state), self.pos)
+                return PoolTo(name, [], to, list(self.pairs.values())[0].asExpr(state), self.pos)
             else:
                 return SetVar({name: to}, self.pos)
             
-        if any("." in x for x in self.pairs.keys()):
+        if any("." in x for x in list(self.pairs.keys())):
             raise PrettyPfaException("cannot assign multiple deep objects (name contains dots) at the same time; separate with semicolons, rather than commas, at {0}".format(self.pos))
 
         if self.qualifier == "var":
-            return Let(dict((k, v.asExpr(state)) for k, v in self.pairs.items()), self.pos)
+            return Let(dict((k, v.asExpr(state)) for k, v in list(self.pairs.items())), self.pos)
         else:
-            return SetVar(dict((k, v.asExpr(state)) for k, v in self.pairs.items()), self.pos)
+            return SetVar(dict((k, v.asExpr(state)) for k, v in list(self.pairs.items())), self.pos)
 
     def defType(self, state):
         if self.qualifier is None and len(self.pairs) == 1:
-            (alias, typeExpr), = self.pairs.items()
+            (alias, typeExpr), = list(self.pairs.items())
             jsonNode = typeExpr.asType(state)
             state.avroTypeAlias[alias] = jsonNode
             state.avroTypeBuilder.makePlaceholder(jsonlib.dumps(jsonNode), state.avroTypeMemo)
@@ -1234,7 +1234,7 @@ class Parser(object):
                     "var": "VAR",
                     "to": "TO",
                     "init": "INIT"}
-        tokens += reserved.values()
+        tokens += list(reserved.values())
 
         literals = [",", ";", ":", "=", "@"]
 
@@ -2150,7 +2150,7 @@ def subs(originalAst, **subs2):
     def pf(node):
         out = subs2[node.name]
         if node.context == "expr":
-            if isinstance(out, basestring):
+            if isinstance(out, str):
                 out = ppfa(out)
             elif not isinstance(out, Ast):
                 out = pfa(out)

@@ -57,7 +57,7 @@ class InspectorMode(Mode):
                     return []
             def action(self, args):
                 if len(args) == 1 and args[0] == parser.Word("help"):
-                    print self.help
+                    print(self.help)
                 elif len(args) == 3 and isinstance(args[0], parser.FilePath) and args[1] == parser.Word("as") and isinstance(args[2], parser.Word):
                     try:
                         data = json.load(open(args[0].text))
@@ -76,14 +76,14 @@ class InspectorMode(Mode):
             def complete(self, established, active):
                 words = getcomplete(established)
                 if len(words) == 0:
-                    return sorted(x + " " for x in self.mode.pfaFiles.keys() if x.startswith(active))
+                    return sorted(x + " " for x in list(self.mode.pfaFiles.keys()) if x.startswith(active))
                 elif len(words) == 1 and "as".startswith(active):
                     return ["as "]
                 else:
                     return []
             def action(self, args):
                 if len(args) == 1 and args[0] == parser.Word("help"):
-                    print self.help
+                    print(self.help)
                 elif len(args) == 3 and isinstance(args[0], parser.Word) and args[1] == parser.Word("as") and isinstance(args[2], parser.Word):
                     if args[0].text not in self.mode.pfaFiles:
                         raise InspectorError("no PFA document named \"{0}\" in memory".format(args[0].text))
@@ -101,12 +101,12 @@ class InspectorMode(Mode):
             def complete(self, established, active):
                 words = getcomplete(established)
                 if len(words) == 0:
-                    return sorted(x for x in self.mode.pfaFiles.keys() if x.startswith(active))
+                    return sorted(x for x in list(self.mode.pfaFiles.keys()) if x.startswith(active))
                 else:
                     return []
             def action(self, args):
                 if len(args) == 1 and args[0] == parser.Word("help"):
-                    print self.help
+                    print(self.help)
                 elif len(args) == 1 and isinstance(args[0], parser.Word):
                     if args[0].text not in self.mode.pfaFiles:
                         raise InspectorError("no PFA document named \"{0}\" in memory".format(args[0].text))
@@ -123,7 +123,7 @@ class InspectorMode(Mode):
             def complete(self, established, active):
                 words = getcomplete(established)
                 if len(words) == 0:
-                    return sorted(x + " " for x in self.mode.pfaFiles.keys() + ["to"] if x.startswith(active))
+                    return sorted(x + " " for x in list(self.mode.pfaFiles.keys()) + ["to"] if x.startswith(active))
                 elif len(words) == 1 and "to".startswith(active):
                     return ["to "]
                 elif words[-1] == parser.Word("to"):
@@ -132,7 +132,7 @@ class InspectorMode(Mode):
                     return []
             def action(self, args):
                 if len(args) == 1 and args[0] == parser.Word("help"):
-                    print self.help
+                    print(self.help)
                 elif len(args) == 3 and isinstance(args[0], parser.Word) and args[1] == parser.Word("to") and isinstance(args[2], parser.FilePath):
                     name = args[0].text
                     if name not in self.mode.pfaFiles:
@@ -191,11 +191,11 @@ class InspectorMode(Mode):
 
         self.commandGroup = CommandGroup(None, commands)
 
-        print """Titus PFA Inspector (version {0})
-Type 'help' for a list of commands.""".format(titus.version.__version__)
+        print("""Titus PFA Inspector (version {0})
+Type 'help' for a list of commands.""".format(titus.version.__version__))
 
         for initialCommand in initialCommands:
-            print initialCommand
+            print(initialCommand)
             self.action(initialCommand)
 
         super(InspectorMode, self).__init__()

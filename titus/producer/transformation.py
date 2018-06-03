@@ -103,10 +103,10 @@ class Transformation(object):
         """
 
         if isinstance(x, dict):
-            return sum((Transformation.findFields(v) for k, v in x.items() if k != "@"), [])
+            return sum((Transformation.findFields(v) for k, v in list(x.items()) if k != "@"), [])
         elif isinstance(x, (list, tuple)):
             return sum((Transformation.findFields(xi) for xi in x), [])
-        elif isinstance(x, basestring):
+        elif isinstance(x, str):
             return [x]
         else:
             return []
@@ -124,10 +124,10 @@ class Transformation(object):
         """
 
         if isinstance(x, dict):
-            return dict((k, Transformation.replace(v, subs)) for k, v in x.items())
+            return dict((k, Transformation.replace(v, subs)) for k, v in list(x.items()))
         elif isinstance(x, (list, tuple)):
             return [Transformation.replace(xi, subs) for xi in x]
-        elif isinstance(x, basestring) and x in subs:
+        elif isinstance(x, str) and x in subs:
             return subs[x]
         else:
             return x
@@ -180,13 +180,13 @@ class Transformation(object):
             self.order.insert(i, key)
 
         # construct PFA from each expression
-        self.pfas = dict((k, ppfa(v).jsonNode(False, set())) for k, v in self.exprs.items())
+        self.pfas = dict((k, ppfa(v).jsonNode(False, set())) for k, v in list(self.exprs.items()))
 
         # find all the fields referenced in all of the expressions
-        self.fields = sorted(set(sum((Transformation.findFields(x) for x in self.pfas.values()), [])))
+        self.fields = sorted(set(sum((Transformation.findFields(x) for x in list(self.pfas.values())), [])))
 
         # construct lambda functions for transforming Numpy
-        self.lambdas = dict((k, eval("lambda " + ", ".join(self.fields) + ": " + Transformation.toNumpyExpr(ppfa(v)), self.namespace)) for k, v in self.exprs.items())
+        self.lambdas = dict((k, eval("lambda " + ", ".join(self.fields) + ": " + Transformation.toNumpyExpr(ppfa(v)), self.namespace)) for k, v in list(self.exprs.items()))
 
     def transform(self, dataset, fieldNames=None):
         """Return a transformed Numpy dataset (leaving the original intact).
@@ -204,10 +204,10 @@ class Transformation(object):
                 fieldNames = dataset.dtype.names
 
         # option 2: dataset is a dictionary of 1-D arrays
-        elif isinstance(dataset, dict) and all(isinstance(x, numpy.ndarray) and len(x.shape) == 1 for x in dataset.values()):
+        elif isinstance(dataset, dict) and all(isinstance(x, numpy.ndarray) and len(x.shape) == 1 for x in list(dataset.values())):
             outType = "dict"
             if fieldNames is None:
-                fieldNames = dataset.keys()
+                fieldNames = list(dataset.keys())
 
         # option 3: dataset is a 2-D table
         elif isinstance(dataset, numpy.ndarray):
@@ -229,9 +229,9 @@ class Transformation(object):
 
         # evaluate the Numpy expressions
         if outType == "array":
-            computed = dict((k, v(*[dataset[:, fieldNames.index(f)] for f in self.fields])) for k, v in self.lambdas.items())
+            computed = dict((k, v(*[dataset[:, fieldNames.index(f)] for f in self.fields])) for k, v in list(self.lambdas.items()))
         else:
-            computed = dict((k, v(*[dataset[f] for f in self.fields])) for k, v in self.lambdas.items())
+            computed = dict((k, v(*[dataset[f] for f in self.fields])) for k, v in list(self.lambdas.items()))
 
         # return the same type you received
         if outType == "recarray":
@@ -253,7 +253,7 @@ class Transformation(object):
 
         if isinstance(x, Ast):
             return x.jsonNode(False, set())
-        elif isinstance(x, basestring):
+        elif isinstance(x, str):
             return ppfa(x).jsonNode(False, set())
         else:
             return pfa(x).jsonNode(False, set())
@@ -272,7 +272,7 @@ class Transformation(object):
         """
 
         subs2.update(subs)
-        for k, v in subs2.items():
+        for k, v in list(subs2.items()):
             subs2[k] = Transformation.interpret(v)
 
         if isinstance(avroType, AvroArray):
@@ -284,17 +284,17 @@ class Transformation(object):
 
         elif isinstance(avroType, AvroMap):
             return {"type": avroType.jsonNode(set()),
-                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in self.pfas.items())}
+                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in list(self.pfas.items()))}
         elif isinstance(avroType, dict) and avroType["type"] == "map":
             return {"type": avroType,
-                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in self.pfas.items())}
+                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in list(self.pfas.items()))}
 
         elif isinstance(avroType, AvroRecord):
             return {"type": avroType.name,
-                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in self.pfas.items())}
-        elif isinstance(avroType, dict) and avroType["type"] == "record" or isinstance(avroType, basestring):
+                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in list(self.pfas.items()))}
+        elif isinstance(avroType, dict) and avroType["type"] == "record" or isinstance(avroType, str):
             return {"type": avroType,
-                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in self.pfas.items())}
+                    "new": dict((k, Transformation.replace(v, subs2)) for k, v in list(self.pfas.items()))}
 
         else:
             raise TypeError("new can only be used to make an array, map, or record")
@@ -311,10 +311,10 @@ class Transformation(object):
         """
 
         subs2.update(subs)
-        for k, v in subs2.items():
+        for k, v in list(subs2.items()):
             subs2[k] = Transformation.interpret(v)
 
-        return {"let": dict((k, Transformation.replace(v, subs2)) for k, v in self.pfas.items())}
+        return {"let": dict((k, Transformation.replace(v, subs2)) for k, v in list(self.pfas.items()))}
 
     def expr(self, name="_0", subs={}, **subs2):
         """Construct a PFA expression for one of the expressions in this ``Transformation``.
@@ -330,7 +330,7 @@ class Transformation(object):
         """
 
         subs2.update(subs)
-        for k, v in subs2.items():
+        for k, v in list(subs2.items()):
             subs2[k] = Transformation.interpret(v)
 
         return Transformation.replace(self.pfas[name], subs2)

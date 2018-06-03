@@ -44,7 +44,7 @@ def convert(xsdFileName):
 
     pyFileName = xsdFileName.replace("schemae/", "").replace("pmml-", "version_").replace("-", "_").replace(".xsd", ".py")
     if os.path.exists(pyFileName):
-        if raw_input("overwrite {0} (y/N)? ".format(pyFileName)).lower() != "y":
+        if input("overwrite {0} (y/N)? ".format(pyFileName)).lower() != "y":
             sys.exit(0)
     output = open(pyFileName, "w")
     output.write("""#!/usr/bin/env python
@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
     pyFileName = "version_independent.py"
     if os.path.exists(pyFileName):
-        if raw_input("overwrite {0} (y/N)? ".format(pyFileName)).lower() != "y":
+        if input("overwrite {0} (y/N)? ".format(pyFileName)).lower() != "y":
             sys.exit(0)
     output = open(pyFileName, "w")
     output.write("""#!/usr/bin/env python

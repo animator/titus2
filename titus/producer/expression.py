@@ -104,7 +104,7 @@ def fcn(params, ret, expr, subs=None, cells=None, pools=None, options=None, **kw
 
 def _form(state, lineno, others):
     if state["options"]["lineNumbers"] and lineno is not None:
-        return OrderedDict([("@", "Python line {0}".format(lineno))] + others.items())
+        return OrderedDict([("@", "Python line {0}".format(lineno))] + list(others.items()))
     else:
         return others
 
@@ -319,8 +319,8 @@ def _expression(expr, state):
         if len(args) == 1:
             args = args[0]
 
-        if name in ["string", "base64", "value", "attr", "cell", "pool", "foreach", "forkey", "forval", "doc", "error", "fcn"] and isinstance(args, dict) and len(args) == 1 and args.keys() == ["string"]:
-            args, = args.values()
+        if name in ["string", "base64", "value", "attr", "cell", "pool", "foreach", "forkey", "forval", "doc", "error", "fcn"] and isinstance(args, dict) and len(args) == 1 and list(args.keys()) == ["string"]:
+            args, = list(args.values())
 
         out = OrderedDict([(name, args)])
 
@@ -385,7 +385,7 @@ def _literal(expr, state):
     if isinstance(expr, ast.Dict):
         out = OrderedDict()
         for key, value in zip(expr.keys, expr.values):
-            if isinstance(key, ast.Str) or (isinstance(key, ast.Name) and isinstance(state["subs"].get(key.id, None), basestring)):
+            if isinstance(key, ast.Str) or (isinstance(key, ast.Name) and isinstance(state["subs"].get(key.id, None), str)):
                 kkey = _literal(key, state)
                 vvalue = _literal(value, state)
                 out[kkey] = vvalue

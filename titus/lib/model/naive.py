@@ -54,8 +54,8 @@ class Gaussian(LibFcn):
                 ll += -0.5*((x - mu)**2 / vari)
             return ll
         else:
-            datumkeys = datum.keys()
-            modelkeys = classModel.keys()
+            datumkeys = list(datum.keys())
+            modelkeys = list(classModel.keys())
             if set(datumkeys) != set(modelkeys):
                 raise PFARuntimeException("datum and classModel misaligned", self.errcodeBase + 0, self.name, pos)
             for feature in datumkeys:
@@ -94,10 +94,10 @@ class Multinomial(LibFcn):
 
     def domap(self, datum, classModel, pos):
         ll = 0.0
-        datumkeys = datum.keys()
-        modelkeys = classModel.keys()
+        datumkeys = list(datum.keys())
+        modelkeys = list(classModel.keys())
         normalizing = sum(classModel.values())
-        if len(classModel) == 0 or not all(x > 0.0 for x in classModel.values()):
+        if len(classModel) == 0 or not all(x > 0.0 for x in list(classModel.values())):
             raise PFARuntimeException("classModel must be non-empty and strictly positive", self.errcodeBase + 1, self.name, pos)
         if set(datumkeys) != set(modelkeys):
             raise PFARuntimeException("datum and classModel misaligned", self.errcodeBase + 0, self.name, pos)
@@ -129,7 +129,7 @@ class Bernoulli(LibFcn):
             classModel = classModel["values"]
 
         ll = 0.0
-        for v in classModel.values():
+        for v in list(classModel.values()):
             if (v <= 0.0) or (v >= 1.0):
                 raise PFARuntimeException("probability in classModel cannot be less than 0 or greater than 1", self.errcodeBase + 0, self.name, pos)
             ll += math.log(1.0 - v)

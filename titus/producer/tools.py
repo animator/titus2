@@ -28,7 +28,7 @@ import sys
 def splitIndex(index):
     """Normalize a casual index like "one, two, 3,four" to canonical form like ["one", "two", 3, "four"]."""
     out = [x.strip() for x in index.split(",")]
-    for i in xrange(len(out)):
+    for i in range(len(out)):
         try:
             out[i] = int(out[i])
         except ValueError:
@@ -37,7 +37,7 @@ def splitIndex(index):
 
 def get(expr, index):
     """Get a subexpression from the root expr and index."""
-    if isinstance(index, basestring):
+    if isinstance(index, str):
         index = splitIndex(index)
     out = expr
     for i in index:
@@ -46,7 +46,7 @@ def get(expr, index):
 
 def assign(expr, index, to):
     """Destructively (in-place) replace a subexpression at a given index with another expression."""
-    if isinstance(index, basestring):
+    if isinstance(index, str):
         index = splitIndex(index)
     out = expr
     for i in index[:-1]:
@@ -73,7 +73,7 @@ def assignedAt(pattern, expr, to):
 
 def remove(expr, index):
     """Destructively (in-place) remove a subexpression at a given index."""
-    if isinstance(index, basestring):
+    if isinstance(index, str):
         index = splitIndex(index)
     out = expr
     for i in index[:-1]:
@@ -138,7 +138,7 @@ def getmatch(pattern, haystack):
                 return None
         return out
 
-    elif isinstance(pattern, (basestring, long, int, float)):
+    elif isinstance(pattern, (str, int, float)):
         if pattern == haystack:
             return Match(haystack, haystack)
         else:
@@ -161,7 +161,7 @@ class Matcher(object):
 class Group(Matcher):
     """Tag a subexpression with a name so that it can be found later."""
     def __init__(self, **kwds):
-        (self.name, self.matcher), = kwds.items()
+        (self.name, self.matcher), = list(kwds.items())
     def __repr__(self):
         return "Group(" + repr(self.name) + "=" + repr(self.matcher) + ")"
     def getmatch(self, haystack):
@@ -177,14 +177,14 @@ class Min(Matcher):
     def __init__(self, **obj):
         self.obj = obj
     def __repr__(self):
-        return "Min(" + ", ".join(k + "=" + repr(v) for k, v in self.obj.items()) + ")"
+        return "Min(" + ", ".join(k + "=" + repr(v) for k, v in list(self.obj.items())) + ")"
     def getmatch(self, haystack):
         if not isinstance(haystack, dict):
             return None
         if len(set(self.obj.keys()).difference(set(["@"])).difference(set(haystack.keys()))) > 0:
             return None
-        out = Match(dict((k, v) for k, v in haystack.items() if k != "@"),
-                    dict((k, v) for k, v in haystack.items() if k != "@"))
+        out = Match(dict((k, v) for k, v in list(haystack.items()) if k != "@"),
+                    dict((k, v) for k, v in list(haystack.items()) if k != "@"))
         for key in self.obj:
             if key != "@":
                 m = getmatch(self.obj[key], haystack[key])
@@ -286,7 +286,7 @@ class Approx(Matcher):
     def __repr__(self):
         return "Approx(" + repr(self.central) + ", " + repr(self.error) + ")"
     def getmatch(self, haystack):
-        if not isinstance(haystack, (long, int, float)) or abs(haystack - self.central) > self.error:
+        if not isinstance(haystack, (int, float)) or abs(haystack - self.central) > self.error:
             return None
         else:
             return Match(haystack, haystack)
@@ -298,7 +298,7 @@ class LT(Matcher):
     def __repr__(self):
         return "LT(" + repr(self.value) + ")"
     def getmatch(self, haystack):
-        if not isinstance(haystack, (long, int, float)) or haystack >= self.value:
+        if not isinstance(haystack, (int, float)) or haystack >= self.value:
             return None
         else:
             return Match(haystack, haystack)
@@ -310,7 +310,7 @@ class LE(Matcher):
     def __repr__(self):
         return "LE(" + repr(self.value) + ")"
     def getmatch(self, haystack):
-        if not isinstance(haystack, (long, int, float)) or haystack > self.value:
+        if not isinstance(haystack, (int, float)) or haystack > self.value:
             return None
         else:
             return Match(haystack, haystack)
@@ -322,7 +322,7 @@ class GT(Matcher):
     def __repr__(self):
         return "GT(" + repr(self.value) + ")"
     def getmatch(self, haystack):
-        if not isinstance(haystack, (long, int, float)) or haystack <= self.value:
+        if not isinstance(haystack, (int, float)) or haystack <= self.value:
             return None
         else:
             return Match(haystack, haystack)
@@ -334,7 +334,7 @@ class GE(Matcher):
     def __repr__(self):
         return "GE(" + repr(self.value) + ")"
     def getmatch(self, haystack):
-        if not isinstance(haystack, (long, int, float)) or haystack < self.value:
+        if not isinstance(haystack, (int, float)) or haystack < self.value:
             return None
         else:
             return Match(haystack, haystack)
@@ -351,7 +351,7 @@ class RegEx(Matcher):
     def __repr__(self):
         return "RegEx(" + repr(self.pattern) + ", " + repr(self.to) + ", " + repr(self.flags) + ")"
     def getmatch(self, haystack):
-        if not isinstance(haystack, basestring):
+        if not isinstance(haystack, str):
             return None
         flags = 0
         if self.flags is not None:
@@ -477,7 +477,7 @@ def look(expr, maxDepth=8, inlineDepth=2, indexWidth=30, dropAt=True, stream=sys
 
 def _dropAt(expr, depth):
     if isinstance(expr, dict):
-        return expr.__class__([(k, _dropAt(v, depth - 1)) for k, v in expr.items() if k != "@"])
+        return expr.__class__([(k, _dropAt(v, depth - 1)) for k, v in list(expr.items()) if k != "@"])
     elif isinstance(expr, (list, tuple)):
         return [_dropAt(x, depth - 1) for x in expr]
     else:
@@ -487,7 +487,7 @@ def _acceptableDepth(expr, limit):
     if limit < 0:
         return False
     elif isinstance(expr, dict):
-        return all(_acceptableDepth(x, limit - 1) for x in expr.values())
+        return all(_acceptableDepth(x, limit - 1) for x in list(expr.values()))
     elif isinstance(expr, (list, tuple)):
         return all(_acceptableDepth(x, limit - 1) for x in expr)
     else:
@@ -527,7 +527,7 @@ def _look(expr, maxDepth, inlineDepth, index, indexWidth, indent):
     elif isinstance(expr, dict):
         if maxDepth > 0:
             block = []
-            for key, value in expr.items():
+            for key, value in list(expr.items()):
                 block.extend(_look(_Pair(key, value), maxDepth - 1, inlineDepth, index + [key], indexWidth, indent + "  "))
             block[-1][1] = block[-1][1].rstrip(",")
             return [[reprindex, indent + "{"]] + block + [["", indent + "}"]]

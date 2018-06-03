@@ -73,14 +73,14 @@ class MetricWithMissingValues(LibFcn):
         tally = 0.0
         numer = 0.0
         denom = 0.0
-        for i in xrange(length):
+        for i in range(length):
             xi = x[i]
             yi = y[i]
             if xi is not None and yi is not None:
                 if isinstance(paramTypes[1]["items"], (tuple, list)):
-                    xi, = xi.values()
+                    xi, = list(xi.values())
                 if isinstance(paramTypes[2]["items"], (tuple, list)):
-                    yi, = yi.values()
+                    yi, = list(yi.values())
                 tally = self.increment(tally, callfcn(state, scope, similarity, [xi, yi]))
                 denom += missingWeight[i]
             numer += missingWeight[i]
@@ -160,14 +160,14 @@ class Minkowski(LibFcn):
         numer = 0.0
         denom = 0.0
         if math.isinf(p):
-            for i in xrange(length):
+            for i in range(length):
                 xi = x[i]
                 yi = y[i]
                 if xi is not None and yi is not None:
                     if isinstance(paramTypes[1]["items"], (tuple, list)):
-                        xi, = xi.values()
+                        xi, = list(xi.values())
                     if isinstance(paramTypes[2]["items"], (tuple, list)):
-                        yi, = yi.values()
+                        yi, = list(yi.values())
                     z = callfcn(state, scope, similarity, [xi, yi])
                     if z > tally:
                         tally = z
@@ -178,14 +178,14 @@ class Minkowski(LibFcn):
             else:
                 return tally * numer / denom
         else:
-            for i in xrange(length):
+            for i in range(length):
                 xi = x[i]
                 yi = y[i]
                 if xi is not None and yi is not None:
                     if isinstance(paramTypes[1]["items"], (tuple, list)):
-                        xi, = xi.values()
+                        xi, = list(xi.values())
                     if isinstance(paramTypes[2]["items"], (tuple, list)):
-                        yi, = yi.values()
+                        yi, = list(yi.values())
                     tally += powLikeJava(callfcn(state, scope, similarity, [xi, yi]), p)
                     denom += missingWeight[i]
                 numer += missingWeight[i]

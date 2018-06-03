@@ -67,12 +67,12 @@ class PmmlContentHandler(xml.sax.handler.ContentHandler):
     def startElementNS(self, name, qname, attrib):
         if self.version is None:
             if name[1] == "PMML":
-                self.setVersion([v for k, v in attrib.items() if k[1] == "version"][0])
+                self.setVersion([v for k, v in list(attrib.items()) if k[1] == "version"][0])
             else:
                 raise ValueError("top-level element must be named PMML")
 
         if name[0] is not None and name[0].startswith(self.namespace):
-            self.startElement(name[1], dict((k[1], v) for k, v in attrib.items()))
+            self.startElement(name[1], dict((k[1], v) for k, v in list(attrib.items())))
 
     def setVersion(self, version):
         self.version = version
@@ -113,14 +113,14 @@ def loadPMML(pmmlInput, processNamespaces=False):
     :return: loaded PMML
     """
 
-    if isinstance(pmmlInput, basestring):
+    if isinstance(pmmlInput, str):
         if len(pmmlInput) >= 2 and pmmlInput[0:2] == "\x1f\x8b":
             pmmlInput = gzip.GzipFile(fileobj=io.StringIO(pmmlInput))
         elif pmmlInput.find("<") != -1:
-            if isinstance(pmmlInput, unicode):
+            if isinstance(pmmlInput, str):
                 pmmlInput = io.StringIO(pmmlInput)
             else:
-                pmmlInput = io.StringIO(unicode(pmmlInput))
+                pmmlInput = io.StringIO(str(pmmlInput))
         else:
             pmmlInput = open(pmmlInput)
 

@@ -19,7 +19,7 @@
 
 import copy
 import json
-import StringIO
+import io
 
 import titus.producer.tools as t
 from titus.inspector.defs import *
@@ -38,7 +38,7 @@ def depthGreaterThan(obj, target):
     """
 
     if isinstance(obj, dict):
-        return any(depthGreaterThan(x, target - 1) for x in obj.values()) or \
+        return any(depthGreaterThan(x, target - 1) for x in list(obj.values())) or \
                (len(obj) == 0 and target <= 0)
     elif isinstance(obj, (list, tuple)):
         return any(depthGreaterThan(x, target - 1) for x in obj) or \
@@ -97,7 +97,7 @@ class LookCommand(Command):
         """
 
         if len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
         else:
             options = {"maxDepth": 8, "indexWidth": 30}
             while len(args) > 0 and isinstance(args[-1], parser.Option):
@@ -110,10 +110,10 @@ class LookCommand(Command):
                 else:
                     raise InspectorError("option {0} unrecognized".format(opt.word.text))
 
-            if not isinstance(options["maxDepth"], (int, long)) or options["maxDepth"] <= 0:
+            if not isinstance(options["maxDepth"], int) or options["maxDepth"] <= 0:
                 raise InspectorError("maxDepth must be a positive integer")
 
-            if not isinstance(options["indexWidth"], (int, long)) or options["indexWidth"] <= 0:
+            if not isinstance(options["indexWidth"], int) or options["indexWidth"] <= 0:
                 raise InspectorError("indexWidth must be a positive integer")
 
             if len(args) == 1 and isinstance(args[0], parser.Word):
@@ -132,10 +132,10 @@ class LookCommand(Command):
                 self.syntaxError()
 
             if not depthGreaterThan(node, 0):
-                print json.dumps(node)
+                print(json.dumps(node))
 
             else:
-                content = StringIO.StringIO()
+                content = io.StringIO()
                 if not depthGreaterThan(node, 1):
                     t.look(node, maxDepth=options["maxDepth"], indexWidth=options["indexWidth"], inlineDepth=0, stream=content)
                 elif not depthGreaterThan(node, 2):
@@ -145,7 +145,7 @@ class LookCommand(Command):
 
                 content = content.getvalue()
                 if content.count("\n") <= 100:
-                    print content
+                    print(content)
                 else:
                     proc = pipe("less")
                     try:
@@ -181,7 +181,7 @@ class CountCommand(Command):
             if active in self.mode.pfaFiles:
                 return [active + "["]
             else:
-                return sorted(x for x in self.mode.pfaFiles.keys() if x.startswith(active))
+                return sorted(x for x in list(self.mode.pfaFiles.keys()) if x.startswith(active))
 
         elif len(words) == 1 and isinstance(words[0], parser.Extract) and words[0].partial:
             if words[0].text in self.mode.pfaFiles:
@@ -202,7 +202,7 @@ class CountCommand(Command):
         """
 
         if len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
         else:
             if len(args) == 2 and isinstance(args[0], parser.Word):
                 if args[0].text not in self.mode.pfaFiles:
@@ -220,7 +220,7 @@ class CountCommand(Command):
                 self.syntaxError()
 
             regex = args[-1].regex()
-            print "{0} matches".format(t.count(regex, node))
+            print("{0} matches".format(t.count(regex, node)))
 
 class IndexCommand(Command):
     """The 'json index' command in pfainspector."""
@@ -248,7 +248,7 @@ class IndexCommand(Command):
             if active in self.mode.pfaFiles:
                 return [active + "["]
             else:
-                return sorted(x for x in self.mode.pfaFiles.keys() if x.startswith(active))
+                return sorted(x for x in list(self.mode.pfaFiles.keys()) if x.startswith(active))
 
         elif len(words) == 1 and isinstance(words[0], parser.Extract) and words[0].partial:
             if words[0].text in self.mode.pfaFiles:
@@ -269,7 +269,7 @@ class IndexCommand(Command):
         """
 
         if len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
         else:
             if len(args) == 2 and isinstance(args[0], parser.Word):
                 if args[0].text not in self.mode.pfaFiles:
@@ -288,7 +288,7 @@ class IndexCommand(Command):
 
             regex = args[-1].regex()
             def display(i):
-                if isinstance(i, basestring):
+                if isinstance(i, str):
                     if " " in i:
                         return json.dumps(i)
                     else:
@@ -296,13 +296,13 @@ class IndexCommand(Command):
                 else:
                     return str(i)
 
-            print "Indexes that match the pattern:"
+            print("Indexes that match the pattern:")
             count = 0
             for index in t.indexes(regex, node):
-                print "    [" + ", ".join(display(i) for i in index) + "]"
+                print("    [" + ", ".join(display(i) for i in index) + "]")
                 count += 1
             if count == 0:
-                print "    (none)"
+                print("    (none)")
 
 class FindCommand(Command):
     """The 'json find' command in pfainspector."""
@@ -355,7 +355,7 @@ class FindCommand(Command):
         """
 
         if len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
         else:
             options = {"maxDepth": 3, "indexWidth": 30}
             while len(args) > 0 and isinstance(args[-1], parser.Option):
@@ -368,10 +368,10 @@ class FindCommand(Command):
                 else:
                     raise InspectorError("option {1} unrecognized".format(opt.word.text))
 
-            if not isinstance(options["maxDepth"], (int, long)) or options["maxDepth"] <= 0:
+            if not isinstance(options["maxDepth"], int) or options["maxDepth"] <= 0:
                 raise InspectorError("maxDepth must be a positive integer")
 
-            if not isinstance(options["indexWidth"], (int, long)) or options["indexWidth"] <= 0:
+            if not isinstance(options["indexWidth"], int) or options["indexWidth"] <= 0:
                 raise InspectorError("indexWidth must be a positive integer")
 
             if len(args) == 2 and isinstance(args[0], parser.Word):
@@ -391,7 +391,7 @@ class FindCommand(Command):
 
             regex = args[-1].regex()
             def display(i):
-                if isinstance(i, basestring):
+                if isinstance(i, str):
                     if " " in i:
                         return json.dumps(i)
                     else:
@@ -399,7 +399,7 @@ class FindCommand(Command):
                 else:
                     return str(i)
 
-            content = StringIO.StringIO()
+            content = io.StringIO()
             count = 0
             for index in t.indexes(regex, node):
                 content.write("At index [" + ", ".join(display(i) for i in index) + "]:\n")
@@ -418,11 +418,11 @@ class FindCommand(Command):
                 content.write("\n")
                 count += 1
             if count == 0:
-                print "    (none)"
+                print("    (none)")
 
             content = content.getvalue()
             if content.count("\n") <= 100:
-                print content
+                print(content)
             else:
                 proc = pipe("less")
                 try:
@@ -458,7 +458,7 @@ class ChangeCommand(Command):
             if active in self.mode.pfaFiles:
                 return [active + "["]
             else:
-                return sorted(x for x in self.mode.pfaFiles.keys() if x.startswith(active))
+                return sorted(x for x in list(self.mode.pfaFiles.keys()) if x.startswith(active))
 
         elif len(words) == 1 and isinstance(words[0], parser.Extract) and words[0].partial:
             if words[0].text in self.mode.pfaFiles:
@@ -482,7 +482,7 @@ class ChangeCommand(Command):
         """
 
         if len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
         else:
             if len(args) == 4 and isinstance(args[0], parser.Word):
                 if args[0].text not in self.mode.pfaFiles:
@@ -512,7 +512,7 @@ class ChangeCommand(Command):
                 self.syntaxError()
 
             def display(i):
-                if isinstance(i, basestring):
+                if isinstance(i, str):
                     if " " in i:
                         return json.dumps(i)
                     else:
@@ -528,7 +528,7 @@ class ChangeCommand(Command):
                         raise InspectorError("group ({0}) not found in regular expression".format(value.name))
 
                 elif isinstance(value, dict):
-                    return dict((k, replace(v, groups)) for k, v in value.items())
+                    return dict((k, replace(v, groups)) for k, v in list(value.items()))
 
                 elif isinstance(value, (list, tuple)):
                     return [replace(x, groups) for x in value]
@@ -538,7 +538,7 @@ class ChangeCommand(Command):
 
             def removeAts(obj):
                 if isinstance(obj, dict):
-                    return dict((k, removeAts(v)) for k, v in obj.items() if k != "@")
+                    return dict((k, removeAts(v)) for k, v in list(obj.items()) if k != "@")
                 elif isinstance(obj, (list, tuple)):
                     return [removeAts(x) for x in obj]
                 else:
@@ -551,12 +551,12 @@ class ChangeCommand(Command):
                     replacedReplacement = replace(replacement, match.groups)
 
                     if ask:
-                        print "At index [" + ", ".join(display(i) for i in index) + "]:"
-                        print "Original:  " + json.dumps(removeAts(t.get(node, index)))
-                        print "Change to: " + json.dumps(replacedReplacement)
+                        print("At index [" + ", ".join(display(i) for i in index) + "]:")
+                        print("Original:  " + json.dumps(removeAts(t.get(node, index))))
+                        print("Change to: " + json.dumps(replacedReplacement))
                         action = None
                         while action is None:
-                            response = raw_input("(Y/n/all/stop/revert): ")
+                            response = input("(Y/n/all/stop/revert): ")
                             normalized = response.strip().lower()
                             if normalized in ("", "y", "yes"):
                                 action = "yes"
@@ -568,7 +568,7 @@ class ChangeCommand(Command):
                                 action = "stop"
                             elif normalized == "revert":
                                 action = "revert"
-                        print
+                        print()
 
                     else:
                         action = "yes"

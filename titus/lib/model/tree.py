@@ -51,8 +51,8 @@ def simpleComparison(paramTypes, datum, comparison, missingOperators, parser, co
             else:
                 fieldValueType = withoutNull
 
-            if isinstance(fieldValue, dict) and len(fieldValue) == 1 and any(parser.getAvroType(x).name == fieldValue.keys()[0] for x in withoutNull):
-                fieldValue, = fieldValue.values()
+            if isinstance(fieldValue, dict) and len(fieldValue) == 1 and any(parser.getAvroType(x).name == list(fieldValue.keys())[0] for x in withoutNull):
+                fieldValue, = list(fieldValue.values())
         
     fieldValueType = parser.getAvroType(fieldValueType)
     valueType = parser.getAvroType(valueType)
@@ -74,8 +74,8 @@ def simpleComparison(paramTypes, datum, comparison, missingOperators, parser, co
         else:
             raise PFARuntimeException("bad value type", code1, fcnName, pos)
 
-        if isinstance(value, dict) and len(value) == 1 and value.keys() == ["array"]:
-            value, = value.values()
+        if isinstance(value, dict) and len(value) == 1 and list(value.keys()) == ["array"]:
+            value, = list(value.values())
 
         if not missingOperators:
             if fieldValue is None:
@@ -99,9 +99,9 @@ def simpleComparison(paramTypes, datum, comparison, missingOperators, parser, co
             return None
 
         if isinstance(fieldValueType, (AvroInt, AvroLong, AvroFloat, AvroDouble)):
-            if isinstance(value, dict) and (value.keys() == ["int"] or value.keys() == ["long"] or value.keys() == ["float"] or value.keys() == ["double"]):
-                value, = value.values()
-            if not isinstance(value, (int, long, float)):
+            if isinstance(value, dict) and (list(value.keys()) == ["int"] or list(value.keys()) == ["long"] or list(value.keys()) == ["float"] or list(value.keys()) == ["double"]):
+                value, = list(value.values())
+            if not isinstance(value, (int, float)):
                 raise PFARuntimeException("bad value type", code1, fcnName, pos)
 
             if operator == "<=":
@@ -193,8 +193,8 @@ class SurrogateTest(LibFcn):
         for comparison in comparisons:
             result = callfcn(state, scope, missingTest, [datum, comparison])
             if result is not None:
-                if isinstance(result, dict) and result.keys() == ["boolean"]:
-                    return result.values()[0]
+                if isinstance(result, dict) and list(result.keys()) == ["boolean"]:
+                    return list(result.values())[0]
                 else:
                     return result
         raise PFARuntimeException("no successful surrogate", self.errcodeBase + 0, self.name, pos)
@@ -216,7 +216,7 @@ class SimpleWalk(LibFcn):
                 node = None
                 break
             else:
-                (utype, node), = union.items()
+                (utype, node), = list(union.items())
                 if utype != treeNodeTypeName:
                     break
         return node
@@ -241,7 +241,7 @@ class MissingWalk(LibFcn):
                 node = None
                 break
             else:
-                (utype, node), = union.items()
+                (utype, node), = list(union.items())
                 if utype != treeNodeTypeName:
                     break
         return node
@@ -263,7 +263,7 @@ class SimpleTree(LibFcn):
                 node = None
                 break
             else:
-                (utype, node), = union.items()
+                (utype, node), = list(union.items())
                 if utype != treeNodeTypeName:
                     break
         return node

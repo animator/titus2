@@ -669,8 +669,8 @@ class DefineFunction(PmmlBinding):
 
         symbolTable = {}
         for p in params:
-            n = p.keys()[0]
-            v = p.values()[0]
+            n = list(p.keys())[0]
+            v = list(p.values())[0]
             symbolTable[n] = v
 
         expr = expressions[0].toPFA(options, context.copy(scope=symbolTable))
@@ -1571,7 +1571,7 @@ class TreeModel(PmmlBinding, ModelElement):
 
             predicateTypes = set(x.predicate().__class__.__name__ for x in otherNodes)
 
-            inputTypes = sorted(set(x["type"] for x in context.dataDictionary.values()))
+            inputTypes = sorted(set(x["type"] for x in list(context.dataDictionary.values())))
             if self.functionName == "regression":
                 outputTypes = ["TreeNode", "double"]
                 context.outputType = "double"

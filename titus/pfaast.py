@@ -326,7 +326,7 @@ class UserFcn(Fcn):
 
     def genpy(self, paramTypes, args, pos=None):
         """Generate an executable Python string for this function; usually ```call(state, DynamicScope(None), self.f["function name"], {arguments...})```."""
-        parNames = [x.keys()[0] for x in self.sig.params]
+        parNames = [list(x.keys())[0] for x in self.sig.params]
         return "call(state, DynamicScope(None), self.f[" + repr(self.name) + "], {" + ", ".join([repr(k) + ": " + v for k, v in zip(parNames, args)]) + "})"
 
     @staticmethod
@@ -340,7 +340,7 @@ class UserFcn(Fcn):
         :rtype: titus.pfaast.UserFcn
         :return: the executable function
         """
-        return UserFcn(n, Sig([{t.keys()[0]: P.fromType(t.values()[0])} for t in fcnDef.params], P.fromType(fcnDef.ret)))
+        return UserFcn(n, Sig([{list(t.keys())[0]: P.fromType(list(t.values())[0])} for t in fcnDef.params], P.fromType(fcnDef.ret)))
 
 class EmitFcn(Fcn):
     """The special ``emit`` function."""
@@ -719,10 +719,10 @@ class EngineConfig(Ast):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise PFASyntaxException("\"name\" must be a string", pos)
 
         if method not in (Method.MAP, Method.EMIT, Method.FOLD):
@@ -743,31 +743,31 @@ class EngineConfig(Ast):
         if not isinstance(end, (list, tuple)) or not all(isinstance(x, Expression) for x in end):
             raise PFASyntaxException("\"end\" must be a list of Expressions", pos)
 
-        if not isinstance(fcns, dict) or not all(isinstance(x, FcnDef) for x in fcns.values()):
+        if not isinstance(fcns, dict) or not all(isinstance(x, FcnDef) for x in list(fcns.values())):
             raise PFASyntaxException("\"fcns\" must be a dictionary of FcnDefs", pos)
 
-        if not isinstance(zero, basestring) and not zero is None:
+        if not isinstance(zero, str) and not zero is None:
             raise PFASyntaxException("\"zero\" must be a string or None", pos)
 
         if (not isinstance(merge, (list, tuple)) or not all(isinstance(x, Expression) for x in merge)) and not merge is None:
             raise PFASyntaxException("\"merge\" must be list of Expressions or None", pos)
 
-        if not isinstance(cells, dict) or not all(isinstance(x, Cell) for x in cells.values()):
+        if not isinstance(cells, dict) or not all(isinstance(x, Cell) for x in list(cells.values())):
             raise PFASyntaxException("\"cells\" must be a dictionary of Cells", pos)
 
-        if not isinstance(pools, dict) or not all(isinstance(x, Pool) for x in pools.values()):
+        if not isinstance(pools, dict) or not all(isinstance(x, Pool) for x in list(pools.values())):
             raise PFASyntaxException("\"pools\" must be a dictionary of Pools", pos)
 
-        if not isinstance(randseed, (int, long)) and not randseed is None:
+        if not isinstance(randseed, int) and not randseed is None:
             raise PFASyntaxException("\"randseed\" must be an int or None", pos)
 
-        if not isinstance(doc, basestring) and not doc is None:
+        if not isinstance(doc, str) and not doc is None:
             raise PFASyntaxException("\"doc\" must be a string or None", pos)
 
-        if not isinstance(version, (int, long)) and not version is None:
+        if not isinstance(version, int) and not version is None:
             raise PFASyntaxException("\"version\" must be an int or None", pos)
 
-        if not isinstance(metadata, dict) or not all(isinstance(x, basestring) for x in metadata.values()):
+        if not isinstance(metadata, dict) or not all(isinstance(x, str) for x in list(metadata.values())):
             raise PFASyntaxException("\"metadata\" must be a dictionary of strings", pos)
 
         if not isinstance(options, dict):
@@ -844,9 +844,9 @@ class EngineConfig(Ast):
                titus.util.flatten(x.collect(pf) for x in self.begin) + \
                titus.util.flatten(x.collect(pf) for x in self.action) + \
                titus.util.flatten(x.collect(pf) for x in self.end) + \
-               titus.util.flatten(x.collect(pf) for x in self.fcns.values()) + \
-               titus.util.flatten(x.collect(pf) for x in self.cells.values()) + \
-               titus.util.flatten(x.collect(pf) for x in self.pools.values())
+               titus.util.flatten(x.collect(pf) for x in list(self.fcns.values())) + \
+               titus.util.flatten(x.collect(pf) for x in list(self.cells.values())) + \
+               titus.util.flatten(x.collect(pf) for x in list(self.pools.values()))
 
     def replace(self, pf):
         """Walk over tree applying a partial function, returning a transformed copy of the tree.
@@ -868,11 +868,11 @@ class EngineConfig(Ast):
                                 [x.replace(pf) for x in self.begin],
                                 [x.replace(pf) for x in self.action],
                                 [x.replace(pf) for x in self.end],
-                                dict((k, v.replace(pf)) for k, v in self.fcns.items()),
+                                dict((k, v.replace(pf)) for k, v in list(self.fcns.items())),
                                 self.zero,
                                 self.merge,
-                                dict((k, v.replace(pf)) for k, v in self.cells.items()),
-                                dict((k, v.replace(pf)) for k, v in self.pools.items()),
+                                dict((k, v.replace(pf)) for k, v in list(self.cells.items())),
+                                dict((k, v.replace(pf)) for k, v in list(self.pools.items())),
                                 self.randseed,
                                 self.doc,
                                 self.version,
@@ -901,7 +901,7 @@ class EngineConfig(Ast):
         topWrapper = SymbolTable(symbolTable, {}, self.cells, self.pools, True, False)
 
         userFunctions = {}
-        for fname, fcnDef in self.fcns.items():
+        for fname, fcnDef in list(self.fcns.items()):
             ufname = "u." + fname
             if not validFunctionName(ufname):
                 raise PFASemanticException("\"{0}\" is not a valid function name".format(fname), self.pos)
@@ -915,7 +915,7 @@ class EngineConfig(Ast):
         withUserFunctions = FunctionTable(dict(list(functionTable.functions.items()) + list(userFunctions.items()) + list(emitFcn.items())))
 
         userFcnContexts = []
-        for fname, fcnDef in self.fcns.items():
+        for fname, fcnDef in list(self.fcns.items()):
             ufname = "u." + fname
             scope = topWrapper.newScope(True, False)
             fcnContext, fcnResult = fcnDef.walk(task, scope, withUserFunctions, engineOptions, pfaVersion)
@@ -1045,13 +1045,13 @@ class EngineConfig(Ast):
             out["end"] = [x.jsonNode(lineNumbers, memo) for x in self.end]
 
         if len(self.fcns) > 0:
-            out["fcns"] = dict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.fcns.items())
+            out["fcns"] = dict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.fcns.items()))
 
         if len(self.cells) > 0:
-            out["cells"] = dict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.cells.items())
+            out["cells"] = dict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.cells.items()))
 
         if len(self.pools) > 0:
-            out["pools"] = dict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.pools.items())
+            out["pools"] = dict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.pools.items()))
 
         if self.zero is not None:
             out["zero"] = json.loads(self.zero)
@@ -1072,7 +1072,7 @@ class EngineConfig(Ast):
             out["metadata"] = dict(self.metadata)
 
         if len(self.options) > 0:
-            out["options"] = dict(self.options.items())
+            out["options"] = dict(list(self.options.items()))
 
         return out
 
@@ -1124,13 +1124,13 @@ class Cell(Ast):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(avroPlaceholder, (AvroPlaceholder, AvroType)):
             raise PFASyntaxException("\"avroPlaceholder\" must be an AvroPlaceholder or AvroType", pos)
 
-        if not isinstance(init, basestring) and not callable(init):
+        if not isinstance(init, str) and not callable(init):
             raise PFASyntaxException("\"init\" must be a string or callable", pos)
 
         if not isinstance(shared, bool):
@@ -1139,7 +1139,7 @@ class Cell(Ast):
         if not isinstance(rollback, bool):
             raise PFASyntaxException("\"rollback\" must be boolean", pos)
 
-        if not isinstance(source, basestring) and not source is None:
+        if not isinstance(source, str) and not source is None:
             raise PFASyntaxException("\"source\" must be a string or None", pos)
         
         if shared and rollback:
@@ -1224,13 +1224,13 @@ class Pool(Ast):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(avroPlaceholder, (AvroPlaceholder, AvroType)):
             raise PFASyntaxException("\"avroPlaceholder\" must be an AvroPlaceholder or AvroType", pos)
 
-        if not isinstance(init, dict) or not all(isinstance(x, basestring) or x is None for x in init.values()):
+        if not isinstance(init, dict) or not all(isinstance(x, str) or x is None for x in list(init.values())):
             raise PFASyntaxException("\"init\" must be a string or callable", pos)
 
         if not isinstance(shared, bool):
@@ -1239,7 +1239,7 @@ class Pool(Ast):
         if not isinstance(rollback, bool):
             raise PFASyntaxException("\"rollback\" must be boolean", pos)
 
-        if not isinstance(source, basestring) and not source is None:
+        if not isinstance(source, str) and not source is None:
             raise PFASyntaxException("\"source\" must be a string or None", pos)
 
         if shared and rollback:
@@ -1281,7 +1281,7 @@ class Pool(Ast):
         if callable(self.init):
             return json.loads(self.init(AvroMap(self.avroType)))
         else:
-            return OrderedDict((k, json.loads(v)) for k, v in self.init.items())
+            return OrderedDict((k, json.loads(v)) for k, v in list(self.init.items()))
 
     def jsonNode(self, lineNumbers, memo):
         """Convert this abstract syntax tree to Pythonized JSON.
@@ -1391,7 +1391,7 @@ class HasPath(object):
                     else:
                         raise PFASemanticException("path index for record {0} must be a literal string; item {1} is an object of type {2}".format(ts(walkingType), indexIndex, ts(exprContext.retType)), self.pos)
 
-                    if name in walkingType.fieldsDict.keys():
+                    if name in list(walkingType.fieldsDict.keys()):
                         walkingType = walkingType.field(name).avroType
                         pathIndexes.append(RecordIndex(name, walkingType))
                     else:
@@ -1419,10 +1419,10 @@ class FcnDef(Argument):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(paramsPlaceholder, (list, tuple)) or not all(isinstance(x, dict) and len(x) == 1 and isinstance(x.values()[0], (AvroPlaceholder, AvroType)) for x in paramsPlaceholder):
+        if not isinstance(paramsPlaceholder, (list, tuple)) or not all(isinstance(x, dict) and len(x) == 1 and isinstance(list(x.values())[0], (AvroPlaceholder, AvroType)) for x in paramsPlaceholder):
             raise PFASyntaxException("\"paramsPlaceholder\" must be a list of single-key dictionaries of AvroPlaceholders or AvroTypes", pos)
 
         if not isinstance(retPlaceholder, (AvroPlaceholder, AvroType)):
@@ -1437,17 +1437,17 @@ class FcnDef(Argument):
     @property
     def paramNames(self):
         """Names of the parameters (list of strings)."""
-        return [t.keys()[0] for t in self.paramsPlaceholder]
+        return [list(t.keys())[0] for t in self.paramsPlaceholder]
 
     @property
     def params(self):
         """Resolved parameter types (list of {string: titus.datatype.AvroType} singletons)."""
-        return [{t.keys()[0]: t.values()[0].avroType} for t in self.paramsPlaceholder]
+        return [{list(t.keys())[0]: list(t.values())[0].avroType} for t in self.paramsPlaceholder]
 
     @property
     def paramsDict(self):
         """Resolved parameter types as an unordered dictionary (dict of titus.datatype.AvroType)."""
-        return dict((t.keys()[0], t.values()[0].avroType) for t in self.paramsPlaceholder)
+        return dict((list(t.keys())[0], list(t.values())[0].avroType) for t in self.paramsPlaceholder)
 
     @property
     def ret(self):
@@ -1507,7 +1507,7 @@ class FcnDef(Argument):
             raise PFASemanticException("function can have at most 22 parameters", self.pos)
 
         scope = symbolTable.newScope(True, False)
-        for name, avroType in self.paramsDict.items():
+        for name, avroType in list(self.paramsDict.items()):
             if not validSymbolName(name):
                 raise PFASemanticException("\"{0}\" is not a valid parameter name".format(name), self.pos)
             scope.put(name, avroType)
@@ -1518,7 +1518,7 @@ class FcnDef(Argument):
         if not isinstance(inferredRetType, ExceptionType) and not self.ret.accepts(inferredRetType):
             raise PFASemanticException("function's inferred return type is {0} but its declared return type is {1}".format(ts(results[-1][0].retType), ts(self.ret)), self.pos)
 
-        context = self.Context(FcnType([t.values()[0] for t in self.params], self.ret), set(titus.util.flatten([x[0].calls for x in results])), self.paramNames, self.paramsDict, self.ret, scope.inThisScope, [x[1] for x in results])
+        context = self.Context(FcnType([list(t.values())[0] for t in self.params], self.ret), set(titus.util.flatten([x[0].calls for x in results])), self.paramNames, self.paramsDict, self.ret, scope.inThisScope, [x[1] for x in results])
         return context, task(context, engineOptions)
 
     def jsonNode(self, lineNumbers, memo):
@@ -1532,7 +1532,7 @@ class FcnDef(Argument):
         :return: JSON representation
         """
         out = self.startDict(lineNumbers)
-        out["params"] = [{x.keys()[0]: x.values()[0].jsonNode(memo)} for x in self.paramsPlaceholder]
+        out["params"] = [{list(x.keys())[0]: list(x.values())[0].jsonNode(memo)} for x in self.paramsPlaceholder]
         out["ret"] = self.retPlaceholder.jsonNode(memo)
         out["do"] = [x.jsonNode(lineNumbers, memo) for x in self.body]
         return out
@@ -1552,10 +1552,10 @@ class FcnRef(Argument):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise PFASyntaxException("\"name\" must be a string", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -1593,7 +1593,7 @@ class FcnRef(Argument):
 
         try:
             params, ret = fcnsig.params, fcnsig.ret
-            fcnType = FcnType([P.toType(p.values()[0]) for p in params], P.mustBeAvro(P.toType(ret)))
+            fcnType = FcnType([P.toType(list(p.values())[0]) for p in params], P.mustBeAvro(P.toType(ret)))
         except IncompatibleTypes:
             raise PFASemanticException("only one-signature functions without generics can be referenced (wrap \"{0}\" in a function definition with the desired signature)".format(self.name), self.pos)
 
@@ -1631,13 +1631,13 @@ class FcnRefFill(Argument):
         :param pos: source file location from the locator mark
         """
         
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise PFASyntaxException("\"name\" must be a string", pos)
 
-        if not isinstance(fill, dict) or not all(isinstance(x, Argument) for x in fill.values()):
+        if not isinstance(fill, dict) or not all(isinstance(x, Argument) for x in list(fill.values())):
             raise PFASyntaxException("\"fill\" must be a dictionary of Arguments", pos)
 
         if len(self.fill) < 1:
@@ -1654,7 +1654,7 @@ class FcnRefFill(Argument):
         :return: a result for each abstract syntax tree node in the ``pf`` function's domain
         """
         return super(FcnRefFill, self).collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.fill.values())
+               titus.util.flatten(x.collect(pf) for x in list(self.fill.values()))
 
     def replace(self, pf):
         """Walk over tree applying a partial function, returning a transformed copy of the tree.
@@ -1670,7 +1670,7 @@ class FcnRefFill(Argument):
             return pf(self)
         else:
             return FcnRefFill(self.name,
-                              dict((k, v.replace(pf)) for k, v in self.fill.items()),
+                              dict((k, v.replace(pf)) for k, v in list(self.fill.items())),
                               self.pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -1699,7 +1699,7 @@ class FcnRefFill(Argument):
 
         fillScope = symbolTable.newScope(True, True)
         argTypeResult = {}
-        for name, arg in self.fill.items():
+        for name, arg in list(self.fill.items()):
             argCtx, argRes = arg.walk(task, fillScope, functionTable, engineOptions, version)
 
             calls = calls.union(argCtx.calls)
@@ -1725,13 +1725,13 @@ class FcnRefFill(Argument):
         try:
             params, ret = fcnsig.params, fcnsig.ret
 
-            originalParamNames = [x.keys()[0] for x in params]
+            originalParamNames = [list(x.keys())[0] for x in params]
             fillNames = set(argTypeResult.keys())
 
             if not fillNames.issubset(set(originalParamNames)):
                 raise PFASemanticException("fill argument names (\"{0}\") are not a subset of function \"{1}\" parameter names (\"{2}\")".format("\", \"".join(sorted(fillNames)), self.name, "\", \"".join(originalParamNames)), self.pos)
 
-            fcnType = FcnType([P.mustBeAvro(P.toType(p.values()[0])) for p in params if p.keys()[0] not in fillNames], P.mustBeAvro(P.toType(ret)))
+            fcnType = FcnType([P.mustBeAvro(P.toType(list(p.values())[0])) for p in params if list(p.keys())[0] not in fillNames], P.mustBeAvro(P.toType(ret)))
         except IncompatibleTypes:
             raise PFASemanticException("only one-signature functions without constraints can be referenced (wrap \"{0}\" in a function definition with the desired signature)".format(self.name), self.pos)
 
@@ -1750,7 +1750,7 @@ class FcnRefFill(Argument):
         """
         out = self.startDict(lineNumbers)
         out["fcn"] = self.name
-        out["fill"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.fill.items())
+        out["fill"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.fill.items()))
         return out
 
     @titus.util.case
@@ -1770,7 +1770,7 @@ class CallUserFcn(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(name, Expression):
@@ -1910,10 +1910,10 @@ class Call(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise PFASyntaxException("\"name\" must be a string", pos)
 
         if not isinstance(args, (list, tuple)) or not all(isinstance(x, Argument) for x in args):
@@ -2039,10 +2039,10 @@ class Ref(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise PFASyntaxException("\"name\" must be a string", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2092,7 +2092,7 @@ class LiteralNull(LiteralValue):
         """:type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2144,7 +2144,7 @@ class LiteralBoolean(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(value, bool):
@@ -2199,10 +2199,10 @@ class LiteralInt(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, (int, long)):
+        if not isinstance(value, int):
             raise PFASyntaxException("\"value\" must be an int", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2254,10 +2254,10 @@ class LiteralLong(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, (int, long)):
+        if not isinstance(value, int):
             raise PFASyntaxException("\"value\" must be an int", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2311,10 +2311,10 @@ class LiteralFloat(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, (int, long, float)):
+        if not isinstance(value, (int, float)):
             raise PFASyntaxException("\"value\" must be a number", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2368,10 +2368,10 @@ class LiteralDouble(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, (int, long, float)):
+        if not isinstance(value, (int, float)):
             raise PFASyntaxException("\"value\" must be a number", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2423,10 +2423,10 @@ class LiteralString(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             raise PFASyntaxException("\"value\" must be a string", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2480,10 +2480,10 @@ class LiteralBase64(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             raise PFASyntaxException("\"value\" must be a string", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -2539,13 +2539,13 @@ class Literal(LiteralValue):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(avroPlaceholder, (AvroPlaceholder, AvroType)):
             raise PFASyntaxException("\"avroPlaceholder\" must be an AvroPlaceholder or AvroType", pos)
 
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             raise PFASyntaxException("\"value\" must be a string", pos)
 
     def equals(self, other):
@@ -2614,10 +2614,10 @@ class NewObject(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(fields, dict) or not all(isinstance(x, Expression) for x in fields.values()):
+        if not isinstance(fields, dict) or not all(isinstance(x, Expression) for x in list(fields.values())):
             raise PFASyntaxException("\"fields\" must be a dictionary of Expressions", pos)
 
         if not isinstance(avroPlaceholder, (AvroPlaceholder, AvroType)):
@@ -2645,7 +2645,7 @@ class NewObject(Expression):
         :return: a result for each abstract syntax tree node in the ``pf`` function's domain
         """
         return super(NewObject, self).collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.fields.values())
+               titus.util.flatten(x.collect(pf) for x in list(self.fields.values()))
 
     def replace(self, pf):
         """Walk over tree applying a partial function, returning a transformed copy of the tree.
@@ -2660,7 +2660,7 @@ class NewObject(Expression):
         if pf.isDefinedAt(self):
             return pf(self)
         else:
-            return NewObject(dict((k, v.replace(pf)) for k, v in self.fields.items()),
+            return NewObject(dict((k, v.replace(pf)) for k, v in list(self.fields.items())),
                              self.avroPlaceholder,
                              self.pos)
 
@@ -2686,13 +2686,13 @@ class NewObject(Expression):
 
         fieldNameTypeExpr = []
         scope = symbolTable.newScope(True, True)
-        for name, expr in self.fields.items():
+        for name, expr in list(self.fields.items()):
             exprContext, exprResult = expr.walk(task, scope, functionTable, engineOptions, version)
             calls = calls.union(exprContext.calls)
             fieldNameTypeExpr.append((name, exprContext.retType, exprResult))
 
         if isinstance(self.avroType, AvroRecord):
-            fldsMap = dict((n, f.avroType) for n, f in self.avroType.fieldsDict.items())
+            fldsMap = dict((n, f.avroType) for n, f in list(self.avroType.fieldsDict.items()))
             for n, t, xr in fieldNameTypeExpr:
                 fieldType = fldsMap.get(n)
                 if fieldType is None:
@@ -2725,7 +2725,7 @@ class NewObject(Expression):
         """
         out = self.startDict(lineNumbers)
         out["type"] = self.avroPlaceholder.jsonNode(memo)
-        out["new"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.fields.items())
+        out["new"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.fields.items()))
         return out
 
     desc = "new (object)"
@@ -2747,7 +2747,7 @@ class NewArray(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(items, (list, tuple)) or not all(isinstance(x, Expression) for x in items):
@@ -2867,7 +2867,7 @@ class Do(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(body, (list, tuple)) or not all(isinstance(x, Expression) for x in body):
@@ -2964,10 +2964,10 @@ class Let(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(values, dict) or not all(isinstance(x, Expression) for x in values.values()):
+        if not isinstance(values, dict) or not all(isinstance(x, Expression) for x in list(values.values())):
             raise PFASyntaxException("\"values\" must be a dictionary of Expressions", pos)
 
         if len(self.values) < 1:
@@ -2984,7 +2984,7 @@ class Let(Expression):
         :return: a result for each abstract syntax tree node in the ``pf`` function's domain
         """
         return super(Let, self).collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.values.values())
+               titus.util.flatten(x.collect(pf) for x in list(self.values.values()))
 
     def replace(self, pf):
         """Walk over tree applying a partial function, returning a transformed copy of the tree.
@@ -2999,7 +2999,7 @@ class Let(Expression):
         if pf.isDefinedAt(self):
             return pf(self)
         else:
-            return Let(dict((k, v.replace(pf)) for k, v in self.values.items()),
+            return Let(dict((k, v.replace(pf)) for k, v in list(self.values.items())),
                        self.pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -3028,7 +3028,7 @@ class Let(Expression):
         newSymbols = {}
 
         nameTypeExpr = []
-        for name, expr in self.values.items():
+        for name, expr in list(self.values.items()):
             if symbolTable.get(name) is not None:
                 raise PFASemanticException("symbol \"{0}\" may not be redeclared or shadowed".format(name), self.pos)
 
@@ -3046,7 +3046,7 @@ class Let(Expression):
 
             nameTypeExpr.append((name, exprContext.retType, exprResult))
 
-        for name, avroType in newSymbols.items():
+        for name, avroType in list(newSymbols.items()):
             symbolTable.put(name, avroType)
 
         context = self.Context(AvroNull(), calls.union(set([self.desc])), nameTypeExpr)
@@ -3063,7 +3063,7 @@ class Let(Expression):
         :return: JSON representation
         """
         out = self.startDict(lineNumbers)
-        out["let"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.values.items())
+        out["let"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.values.items()))
         return out
 
     desc = "let"
@@ -3083,10 +3083,10 @@ class SetVar(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(values, dict) or not all(isinstance(x, Expression) for x in values.values()):
+        if not isinstance(values, dict) or not all(isinstance(x, Expression) for x in list(values.values())):
             raise PFASyntaxException("\"values\" must be a dictionary of Expressions", pos)
 
         if len(self.values) < 1:
@@ -3103,7 +3103,7 @@ class SetVar(Expression):
         :return: a result for each abstract syntax tree node in the ``pf`` function's domain
         """
         return super(SetVar, self).collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.values.values())
+               titus.util.flatten(x.collect(pf) for x in list(self.values.values()))
 
     def replace(self, pf):
         """Walk over tree applying a partial function, returning a transformed copy of the tree.
@@ -3118,7 +3118,7 @@ class SetVar(Expression):
         if pf.isDefinedAt(self):
             return pf(self)
         else:
-            return SetVar(dict((k, v.replace(pf)) for k, v in self.values.items()),
+            return SetVar(dict((k, v.replace(pf)) for k, v in list(self.values.items())),
                           self.pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -3142,7 +3142,7 @@ class SetVar(Expression):
         calls = set()
 
         nameTypeExpr = []
-        for name, expr in self.values.items():
+        for name, expr in list(self.values.items()):
             if symbolTable.get(name) is None:
                 raise PFASemanticException("unknown symbol \"{0}\" cannot be assigned with \"set\" (use \"let\" to declare a new symbol)".format(name), self.pos)
             elif not symbolTable.writable(name):
@@ -3171,7 +3171,7 @@ class SetVar(Expression):
         :return: JSON representation
         """
         out = self.startDict(lineNumbers)
-        out["set"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.values.items())
+        out["set"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.values.items()))
         return out
 
     desc = "set"
@@ -3193,7 +3193,7 @@ class AttrGet(Expression, HasPath):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(expr, Expression):
@@ -3300,7 +3300,7 @@ class AttrTo(Expression, HasPath):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(expr, Expression):
@@ -3432,10 +3432,10 @@ class CellGet(Expression, HasPath):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(cell, basestring):
+        if not isinstance(cell, str):
             raise PFASyntaxException("\"cell\" must be a string", pos)
 
         if not isinstance(path, (list, tuple)) or not all(isinstance(x, Expression) for x in path):
@@ -3535,10 +3535,10 @@ class CellTo(Expression, HasPath):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(cell, basestring):
+        if not isinstance(cell, str):
             raise PFASyntaxException("\"cell\" must be a string", pos)
 
         if not isinstance(path, (list, tuple)) or not all(isinstance(x, Expression) for x in path):
@@ -3663,10 +3663,10 @@ class PoolGet(Expression, HasPath):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(pool, basestring):
+        if not isinstance(pool, str):
             raise PFASyntaxException("\"pool\" must be a string", pos)
 
         if not isinstance(path, (list, tuple)) or not all(isinstance(x, Expression) for x in path):
@@ -3770,10 +3770,10 @@ class PoolTo(Expression, HasPath):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(pool, basestring):
+        if not isinstance(pool, str):
             raise PFASyntaxException("\"pool\" must be a string", pos)
 
         if not isinstance(path, (list, tuple)) or not all(isinstance(x, Expression) for x in path):
@@ -3913,10 +3913,10 @@ class PoolDel(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(pool, basestring):
+        if not isinstance(pool, str):
             raise PFASyntaxException("\"pool\" must be a string", pos)
 
         if not isinstance(dell, Expression):
@@ -4018,7 +4018,7 @@ class If(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(predicate, Expression):
@@ -4159,7 +4159,7 @@ class Cond(Expression):
         :type pos: string or ``None``
         :param pos: source file location from the locator mark
         """
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(ifthens, (list, tuple)) or not all(isinstance(x, If) for x in ifthens):
@@ -4311,7 +4311,7 @@ class While(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(predicate, Expression):
@@ -4419,7 +4419,7 @@ class DoUntil(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(body, (list, tuple)) or not all(isinstance(x, Expression) for x in body):
@@ -4531,16 +4531,16 @@ class For(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(init, dict) or not all(isinstance(x, Expression) for x in init.values()):
+        if not isinstance(init, dict) or not all(isinstance(x, Expression) for x in list(init.values())):
             raise PFASyntaxException("\"init\" must be a dictionary of Expression", pos)
 
         if not isinstance(predicate, Expression):
             raise PFASyntaxException("\"predicate\" must be an Expression", pos)
 
-        if not isinstance(step, dict) or not all(isinstance(x, Expression) for x in step.values()):
+        if not isinstance(step, dict) or not all(isinstance(x, Expression) for x in list(step.values())):
             raise PFASyntaxException("\"step\" must be a dictionary of Expressions", pos)
 
         if not isinstance(body, (list, tuple)) or not all(isinstance(x, Expression) for x in body):
@@ -4566,9 +4566,9 @@ class For(Expression):
         :return: a result for each abstract syntax tree node in the ``pf`` function's domain
         """
         return super(For, self).collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.init.values()) + \
+               titus.util.flatten(x.collect(pf) for x in list(self.init.values())) + \
                self.predicate.collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.step.values()) + \
+               titus.util.flatten(x.collect(pf) for x in list(self.step.values())) + \
                titus.util.flatten(x.collect(pf) for x in self.body)
 
     def replace(self, pf):
@@ -4584,9 +4584,9 @@ class For(Expression):
         if pf.isDefinedAt(self):
             return pf(self)
         else:
-            return For(dict((k, v.replace(pf)) for k, v in self.init.items()),
+            return For(dict((k, v.replace(pf)) for k, v in list(self.init.items())),
                        self.predicate.replace(pf),
-                       dict((k, v.replace(pf)) for k, v in self.step.items()),
+                       dict((k, v.replace(pf)) for k, v in list(self.step.items())),
                        [x.replace(pf) for x in self.body],
                        self.pos)
 
@@ -4614,7 +4614,7 @@ class For(Expression):
         newSymbols = {}
 
         initNameTypeExpr = []
-        for name, expr in self.init.items():
+        for name, expr in list(self.init.items()):
             if loopScope.get(name) is not None:
                 raise PFASemanticException("symbol \"{0}\" may not be redeclared or shadowed".format(name), self.pos)
 
@@ -4629,7 +4629,7 @@ class For(Expression):
             
             initNameTypeExpr.append((name, exprContext.retType, exprResult))
 
-        for name, avroType in newSymbols.items():
+        for name, avroType in list(newSymbols.items()):
             loopScope.put(name, avroType)
 
         predicateScope = loopScope.newScope(True, True)
@@ -4639,7 +4639,7 @@ class For(Expression):
         calls = calls.union(predicateContext.calls)
 
         stepNameTypeExpr = []
-        for name, expr in self.step.items():
+        for name, expr in list(self.step.items()):
             if loopScope.get(name) is None:
                 raise PFASemanticException("unknown symbol \"{0}\" cannot be assigned with \"step\"".format(name), self.pos)
             elif not loopScope.writable(name):
@@ -4673,9 +4673,9 @@ class For(Expression):
         :return: JSON representation
         """
         out = self.startDict(lineNumbers)
-        out["for"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.init.items())
+        out["for"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.init.items()))
         out["while"] = self.predicate.jsonNode(lineNumbers, memo)
-        out["step"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in self.step.items())
+        out["step"] = OrderedDict((k, v.jsonNode(lineNumbers, memo)) for k, v in list(self.step.items()))
         out["do"] = [x.jsonNode(lineNumbers, memo) for x in self.body]
         return out
 
@@ -4702,10 +4702,10 @@ class Foreach(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             raise PFASyntaxException("\"name\" must be a string", pos)
 
         if not isinstance(array, Expression):
@@ -4838,13 +4838,13 @@ class Forkeyval(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(forkey, basestring):
+        if not isinstance(forkey, str):
             raise PFASyntaxException("\"forkey\" must be a string", pos)
 
-        if not isinstance(forval, basestring):
+        if not isinstance(forval, str):
             raise PFASyntaxException("\"forval\" must be a string", pos)
 
         if not isinstance(map, Expression):
@@ -4977,13 +4977,13 @@ class CastCase(Ast):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(avroPlaceholder, (AvroPlaceholder, AvroType)):
             raise PFASyntaxException("\"avroPlaceholder\" must be an AvroPlaceholder or AvroType", pos)
 
-        if not isinstance(named, basestring):
+        if not isinstance(named, str):
             raise PFASyntaxException("\"named\" must be a string", pos)
 
         if not isinstance(body, (list, tuple)) or not all(isinstance(x, Expression) for x in body):
@@ -5091,7 +5091,7 @@ class CastBlock(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(expr, Expression):
@@ -5227,7 +5227,7 @@ class Upcast(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(expr, Expression):
@@ -5334,10 +5334,10 @@ class IfNotNull(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(exprs, dict) or not all(isinstance(x, Expression) for x in exprs.values()):
+        if not isinstance(exprs, dict) or not all(isinstance(x, Expression) for x in list(exprs.values())):
             raise PFASyntaxException("\"exprs\" must be a dictionary of Expressions", pos)
 
         if not isinstance(thenClause, (list, tuple)) or not all(isinstance(x, Expression) for x in thenClause):
@@ -5366,7 +5366,7 @@ class IfNotNull(Expression):
         :return: a result for each abstract syntax tree node in the ``pf`` function's domain
         """
         return super(IfNotNull, self).collect(pf) + \
-               titus.util.flatten(x.collect(pf) for x in self.exprs.values()) + \
+               titus.util.flatten(x.collect(pf) for x in list(self.exprs.values())) + \
                titus.util.flatten(x.collect(pf) for x in self.thenClause) + \
                (titus.util.flatten(x.collect(pf) for x in self.elseClause) if self.elseClause is not None else [])
 
@@ -5383,7 +5383,7 @@ class IfNotNull(Expression):
         if pf.isDefinedAt(self):
             return pf(self)
         else:
-            return IfNotNull(dict((k, v.replace(pf)) for k, v in self.exprs.items()),
+            return IfNotNull(dict((k, v.replace(pf)) for k, v in list(self.exprs.items())),
                              [x.replace(pf) for x in self.thenClause],
                              [x.replace(pf) for x in self.elseClause] if self.elseClause is not None else None,
                              self.pos)
@@ -5412,7 +5412,7 @@ class IfNotNull(Expression):
         assignmentScope = symbolTable.newScope(False, False)
 
         symbolTypeResult = []
-        for name, expr in self.exprs.items():
+        for name, expr in list(self.exprs.items()):
             if not validSymbolName(name):
                 raise PFASemanticException("\"{0}\" is not a valid symbol name".format(name), self.pos)
 
@@ -5472,7 +5472,7 @@ class IfNotNull(Expression):
         """
         out = self.startDict(lineNumbers)
         jsonExprs = {}
-        for name, expr in self.exprs.items():
+        for name, expr in list(self.exprs.items()):
             jsonExprs[name] = expr.jsonNode(lineNumbers, memo)
         out["ifnotnull"] = jsonExprs
         out["then"] = [x.jsonNode(lineNumbers, memo) for x in self.thenClause]
@@ -5702,10 +5702,10 @@ class Pack(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(exprs, (list, tuple)) or not all(isinstance(x, (list, tuple)) and len(x) == 2 and isinstance(x[0], basestring) and isinstance(x[1], Expression) for x in exprs):
+        if not isinstance(exprs, (list, tuple)) or not all(isinstance(x, (list, tuple)) and len(x) == 2 and isinstance(x[0], str) and isinstance(x[1], Expression) for x in exprs):
             raise PFASyntaxException("\"exprs\" must be a list of (string, Expression) tuples", pos)
 
         if len(self.exprs) < 1:
@@ -5813,13 +5813,13 @@ class Unpack(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(bytes, Expression):
             raise PFASyntaxException("\"bytes\" must be an Expression", pos)
 
-        if not isinstance(format, (list, tuple)) or not all(isinstance(x, (list, tuple)) and len(x) == 2 and isinstance(x[0], basestring) and isinstance(x[1], basestring) for x in format):
+        if not isinstance(format, (list, tuple)) or not all(isinstance(x, (list, tuple)) and len(x) == 2 and isinstance(x[0], str) and isinstance(x[1], str) for x in format):
             raise PFASyntaxException("\"format\" must be a list of (string, string) tuples", pos)
 
         if not isinstance(thenClause, (list, tuple)) or not all(isinstance(x, Expression) for x in thenClause):
@@ -5973,10 +5973,10 @@ class Doc(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(comment, basestring):
+        if not isinstance(comment, str):
             raise PFASyntaxException("\"comment\" must be a string", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -6033,13 +6033,13 @@ class Error(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(message, basestring):
+        if not isinstance(message, str):
             raise PFASyntaxException("\"message\" must be a string", pos)
 
-        if (not isinstance(code, (int, long)) and not code is None) or not code < 0:
+        if (not isinstance(code, int) and not code is None) or not code < 0:
             raise PFASyntaxException("\"code\" must be a negative int or None", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
@@ -6098,13 +6098,13 @@ class Try(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(exprs, (list, tuple)) or not all(isinstance(x, Expression) for x in exprs):
             raise PFASyntaxException("\"exprs\" must be a list of Expressions", pos)
 
-        if (not isinstance(filter, (list, tuple)) or not all(isinstance(x, (basestring, int, long)) for x in filter)) and not filter is None:
+        if (not isinstance(filter, (list, tuple)) or not all(isinstance(x, (str, int)) for x in filter)) and not filter is None:
             raise PFASyntaxException("\"filter\" must be a list of strings and integers or None", pos)
 
     def collect(self, pf):
@@ -6208,13 +6208,13 @@ class Log(Expression):
         :param pos: source file location from the locator mark
         """
 
-        if not isinstance(pos, basestring) and not pos is None:
+        if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
         if not isinstance(exprs, (list, tuple)) or not all(isinstance(x, Expression) for x in exprs):
             raise PFASyntaxException("\"exprs\" must be a list of Expressions", pos)
 
-        if not isinstance(namespace, basestring) and not namespace is None:
+        if not isinstance(namespace, str) and not namespace is None:
             raise PFASyntaxException("\"namespace\" must be a string or None", pos)
 
     def collect(self, pf):

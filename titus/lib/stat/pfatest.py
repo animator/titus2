@@ -154,7 +154,7 @@ class Mahalanobis(LibFcn):
             if (set(observation.keys()) != set(prediction.keys())):
                 raise PFARuntimeException("misaligned prediction", self.errcodeBase + 1, self.name, pos)
             # use observation keys throughout
-            keys = observation.keys()
+            keys = list(observation.keys())
             try:
                 x = np().array([observation[key] - prediction[key] for key in keys])
             except:
@@ -186,7 +186,7 @@ class UpdateChi2(LibFcn):
         elif isinstance(pull, (tuple, list)):
             return dict(state_, chi2=(state_["chi2"] + sum([y**2 for y in pull])), dof=(state_["dof"] + 1))
         else:
-            return dict(state_, chi2=(state_["chi2"] + sum([y**2 for y in pull.values()])), dof=(state_["dof"] + 1))
+            return dict(state_, chi2=(state_["chi2"] + sum([y**2 for y in list(pull.values())])), dof=(state_["dof"] + 1))
 provide(UpdateChi2())
 
 class ReducedChi2(LibFcn):

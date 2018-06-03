@@ -29,6 +29,7 @@ from titus.util import div, callfcn
 from titus.lib.core import INT_MIN_VALUE
 from titus.lib.core import INT_MAX_VALUE
 import titus.P as P
+from functools import reduce
 
 provides = {}
 def provide(fcn):
@@ -108,8 +109,8 @@ class UpdateCovariance(LibFcn):
             oldMean = theState["mean"]
             oldCovariance = theState["covariance"]
 
-            countKeys = set(oldCount.keys()).union(reduce(lambda a, b: a.union(b), (set(v.keys()) for v in oldCount.values()), set()))
-            covarKeys = set(oldCovariance.keys()).union(reduce(lambda a, b: a.union(b), (set(v.keys()) for v in oldCovariance.values()), set()))
+            countKeys = set(oldCount.keys()).union(reduce(lambda a, b: a.union(b), (set(v.keys()) for v in list(oldCount.values())), set()))
+            covarKeys = set(oldCovariance.keys()).union(reduce(lambda a, b: a.union(b), (set(v.keys()) for v in list(oldCovariance.values())), set()))
             keys = set(x.keys()).union(countKeys).union(covarKeys)
 
             newCount = {}
@@ -158,9 +159,9 @@ class UpdateCovariance(LibFcn):
             newCount = oldCount + w
             newMean = [oldm + div((x[i] - oldm) * w, newCount) for i, oldm in enumerate(oldMean)]
             newCovariance = []
-            for i in xrange(size):
+            for i in range(size):
                 row = []
-                for j in xrange(size):
+                for j in range(size):
                     row.append(div((oldCovariance[i][j]*oldCount) + div((x[i] - oldMean[i]) * (x[j] - oldMean[j]) * w*oldCount, newCount), newCount))
                 newCovariance.append(row)
 
@@ -419,7 +420,7 @@ class ForecastHoltWinters(LibFcn):
         trend = theState["trend"]
 
         if not hasPeriodic:
-            return [level + i*trend for i in xrange(1, n + 1)]
+            return [level + i*trend for i in range(1, n + 1)]
         else:
             cycle = theState["cycle"]
             L = len(cycle)
@@ -427,9 +428,9 @@ class ForecastHoltWinters(LibFcn):
                 raise PFARuntimeException("empty cycle", self.errcodeBase + 0, self.name, pos)
 
             if theState["multiplicative"]:
-                return [(level + i*trend) * cycle[i % L] for i in xrange(1, n + 1)]
+                return [(level + i*trend) * cycle[i % L] for i in range(1, n + 1)]
             else:
-                return [level + i*trend + cycle[i % L] for i in xrange(1, n + 1)]
+                return [level + i*trend + cycle[i % L] for i in range(1, n + 1)]
 
 provide(ForecastHoltWinters())
 

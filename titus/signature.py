@@ -69,7 +69,7 @@ class PFAVersion(object):
         :type release: non-negative integer
         :param release: release version number (bug-fixes)
         """
-        if major < 0 or minor < 0 or release < 0 or not isinstance(major, (int, long)) or not isinstance(minor, (int, long)) or not isinstance(release, (int, long)):
+        if major < 0 or minor < 0 or release < 0 or not isinstance(major, int) or not isinstance(minor, int) or not isinstance(release, int):
             raise ValueError("PFA version major, minor, and release numbers must be non-negative integers")
         self.major = major
         self.minor = minor
@@ -95,7 +95,7 @@ class PFAVersion(object):
         :return: corresponding ``PFAVersion``
         """
         try:
-            major, minor, release = map(int, x.split("."))
+            major, minor, release = list(map(int, x.split(".")))
             return PFAVersion(major, minor, release)
         except ValueError:
             raise ValueError("PFA version numbers must have major.minor.release structure, where major, minor, and release are integers")
@@ -338,7 +338,7 @@ class Sig(Signature):
 
     def __repr__(self):
         alreadyLabeled = set()
-        return "(" + ", ".join(p.keys()[0] + ": " + toText(p.values()[0], alreadyLabeled) for p in self.params) + " -> " + toText(self.ret, alreadyLabeled) + ")"
+        return "(" + ", ".join(list(p.keys())[0] + ": " + toText(list(p.values())[0], alreadyLabeled) for p in self.params) + " -> " + toText(self.ret, alreadyLabeled) + ")"
 
     def accepts(self, args, version):
         """Determine if this signature accepts the given arguments for a given PFA version number.
@@ -353,10 +353,10 @@ class Sig(Signature):
 
         if self.lifespan.current(version) or self.lifespan.deprecated(version):
             labelData = {}
-            if len(self.params) == len(args) and all(self.check(p.values()[0], a, labelData, False, False) for p, a in zip(self.params, args)):
+            if len(self.params) == len(args) and all(self.check(list(p.values())[0], a, labelData, False, False) for p, a in zip(self.params, args)):
                 try:
-                    assignments = dict((l, ld.determineAssignment()) for l, ld in labelData.items())
-                    assignedParams = [self.assign(p.values()[0], a, assignments) for p, a in zip(self.params, args)]
+                    assignments = dict((l, ld.determineAssignment()) for l, ld in list(labelData.items()))
+                    assignedParams = [self.assign(list(p.values())[0], a, assignments) for p, a in zip(self.params, args)]
                     assignedRet = self.assignRet(self.ret, assignments)
                     return (self, assignedParams, assignedRet)
                 except IncompatibleTypes:
@@ -438,14 +438,14 @@ class Sig(Signature):
             while not found and not atypesPermutations_isEmpty:
                 available = OrderedDict((i, x) for i, x in enumerate(pat.types))
                 try:
-                    nextPermutation = atypesPermutations.next()
+                    nextPermutation = next(atypesPermutations)
                 except StopIteration:
                     atypesPermutations_isEmpty = True
                 else:
                     anyfalse = False
                     for a in nextPermutation:
                         foundone = False
-                        for i, p in available.items():
+                        for i, p in list(available.items()):
                             if self.check(p, a, labelData2, True, reversed):
                                 del available[i]
                                 foundone = True
@@ -486,7 +486,7 @@ class Sig(Signature):
                 amap = dict((x.name, x) for x in arg.fields)
 
                 if set(pat.fields.keys()) == set(amap.keys()):
-                    return all(self.check(pat.fields[k], amap[k].avroType, labelData, True, reversed) for k in pat.fields.keys())
+                    return all(self.check(pat.fields[k], amap[k].avroType, labelData, True, reversed) for k in list(pat.fields.keys()))
                 else:
                     return False
 
@@ -511,7 +511,7 @@ class Sig(Signature):
             amap = dict((x.name, x) for x in arg.fields)
 
             if set(pat.minimalFields.keys()).issubset(set(amap.keys())):
-                return all(self.check(pt, amap[pn].avroType, labelData, True, reversed) for pn, pt in pat.minimalFields.items())
+                return all(self.check(pt, amap[pn].avroType, labelData, True, reversed) for pn, pt in list(pat.minimalFields.items()))
             else:
                 return False
 
@@ -705,9 +705,9 @@ def toText(p, alreadyLabeled=None):
         return "map of " + toText(p.values, alreadyLabeled)
     elif isinstance(p, P.Record):
         if p.fullName is None:
-            return "record (fields: {" + ", ".join(n + ": " + toText(f, alreadyLabeled) for n, f in p.fields.items()) + "})"
+            return "record (fields: {" + ", ".join(n + ": " + toText(f, alreadyLabeled) for n, f in list(p.fields.items())) + "})"
         else:
-            return "record (fields: {" + ", ".join(n + ": " + toText(f, alreadyLabeled) for n, f in p.fields.items()) + ", name: " + p.fullName + "})"
+            return "record (fields: {" + ", ".join(n + ": " + toText(f, alreadyLabeled) for n, f in list(p.fields.items())) + ", name: " + p.fullName + "})"
     elif isinstance(p, P.Union):
         return "union of {" + ", ".join(toText(x, alreadyLabeled) for x in p.types) + "}"
     elif isinstance(p, P.Fcn):
@@ -736,7 +736,7 @@ def toText(p, alreadyLabeled=None):
         return "any fixed " + p.label
     elif isinstance(p, P.WildRecord):
         alreadyLabeled.add(p.label)
-        return "any record " + p.label + ("" if len(p.minimalFields) == 0 else " with fields {" + ", ".join(n + ": " + toText(f, alreadyLabeled) for n, f in p.minimalFields.items()) + "}")
+        return "any record " + p.label + ("" if len(p.minimalFields) == 0 else " with fields {" + ", ".join(n + ": " + toText(f, alreadyLabeled) for n, f in list(p.minimalFields.items())) + "}")
     elif isinstance(p, P.EnumFields):
         alreadyLabeled.add(p.label)
         return "enum " + p.label + " of fields of " + p.wildRecord

@@ -176,7 +176,7 @@ def fanoutString(x, dictionary, outOfRange):
         return out
 
 def fanoutInt(x, minimum, maximum, outOfRange):
-    out = [x == i for i in xrange(minimum, maximum)]
+    out = [x == i for i in range(minimum, maximum)]
     if outOfRange:
         return out + [x < minimum or x >= maximum]
     else:

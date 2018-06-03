@@ -33,6 +33,7 @@ from titus.lib.core import INT_MAX_VALUE
 from titus.lib.core import LONG_MIN_VALUE
 from titus.lib.core import LONG_MAX_VALUE
 import titus.P as P
+from functools import reduce
 
 provides = {}
 def provide(fcn):
@@ -139,7 +140,7 @@ class Contains(LibFcn):
     errcodeBase = 15070
     def __call__(self, state, scope, pos, paramTypes, haystack, needle):
         if isinstance(needle, (list, tuple)):
-            for start in xrange(len(haystack) - len(needle) + 1):
+            for start in range(len(haystack) - len(needle) + 1):
                 if needle == haystack[start:(start + len(needle))]:
                     return True
             return False
@@ -172,7 +173,7 @@ class Count(LibFcn):
                     return 0
                 else:
                     count = 0
-                    for start in xrange(len(haystack) - len(needle) + 1):
+                    for start in range(len(haystack) - len(needle) + 1):
                         if needle == haystack[start:(start + len(needle))]:
                             count += 1
                     return count
@@ -194,7 +195,7 @@ class Index(LibFcn):
     errcodeBase = 15090
     def __call__(self, state, scope, pos, paramTypes, haystack, needle):
         if isinstance(needle, (list, tuple)):
-            for start in xrange(len(haystack) - len(needle) + 1):
+            for start in range(len(haystack) - len(needle) + 1):
                 if needle == haystack[start:(start + len(needle))]:
                     return start
             return -1
@@ -218,7 +219,7 @@ class RIndex(LibFcn):
     errcodeBase = 15100
     def __call__(self, state, scope, pos, paramTypes, haystack, needle):
         if isinstance(needle, (list, tuple)):
-            for start in xrange(len(haystack) - len(needle), -1, -1):
+            for start in range(len(haystack) - len(needle), -1, -1):
                 if needle == haystack[start:(start + len(needle))]:
                     return start
             return -1
@@ -228,7 +229,7 @@ class RIndex(LibFcn):
                     return len(haystack) - 1 - index
             return -1
         else:
-            for index in xrange(len(haystack) - 1, -1, -1):
+            for index in range(len(haystack) - 1, -1, -1):
                 if needle == haystack[index]:
                     return index
             return -1
@@ -782,7 +783,7 @@ class Mode(LibFcn):
                     lookup[xx] = x
                 counter[xx] += 1
             bestn = 0
-            for n in counter.values():
+            for n in list(counter.values()):
                 if n > bestn:
                     bestn = n
             besties = [lookup[xx] for xx in counter if counter[xx] == bestn]
@@ -959,8 +960,8 @@ class FilterMap(LibFcn):
         for x in a:
             y = callfcn(state, scope, fcn, [x])
             if y is not None:
-                if isinstance(y, dict) and len(y) == 1 and y.keys()[0] in typeNames:
-                    tag, value = y.items()[0]
+                if isinstance(y, dict) and len(y) == 1 and list(y.keys())[0] in typeNames:
+                    tag, value = list(y.items())[0]
                 else:
                     value = y
                 out.append(value)
@@ -977,8 +978,8 @@ class FilterMapWithIndex(LibFcn):
         for i, x in enumerate(a):
             y = callfcn(state, scope, fcn, [i, x])
             if y is not None:
-                if isinstance(y, dict) and len(y) == 1 and y.keys()[0] in typeNames:
-                    tag, value = y.items()[0]
+                if isinstance(y, dict) and len(y) == 1 and list(y.keys())[0] in typeNames:
+                    tag, value = list(y.items())[0]
                 else:
                     value = y
                 out.append(value)
@@ -1152,7 +1153,7 @@ class SlidingWindow(LibFcn):
             raise PFARuntimeException("step < 1", self.errcodeBase + 1, self.name, pos)
         out = []
         i = 0
-        for start in xrange(0, len(a), step):
+        for start in range(0, len(a), step):
             chunk = a[start:(start + size)]
             if len(chunk) == size:
                 out.append(chunk)

@@ -75,13 +75,13 @@ class Linear(LibFcn):
                 const = np().array(model["const"])
                 datum = np().array(datum + [1.0])
                 coeff = np().vstack((coeff.T, const))
-                return map(float, np().dot(coeff.T, datum))
+                return list(map(float, np().dot(coeff.T, datum)))
 
         elif coeffType == {'values': 'double', 'type': 'map'}: #sig3
             coeff = model["coeff"]
             const = model["const"]
             out = 0.0
-            for key in set(datum.keys() + coeff.keys()):
+            for key in set(list(datum.keys()) + list(coeff.keys())):
                 out += datum.get(key, 0.0) * coeff.get(key, 0.0)
             return float(out + const)
 
@@ -90,8 +90,8 @@ class Linear(LibFcn):
             const = model["const"]
             outMap = {}
 
-            innerKeys = set(datum.keys() + sum([x.keys() for x in coeff.values()], []))
-            outerKeys = set(const.keys() + coeff.keys())
+            innerKeys = set(list(datum.keys()) + sum([list(x.keys()) for x in list(coeff.values())], []))
+            outerKeys = set(list(const.keys()) + list(coeff.keys()))
 
             for outerKey in outerKeys:
                 out = 0.0
@@ -135,7 +135,7 @@ class LinearVariance(LibFcn):
         elif covarType == {"type": "map", "values": {"type": "map", "values": "double"}}:  # sig3
             datum = dict(list(datum.items()) + [("", 1.0)])
             covar = model["covar"]
-            keys = list(set(datum.keys() + sum([x.keys() for x in covar.values()], [])))
+            keys = list(set(list(datum.keys()) + sum([list(x.keys()) for x in list(covar.values())], [])))
             x = np().matrix([[datum.get(k, 0.0) for k in keys]])
             C = np().matrix([[covar.get(i, {}).get(j, 0.0) for j in keys] for i in keys])
             return float(x.dot(C.dot(x.T))[0][0])
@@ -143,10 +143,10 @@ class LinearVariance(LibFcn):
         else:
             datum = dict(list(datum.items()) + [("", 1.0)])
             covar = model["covar"]
-            keys = list(set(datum.keys() + sum(flatten([[x.keys() for x in row.values()] for row in covar.values()]), [])))
+            keys = list(set(list(datum.keys()) + sum(flatten([[list(x.keys()) for x in list(row.values())] for row in list(covar.values())]), [])))
             x = np().matrix([[datum.get(k, 0.0) for k in keys]])
             out = {}
-            for depkey, row in covar.items():
+            for depkey, row in list(covar.items()):
                 C = np().matrix([[row.get(i, {}).get(j, 0.0) for j in keys] for i in keys])
                 out[depkey] = float(x.dot(C.dot(x.T))[0][0])
             return out
@@ -261,7 +261,7 @@ class GaussianProcess(LibFcn):
 
             else:
                 out = [None] * n_outputs
-                for i in xrange(n_outputs):
+                for i in range(n_outputs):
                     y = np().array([t["to"][i] for t in table])
                     if "sigma" in table[0]:
                         nugget = np().array([(t["sigma"][i]/t["to"][i])**2 if t["to"][i] != 0.0 else float("inf") for t in table])
@@ -295,7 +295,7 @@ class GaussianProcess(LibFcn):
 
             else:
                 out = [None] * n_outputs
-                for i in xrange(n_outputs):
+                for i in range(n_outputs):
                     y = np().array([t["to"][i] for t in table])
                     if "sigma" in table[0]:
                         nugget = np().array([(t["sigma"][i]/t["to"][i])**2 if t["to"][i] != 0.0 else float("inf") for t in table])
@@ -387,7 +387,7 @@ class Residual(LibFcn):
             if len(observation) != len(prediction):
                 raise PFARuntimeException("misaligned prediction", self.errcodeBase + 0, self.name, pos)
             result = {}
-            for k, o in observation.items():
+            for k, o in list(observation.items()):
                 try:
                     result[k] = o - prediction[k]
                 except KeyError:
@@ -419,7 +419,7 @@ class Pull(LibFcn):
             if len(observation) != len(uncertainty):
                 raise PFARuntimeException("misaligned uncertainty", self.errcodeBase + 1, self.name, pos)
             result = {}
-            for k, o in observation.items():
+            for k, o in list(observation.items()):
                 try:
                     p = prediction[k]
                 except KeyError:
@@ -467,7 +467,7 @@ class Mahalanobis(LibFcn):
             if (len(observation) != len(prediction)):
                 raise PFARuntimeException("misaligned prediction", self.errcodeBase + 1, self.name, pos)
             # use observation keys throughout
-            keys = observation.keys()
+            keys = list(observation.keys())
             try:
                 x = np().array([observation[key] - prediction[key] for key in keys])
             except:
@@ -495,7 +495,7 @@ class UpdateChi2(LibFcn):
         elif isinstance(pull, (tuple, list)):
             return update(sum([y**2 for y in pull]), state_)
         else:
-            return update(sum([y**2 for y in pull.values()]), state_)
+            return update(sum([y**2 for y in list(pull.values())]), state_)
 provide(UpdateChi2())
 def update(x, state_):
     state_["chi2"] = float(state_["chi2"] + x)

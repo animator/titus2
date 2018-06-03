@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import version_independent as ind    
+from . import version_independent as ind    
 
 namespace = "http://www.dmg.org/PMML-4_1"
         
@@ -26,7 +26,7 @@ class PMML(ind.PMML):
     def __init__(self, attribs):
         super(PMML, self).__init__()
         self.version = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AssociationModel = []
         self.BaselineModel = []
@@ -57,7 +57,7 @@ class ARIMA(ind.ARIMA):
     """Represents a <ARIMA> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ARIMA, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class Aggregate(ind.Aggregate):
@@ -68,7 +68,7 @@ class Aggregate(ind.Aggregate):
         self.function = None
         self.groupField = None
         self.sqlWhere = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -76,7 +76,7 @@ class Alternate(ind.Alternate):
     """Represents a <Alternate> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Alternate, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AnyDistribution = []
         self.Extension = []
@@ -88,7 +88,7 @@ class Annotation(ind.Annotation):
     """Represents a <Annotation> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Annotation, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -97,7 +97,7 @@ class Anova(ind.Anova):
     def __init__(self, attribs):
         super(Anova, self).__init__()
         self.target = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AnovaRow = []
         self.Extension = []
@@ -112,7 +112,7 @@ class AnovaRow(ind.AnovaRow):
         self.meanOfSquares = None
         self.fValue = None
         self.pValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -120,7 +120,7 @@ class AntecedentSequence(ind.AntecedentSequence):
     """Represents a <AntecedentSequence> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(AntecedentSequence, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.SequenceReference = []
@@ -132,7 +132,7 @@ class AnyDistribution(ind.AnyDistribution):
         super(AnyDistribution, self).__init__()
         self.mean = None
         self.variance = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -142,7 +142,7 @@ class Application(ind.Application):
         super(Application, self).__init__()
         self.name = None
         self.version = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -153,7 +153,7 @@ class Apply(ind.Apply):
         self.function = None
         self.mapMissingTo = None
         self.invalidValueTreatment = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Aggregate = []
         self.Apply = []
@@ -169,7 +169,7 @@ class Array(ind.Array):
     """Represents a <Array> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Array, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class AssociationModel(ind.AssociationModel):
@@ -189,7 +189,7 @@ class AssociationModel(ind.AssociationModel):
         self.numberOfItemsets = None
         self.numberOfRules = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AssociationRule = []
         self.Extension = []
@@ -213,7 +213,7 @@ class AssociationRule(ind.AssociationRule):
         self.leverage = None
         self.affinity = None
         self.id = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -223,7 +223,7 @@ class Attribute(ind.Attribute):
         super(Attribute, self).__init__()
         self.reasonCode = None
         self.partialScore = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CompoundPredicate = []
         self.Extension = []
@@ -237,7 +237,7 @@ class BaseCumHazardTables(ind.BaseCumHazardTables):
     def __init__(self, attribs):
         super(BaseCumHazardTables, self).__init__()
         self.maxTime = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BaselineCell = []
         self.BaselineStratum = []
@@ -247,7 +247,7 @@ class Baseline(ind.Baseline):
     """Represents a <Baseline> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Baseline, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AnyDistribution = []
         self.CountTable = []
@@ -267,7 +267,7 @@ class BaselineCell(ind.BaselineCell):
         super(BaselineCell, self).__init__()
         self.time = None
         self.cumHazard = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -279,7 +279,7 @@ class BaselineModel(ind.BaselineModel):
         self.functionName = None
         self.algorithmName = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -298,7 +298,7 @@ class BaselineStratum(ind.BaselineStratum):
         self.value = None
         self.label = None
         self.maxTime = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BaselineCell = []
         self.Extension = []
@@ -308,7 +308,7 @@ class BayesInput(ind.BayesInput):
     def __init__(self, attribs):
         super(BayesInput, self).__init__()
         self.fieldName = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DerivedField = []
         self.Extension = []
@@ -318,7 +318,7 @@ class BayesInputs(ind.BayesInputs):
     """Represents a <BayesInputs> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(BayesInputs, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BayesInput = []
         self.Extension = []
@@ -328,7 +328,7 @@ class BayesOutput(ind.BayesOutput):
     def __init__(self, attribs):
         super(BayesOutput, self).__init__()
         self.fieldName = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.TargetValueCounts = []
@@ -337,7 +337,7 @@ class BoundaryValueMeans(ind.BoundaryValueMeans):
     """Represents a <BoundaryValueMeans> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(BoundaryValueMeans, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -346,7 +346,7 @@ class BoundaryValues(ind.BoundaryValues):
     """Represents a <BoundaryValues> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(BoundaryValues, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -358,7 +358,7 @@ class CategoricalPredictor(ind.CategoricalPredictor):
         self.name = None
         self.value = None
         self.coefficient = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -366,7 +366,7 @@ class Categories(ind.Categories):
     """Represents a <Categories> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Categories, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Category = []
         self.Extension = []
@@ -376,7 +376,7 @@ class Category(ind.Category):
     def __init__(self, attribs):
         super(Category, self).__init__()
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -387,7 +387,7 @@ class Characteristic(ind.Characteristic):
         self.name = None
         self.reasonCode = None
         self.baselineScore = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Attribute = []
         self.Extension = []
@@ -396,7 +396,7 @@ class Characteristics(ind.Characteristics):
     """Represents a <Characteristics> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Characteristics, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Characteristic = []
         self.Extension = []
@@ -409,7 +409,7 @@ class ChildParent(ind.ChildParent):
         self.parentField = None
         self.parentLevelField = None
         self.isRecursive = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.InlineTable = []
@@ -419,7 +419,7 @@ class ClassLabels(ind.ClassLabels):
     """Represents a <ClassLabels> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ClassLabels, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -431,7 +431,7 @@ class Cluster(ind.Cluster):
         self.id = None
         self.name = None
         self.size = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Covariances = []
@@ -448,7 +448,7 @@ class ClusteringField(ind.ClusteringField):
         self.fieldWeight = None
         self.similarityScale = None
         self.compareFunction = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Comparisons = []
         self.Extension = []
@@ -463,7 +463,7 @@ class ClusteringModel(ind.ClusteringModel):
         self.modelClass = None
         self.numberOfClusters = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             """Represents a <= None
         self.numberOfClusters = None
         self.isScorable = None
@@ -488,7 +488,7 @@ class ClusteringModelQuality(ind.ClusteringModelQuality):
         self.dataName = None
         self.SSE = None
         self.SSB = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class Coefficient(ind.Coefficient):
@@ -496,7 +496,7 @@ class Coefficient(ind.Coefficient):
     def __init__(self, attribs):
         super(Coefficient, self).__init__()
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -506,7 +506,7 @@ class Coefficients(ind.Coefficients):
         super(Coefficients, self).__init__()
         self.numberOfCoefficients = None
         self.absoluteValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Coefficient = []
         self.Extension = []
@@ -519,7 +519,7 @@ class ComparisonMeasure(ind.ComparisonMeasure):
         self.compareFunction = None
         self.minimum = None
         self.maximum = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.binarySimilarity = []
@@ -536,7 +536,7 @@ class Comparisons(ind.Comparisons):
     """Represents a <Comparisons> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Comparisons, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Matrix = []
@@ -546,7 +546,7 @@ class CompoundPredicate(ind.CompoundPredicate):
     def __init__(self, attribs):
         super(CompoundPredicate, self).__init__()
         self.booleanOperator = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CompoundPredicate = []
         self.Extension = []
@@ -559,7 +559,7 @@ class CompoundRule(ind.CompoundRule):
     """Represents a <CompoundRule> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(CompoundRule, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CompoundPredicate = []
         self.CompoundRule = []
@@ -576,7 +576,7 @@ class Con(ind.Con):
         super(Con, self).__init__()
         self.isfrom = None
         self.weight = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -584,7 +584,7 @@ class ConfusionMatrix(ind.ConfusionMatrix):
     """Represents a <ConfusionMatrix> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ConfusionMatrix, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.ClassLabels = []
         self.Extension = []
@@ -594,7 +594,7 @@ class ConsequentSequence(ind.ConsequentSequence):
     """Represents a <ConsequentSequence> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ConsequentSequence, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.SequenceReference = []
@@ -605,7 +605,7 @@ class Constant(ind.Constant):
     def __init__(self, attribs):
         super(Constant, self).__init__()
         self.dataType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class Constraints(ind.Constraints):
@@ -627,7 +627,7 @@ class Constraints(ind.Constraints):
         self.maximumItemsetSeparationTime = None
         self.minimumAntConsSeparationTime = None
         self.maximumAntConsSeparationTime = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -637,7 +637,7 @@ class ContStats(ind.ContStats):
         super(ContStats, self).__init__()
         self.totalValuesSum = None
         self.totalSquaresSum = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -647,7 +647,7 @@ class CorrelationFields(ind.CorrelationFields):
     """Represents a <CorrelationFields> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(CorrelationFields, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -656,7 +656,7 @@ class CorrelationMethods(ind.CorrelationMethods):
     """Represents a <CorrelationMethods> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(CorrelationMethods, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Matrix = []
@@ -665,7 +665,7 @@ class CorrelationValues(ind.CorrelationValues):
     """Represents a <CorrelationValues> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(CorrelationValues, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Matrix = []
@@ -674,7 +674,7 @@ class Correlations(ind.Correlations):
     """Represents a <Correlations> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Correlations, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CorrelationFields = []
         self.CorrelationMethods = []
@@ -685,7 +685,7 @@ class CountTable(ind.CountTable):
     """Represents a <CountTable> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(CountTable, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class Counts(ind.Counts):
@@ -696,7 +696,7 @@ class Counts(ind.Counts):
         self.missingFreq = None
         self.invalidFreq = None
         self.cardinality = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -704,7 +704,7 @@ class Covariances(ind.Covariances):
     """Represents a <Covariances> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Covariances, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Matrix = []
@@ -713,7 +713,7 @@ class CovariateList(ind.CovariateList):
     """Represents a <CovariateList> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(CovariateList, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Predictor = []
@@ -723,7 +723,7 @@ class DataDictionary(ind.DataDictionary):
     def __init__(self, attribs):
         super(DataDictionary, self).__init__()
         self.numberOfFields = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DataField = []
         self.Extension = []
@@ -739,7 +739,7 @@ class DataField(ind.DataField):
         self.dataType = None
         self.taxonomy = None
         self.isCyclic = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Interval = []
@@ -752,7 +752,7 @@ class Decision(ind.Decision):
         self.value = None
         self.displayValue = None
         self.description = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -767,7 +767,7 @@ class DecisionTree(ind.DecisionTree):
         self.missingValuePenalty = None
         self.noTrueChildStrategy = None
         self.splitCharacteristic = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -783,7 +783,7 @@ class Decisions(ind.Decisions):
         super(Decisions, self).__init__()
         self.businessProblem = None
         self.description = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Decision = []
         self.Extension = []
@@ -795,7 +795,7 @@ class DefineFunction(ind.DefineFunction):
         self.name = None
         self.optype = None
         self.dataType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Aggregate = []
         self.Apply = []
@@ -814,7 +814,7 @@ class Delimiter(ind.Delimiter):
         super(Delimiter, self).__init__()
         self.delimiter = None
         self.gap = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -826,7 +826,7 @@ class DerivedField(ind.DerivedField):
         self.displayName = None
         self.optype = None
         self.dataType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Aggregate = []
         self.Apply = []
@@ -844,7 +844,7 @@ class DiscrStats(ind.DiscrStats):
     def __init__(self, attribs):
         super(DiscrStats, self).__init__()
         self.modalValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -857,7 +857,7 @@ class Discretize(ind.Discretize):
         self.mapMissingTo = None
         self.defaultValue = None
         self.dataType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DiscretizeBin = []
         self.Extension = []
@@ -867,7 +867,7 @@ class DiscretizeBin(ind.DiscretizeBin):
     def __init__(self, attribs):
         super(DiscretizeBin, self).__init__()
         self.binValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Interval = []
@@ -876,7 +876,7 @@ class DocumentTermMatrix(ind.DocumentTermMatrix):
     """Represents a <DocumentTermMatrix> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(DocumentTermMatrix, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Matrix = []
@@ -885,7 +885,7 @@ class EventValues(ind.EventValues):
     """Represents a <EventValues> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(EventValues, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Interval = []
@@ -897,7 +897,7 @@ class ExponentialSmoothing(ind.ExponentialSmoothing):
         super(ExponentialSmoothing, self).__init__()
         self.RMSE = None
         self.transformation = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Level = []
         self.Seasonality_ExpoSmooth = []
@@ -911,14 +911,14 @@ class Extension(ind.Extension):
         self.extender = None
         self.name = None
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class FactorList(ind.FactorList):
     """Represents a <FactorList> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(FactorList, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Predictor = []
@@ -927,7 +927,7 @@ class AlwaysFalse(ind.AlwaysFalse):
     """Represents a <AlwaysFalse> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(AlwaysFalse, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -941,7 +941,7 @@ class FieldColumnPair(ind.FieldColumnPair):
         super(FieldColumnPair, self).__init__()
         self.field = None
         self.column = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -951,7 +951,7 @@ class FieldRef(ind.FieldRef):
         super(FieldRef, self).__init__()
         self.field = None
         self.mapMissingTo = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -961,7 +961,7 @@ class FieldValue(ind.FieldValue):
         super(FieldValue, self).__init__()
         self.field = None
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.FieldValue = []
@@ -974,7 +974,7 @@ class FieldValueCount(ind.FieldValueCount):
         self.field = None
         self.value = None
         self.count = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -984,7 +984,7 @@ class GaussianDistribution(ind.GaussianDistribution):
         super(GaussianDistribution, self).__init__()
         self.mean = None
         self.variance = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1014,7 +1014,7 @@ class GeneralRegressionModel(ind.GeneralRegressionModel):
         self.statusVariable = None
         self.baselineStrataVariable = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BaseCumHazardTables = []
         self.CovariateList = []
@@ -1039,7 +1039,7 @@ class Header(ind.Header):
         super(Header, self).__init__()
         self.copyright = None
         self.description = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Annotation = []
         self.Application = []
@@ -1050,7 +1050,7 @@ class INT_Entries(ind.INT_Entries):
     """Represents a <INT_Entries> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(INT_Entries, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
     @property
@@ -1063,7 +1063,7 @@ class INT_SparseArray(ind.INT_SparseArray):
         super(INT_SparseArray, self).__init__()
         self.n = None
         self.defaultValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.INT_Entries = []
         self.Indices = []
@@ -1076,14 +1076,14 @@ class Indices(ind.Indices):
     """Represents a <Indices> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Indices, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class InlineTable(ind.InlineTable):
     """Represents a <InlineTable> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(InlineTable, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.row = []
@@ -1094,7 +1094,7 @@ class InstanceField(ind.InstanceField):
         super(InstanceField, self).__init__()
         self.field = None
         self.column = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1102,7 +1102,7 @@ class InstanceFields(ind.InstanceFields):
     """Represents a <InstanceFields> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(InstanceFields, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.InstanceField = []
@@ -1114,7 +1114,7 @@ class Interval(ind.Interval):
         self.closure = None
         self.leftMargin = None
         self.rightMargin = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1126,7 +1126,7 @@ class Item(ind.Item):
         self.value = None
         self.mappedValue = None
         self.weight = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1135,7 +1135,7 @@ class ItemRef(ind.ItemRef):
     def __init__(self, attribs):
         super(ItemRef, self).__init__()
         self.itemRef = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1146,7 +1146,7 @@ class Itemset(ind.Itemset):
         self.id = None
         self.support = None
         self.numberOfItems = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.ItemRef = []
@@ -1158,7 +1158,7 @@ class KNNInput(ind.KNNInput):
         self.field = None
         self.fieldWeight = None
         self.compareFunction = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1166,7 +1166,7 @@ class KNNInputs(ind.KNNInputs):
     """Represents a <KNNInputs> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(KNNInputs, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.KNNInput = []
@@ -1178,7 +1178,7 @@ class KohonenMap(ind.KohonenMap):
         self.coord1 = None
         self.coord2 = None
         self.coord3 = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1188,7 +1188,7 @@ class Level(ind.Level):
         super(Level, self).__init__()
         self.alpha = None
         self.smoothedValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class LiftData(ind.LiftData):
@@ -1198,7 +1198,7 @@ class LiftData(ind.LiftData):
         self.targetFieldValue = None
         self.targetFieldDisplayValue = None
         self.rankingQuality = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.ModelLiftGraph = []
@@ -1209,7 +1209,7 @@ class LiftGraph(ind.LiftGraph):
     """Represents a <LiftGraph> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(LiftGraph, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BoundaryValueMeans = []
         self.BoundaryValues = []
@@ -1222,7 +1222,7 @@ class LinearKernelType(ind.LinearKernelType):
     def __init__(self, attribs):
         super(LinearKernelType, self).__init__()
         self.description = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1232,7 +1232,7 @@ class LinearNorm(ind.LinearNorm):
         super(LinearNorm, self).__init__()
         self.orig = None
         self.norm = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1240,7 +1240,7 @@ class LocalTransformations(ind.LocalTransformations):
     """Represents a <LocalTransformations> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(LocalTransformations, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DerivedField = []
         self.Extension = []
@@ -1253,7 +1253,7 @@ class MapValues(ind.MapValues):
         self.defaultValue = None
         self.outputColumn = None
         self.dataType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.FieldColumnPair = []
@@ -1266,7 +1266,7 @@ class MatCell(ind.MatCell):
         super(MatCell, self).__init__()
         self.row = None
         self.col = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class Matrix(ind.Matrix):
@@ -1278,7 +1278,7 @@ class Matrix(ind.Matrix):
         self.nbCols = None
         self.diagDefault = None
         self.offDiagDefault = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.MatCell = []
@@ -1287,7 +1287,7 @@ class MiningBuildTask(ind.MiningBuildTask):
     """Represents a <MiningBuildTask> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(MiningBuildTask, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1305,7 +1305,7 @@ class MiningField(ind.MiningField):
         self.missingValueReplacement = None
         self.missingValueTreatment = None
         self.invalidValueTreatment = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1317,7 +1317,7 @@ class MiningModel(ind.MiningModel):
         self.functionName = None
         self.algorithmName = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DecisionTree = []
         self.Extension = []
@@ -1335,7 +1335,7 @@ class MiningSchema(ind.MiningSchema):
     """Represents a <MiningSchema> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(MiningSchema, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.MiningField = []
@@ -1344,7 +1344,7 @@ class MissingValueWeights(ind.MissingValueWeights):
     """Represents a <MissingValueWeights> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(MissingValueWeights, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -1353,7 +1353,7 @@ class ModelExplanation(ind.ModelExplanation):
     """Represents a <ModelExplanation> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ModelExplanation, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.ClusteringModelQuality = []
         self.Correlations = []
@@ -1364,7 +1364,7 @@ class ModelLiftGraph(ind.ModelLiftGraph):
     """Represents a <ModelLiftGraph> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ModelLiftGraph, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LiftGraph = []
@@ -1373,7 +1373,7 @@ class ModelStats(ind.ModelStats):
     """Represents a <ModelStats> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ModelStats, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.MultivariateStats = []
@@ -1385,7 +1385,7 @@ class ModelVerification(ind.ModelVerification):
         super(ModelVerification, self).__init__()
         self.recordCount = None
         self.fieldCount = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.InlineTable = []
@@ -1411,7 +1411,7 @@ class MultivariateStat(ind.MultivariateStat):
         self.confidenceLevel = None
         self.confidenceLowerBound = None
         self.confidenceUpperBound = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1420,7 +1420,7 @@ class MultivariateStats(ind.MultivariateStats):
     def __init__(self, attribs):
         super(MultivariateStats, self).__init__()
         self.targetCategory = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.MultivariateStat = []
@@ -1434,7 +1434,7 @@ class NaiveBayesModel(ind.NaiveBayesModel):
         self.functionName = None
         self.algorithmName = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BayesInputs = []
         self.BayesOutput = []
@@ -1460,7 +1460,7 @@ class NearestNeighborModel(ind.NearestNeighborModel):
         self.instanceIdVariable = None
         self.threshold = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.ComparisonMeasure = []
         self.Extension = []
@@ -1479,7 +1479,7 @@ class NeuralInput(ind.NeuralInput):
     def __init__(self, attribs):
         super(NeuralInput, self).__init__()
         self.id = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DerivedField = []
         self.Extension = []
@@ -1489,7 +1489,7 @@ class NeuralInputs(ind.NeuralInputs):
     def __init__(self, attribs):
         super(NeuralInputs, self).__init__()
         self.numberOfInputs = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.NeuralInput = []
@@ -1504,7 +1504,7 @@ class NeuralLayer(ind.NeuralLayer):
         self.width = None
         self.altitude = None
         self.normalizationMethod = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Neuron = []
@@ -1523,7 +1523,7 @@ class NeuralNetwork(ind.NeuralNetwork):
         self.altitude = None
         self.numberOfLayers = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -1542,7 +1542,7 @@ class NeuralOutput(ind.NeuralOutput):
     def __init__(self, attribs):
         super(NeuralOutput, self).__init__()
         self.outputNeuron = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DerivedField = []
         self.Extension = []
@@ -1552,7 +1552,7 @@ class NeuralOutputs(ind.NeuralOutputs):
     def __init__(self, attribs):
         super(NeuralOutputs, self).__init__()
         self.numberOfOutputs = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.NeuralOutput = []
@@ -1565,7 +1565,7 @@ class Neuron(ind.Neuron):
         self.bias = None
         self.width = None
         self.altitude = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Con = []
         self.Extension = []
@@ -1578,7 +1578,7 @@ class Node(ind.Node):
         self.score = None
         self.recordCount = None
         self.defaultChild = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CompoundPredicate = []
         self.DecisionTree = []
@@ -1599,7 +1599,7 @@ class NormContinuous(ind.NormContinuous):
         self.mapMissingTo = None
         self.field = None
         self.outliers = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LinearNorm = []
@@ -1612,7 +1612,7 @@ class NormDiscrete(ind.NormDiscrete):
         self.method = None
         self.value = None
         self.mapMissingTo = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1620,7 +1620,7 @@ class NormalizedCountTable(ind.NormalizedCountTable):
     """Represents a <NormalizedCountTable> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(NormalizedCountTable, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class NumericInfo(ind.NumericInfo):
@@ -1633,7 +1633,7 @@ class NumericInfo(ind.NumericInfo):
         self.standardDeviation = None
         self.median = None
         self.interQuartileRange = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Quantile = []
@@ -1645,7 +1645,7 @@ class NumericPredictor(ind.NumericPredictor):
         self.name = None
         self.exponent = None
         self.coefficient = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1653,7 +1653,7 @@ class OptimumLiftGraph(ind.OptimumLiftGraph):
     """Represents a <OptimumLiftGraph> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(OptimumLiftGraph, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LiftGraph = []
@@ -1662,7 +1662,7 @@ class Output(ind.Output):
     """Represents a <Output> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Output, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.OutputField = []
@@ -1685,7 +1685,7 @@ class OutputField(ind.OutputField):
         self.rankOrder = None
         self.isMultiValued = None
         self.segmentId = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Aggregate = []
         self.Apply = []
@@ -1706,7 +1706,7 @@ class PCell(ind.PCell):
         self.parameterName = None
         self.beta = None
         self.df = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1720,7 +1720,7 @@ class PCovCell(ind.PCovCell):
         self.tCol = None
         self.value = None
         self.targetCategory = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1729,7 +1729,7 @@ class PCovMatrix(ind.PCovMatrix):
     def __init__(self, attribs):
         super(PCovMatrix, self).__init__()
         self.type = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.PCovCell = []
@@ -1742,7 +1742,7 @@ class PPCell(ind.PPCell):
         self.predictorName = None
         self.parameterName = None
         self.targetCategory = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1750,7 +1750,7 @@ class PPMatrix(ind.PPMatrix):
     """Represents a <PPMatrix> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(PPMatrix, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.PPCell = []
@@ -1760,7 +1760,7 @@ class PairCounts(ind.PairCounts):
     def __init__(self, attribs):
         super(PairCounts, self).__init__()
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.TargetValueCounts = []
@@ -1769,7 +1769,7 @@ class ParamMatrix(ind.ParamMatrix):
     """Represents a <ParamMatrix> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ParamMatrix, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.PCell = []
@@ -1781,7 +1781,7 @@ class Parameter(ind.Parameter):
         self.name = None
         self.label = None
         self.referencePoint = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1792,14 +1792,14 @@ class ParameterField(ind.ParameterField):
         self.name = None
         self.optype = None
         self.dataType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class ParameterList(ind.ParameterList):
     """Represents a <ParameterList> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ParameterList, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Parameter = []
@@ -1810,7 +1810,7 @@ class Partition(ind.Partition):
         super(Partition, self).__init__()
         self.name = None
         self.size = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.PartitionFieldStats = []
@@ -1821,7 +1821,7 @@ class PartitionFieldStats(ind.PartitionFieldStats):
         super(PartitionFieldStats, self).__init__()
         self.field = None
         self.weighted = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Counts = []
@@ -1833,7 +1833,7 @@ class PoissonDistribution(ind.PoissonDistribution):
     def __init__(self, attribs):
         super(PoissonDistribution, self).__init__()
         self.mean = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1845,7 +1845,7 @@ class PolynomialKernelType(ind.PolynomialKernelType):
         self.gamma = None
         self.coef0 = None
         self.degree = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1872,7 +1872,7 @@ class PredictiveModelQuality(ind.PredictiveModelQuality):
         self.AIC = None
         self.BIC = None
         self.AICc = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.ConfusionMatrix = []
         self.Extension = []
@@ -1885,7 +1885,7 @@ class Predictor(ind.Predictor):
         super(Predictor, self).__init__()
         self.name = None
         self.contrastMatrixType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Categories = []
         self.Extension = []
@@ -1897,7 +1897,7 @@ class PredictorTerm(ind.PredictorTerm):
         super(PredictorTerm, self).__init__()
         self.name = None
         self.coefficient = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.FieldRef = []
@@ -1908,7 +1908,7 @@ class Quantile(ind.Quantile):
         super(Quantile, self).__init__()
         self.quantileLimit = None
         self.quantileValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1916,7 +1916,7 @@ class REAL_Entries(ind.REAL_Entries):
     """Represents a <REAL_Entries> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(REAL_Entries, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
     @property
@@ -1929,7 +1929,7 @@ class REAL_SparseArray(ind.REAL_SparseArray):
         super(REAL_SparseArray, self).__init__()
         self.n = None
         self.defaultValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Indices = []
         self.REAL_Entries = []
@@ -1946,7 +1946,7 @@ class ROC(ind.ROC):
         self.positiveTargetFieldDisplayValue = None
         self.negativeTargetFieldValue = None
         self.negativeTargetFieldDisplayValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.ROCGraph = []
@@ -1955,7 +1955,7 @@ class ROCGraph(ind.ROCGraph):
     """Represents a <ROCGraph> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(ROCGraph, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.BoundaryValues = []
         self.Extension = []
@@ -1968,7 +1968,7 @@ class RadialBasisKernelType(ind.RadialBasisKernelType):
         super(RadialBasisKernelType, self).__init__()
         self.description = None
         self.gamma = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -1976,7 +1976,7 @@ class RandomLiftGraph(ind.RandomLiftGraph):
     """Represents a <RandomLiftGraph> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(RandomLiftGraph, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LiftGraph = []
@@ -1989,7 +1989,7 @@ class Regression(ind.Regression):
         self.functionName = None
         self.algorithmName = None
         self.normalizationMethod = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -2010,7 +2010,7 @@ class RegressionModel(ind.RegressionModel):
         self.targetFieldName = None
         self.normalizationMethod = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -2028,7 +2028,7 @@ class RegressionTable(ind.RegressionTable):
         super(RegressionTable, self).__init__()
         self.intercept = None
         self.targetCategory = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CategoricalPredictor = []
         self.Extension = []
@@ -2045,7 +2045,7 @@ class ResultField(ind.ResultField):
         self.dataType = None
         self.feature = None
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2054,7 +2054,7 @@ class RuleSelectionMethod(ind.RuleSelectionMethod):
     def __init__(self, attribs):
         super(RuleSelectionMethod, self).__init__()
         self.criterion = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2066,7 +2066,7 @@ class RuleSet(ind.RuleSet):
         self.nbCorrect = None
         self.defaultScore = None
         self.defaultConfidence = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CompoundRule = []
         self.Extension = []
@@ -2082,7 +2082,7 @@ class RuleSetModel(ind.RuleSetModel):
         self.functionName = None
         self.algorithmName = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -2102,7 +2102,7 @@ class ScoreDistribution(ind.ScoreDistribution):
         self.recordCount = None
         self.confidence = None
         self.probability = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2119,7 +2119,7 @@ class Scorecard(ind.Scorecard):
         self.baselineScore = None
         self.baselineMethod = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Characteristics = []
         self.Extension = []
@@ -2135,7 +2135,7 @@ class SeasonalTrendDecomposition(ind.SeasonalTrendDecomposition):
     """Represents a <SeasonalTrendDecomposition> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(SeasonalTrendDecomposition, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class Seasonality_ExpoSmooth(ind.Seasonality_ExpoSmooth):
@@ -2147,7 +2147,7 @@ class Seasonality_ExpoSmooth(ind.Seasonality_ExpoSmooth):
         self.unit = None
         self.phase = None
         self.delta = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         
@@ -2157,7 +2157,7 @@ class Segment(ind.Segment):
         super(Segment, self).__init__()
         self.id = None
         self.weight = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AssociationModel = []
         self.BaselineModel = []
@@ -2187,7 +2187,7 @@ class Segmentation(ind.Segmentation):
     def __init__(self, attribs):
         super(Segmentation, self).__init__()
         self.multipleModelMethod = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Segment = []
@@ -2200,7 +2200,7 @@ class Sequence(ind.Sequence):
         self.numberOfSets = None
         self.occurrence = None
         self.support = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Delimiter = []
         self.Extension = []
@@ -2221,7 +2221,7 @@ class SequenceModel(ind.SequenceModel):
         self.maxNumberOfTAsPerTAGroup = None
         self.avgNumberOfTAsPerTAGroup = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Constraints = []
         self.Extension = []
@@ -2239,7 +2239,7 @@ class SequenceReference(ind.SequenceReference):
     def __init__(self, attribs):
         super(SequenceReference, self).__init__()
         self.seqId = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2253,7 +2253,7 @@ class SequenceRule(ind.SequenceRule):
         self.support = None
         self.confidence = None
         self.lift = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.AntecedentSequence = []
         self.ConsequentSequence = []
@@ -2268,7 +2268,7 @@ class SetPredicate(ind.SetPredicate):
         self.id = None
         self.field = None
         self.operator = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -2278,7 +2278,7 @@ class SetReference(ind.SetReference):
     def __init__(self, attribs):
         super(SetReference, self).__init__()
         self.setId = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2289,7 +2289,7 @@ class SigmoidKernelType(ind.SigmoidKernelType):
         self.description = None
         self.gamma = None
         self.coef0 = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2300,7 +2300,7 @@ class SimplePredicate(ind.SimplePredicate):
         self.field = None
         self.operator = None
         self.value = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2314,7 +2314,7 @@ class SimpleRule(ind.SimpleRule):
         self.nbCorrect = None
         self.confidence = None
         self.weight = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.CompoundPredicate = []
         self.Extension = []
@@ -2330,7 +2330,7 @@ class SimpleSetPredicate(ind.SimpleSetPredicate):
         super(SimpleSetPredicate, self).__init__()
         self.field = None
         self.booleanOperator = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -2339,7 +2339,7 @@ class SpectralAnalysis(ind.SpectralAnalysis):
     """Represents a <SpectralAnalysis> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(SpectralAnalysis, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class SupportVector(ind.SupportVector):
@@ -2347,7 +2347,7 @@ class SupportVector(ind.SupportVector):
     def __init__(self, attribs):
         super(SupportVector, self).__init__()
         self.vectorId = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2358,7 +2358,7 @@ class SupportVectorMachine(ind.SupportVectorMachine):
         self.targetCategory = None
         self.alternateTargetCategory = None
         self.threshold = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Coefficients = []
         self.Extension = []
@@ -2375,7 +2375,7 @@ class SupportVectorMachineModel(ind.SupportVectorMachineModel):
         self.svmRepresentation = None
         self.classificationMethod = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LinearKernelType = []
@@ -2398,7 +2398,7 @@ class SupportVectors(ind.SupportVectors):
         super(SupportVectors, self).__init__()
         self.numberOfSupportVectors = None
         self.numberOfAttributes = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.SupportVector = []
@@ -2407,7 +2407,7 @@ class TableLocator(ind.TableLocator):
     """Represents a <TableLocator> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(TableLocator, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2422,7 +2422,7 @@ class Target(ind.Target):
         self.max = None
         self.rescaleConstant = None
         self.rescaleFactor = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.TargetValue = []
@@ -2435,7 +2435,7 @@ class TargetValue(ind.TargetValue):
         self.displayValue = None
         self.priorProbability = None
         self.defaultValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Partition = []
@@ -2446,7 +2446,7 @@ class TargetValueCount(ind.TargetValueCount):
         super(TargetValueCount, self).__init__()
         self.value = None
         self.count = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2454,7 +2454,7 @@ class TargetValueCounts(ind.TargetValueCounts):
     """Represents a <TargetValueCounts> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(TargetValueCounts, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.TargetValueCount = []
@@ -2463,7 +2463,7 @@ class Targets(ind.Targets):
     """Represents a <Targets> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Targets, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.Target = []
@@ -2473,7 +2473,7 @@ class Taxonomy(ind.Taxonomy):
     def __init__(self, attribs):
         super(Taxonomy, self).__init__()
         self.name = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.ChildParent = []
         self.Extension = []
@@ -2488,7 +2488,7 @@ class TestDistributions(ind.TestDistributions):
         self.windowSize = None
         self.weightField = None
         self.normalizationScheme = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Alternate = []
         self.Baseline = []
@@ -2498,7 +2498,7 @@ class TextCorpus(ind.TextCorpus):
     """Represents a <TextCorpus> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(TextCorpus, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.TextDocument = []
@@ -2507,7 +2507,7 @@ class TextDictionary(ind.TextDictionary):
     """Represents a <TextDictionary> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(TextDictionary, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -2521,7 +2521,7 @@ class TextDocument(ind.TextDocument):
         self.name = None
         self.length = None
         self.file = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2535,7 +2535,7 @@ class TextModel(ind.TextModel):
         self.numberOfTerms = None
         self.numberOfDocuments = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DocumentTermMatrix = []
         self.Extension = []
@@ -2558,7 +2558,7 @@ class TextModelNormalization(ind.TextModelNormalization):
         self.localTermWeights = None
         self.globalTermWeights = None
         self.documentNormalization = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2567,7 +2567,7 @@ class TextModelSimiliarity(ind.TextModelSimiliarity):
     def __init__(self, attribs):
         super(TextModelSimiliarity, self).__init__()
         self.similarityType = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2579,7 +2579,7 @@ class Time(ind.Time):
         self.max = None
         self.mean = None
         self.standardDeviation = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2591,7 +2591,7 @@ class TimeAnchor(ind.TimeAnchor):
         self.offset = None
         self.stepsize = None
         self.displayName = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.TimeCycle = []
         self.TimeException = []
@@ -2603,7 +2603,7 @@ class TimeCycle(ind.TimeCycle):
         self.length = None
         self.type = None
         self.displayName = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         
@@ -2613,7 +2613,7 @@ class TimeException(ind.TimeException):
         super(TimeException, self).__init__()
         self.type = None
         self.count = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         
@@ -2625,7 +2625,7 @@ class TimeSeries(ind.TimeSeries):
         self.startTime = None
         self.endTime = None
         self.interpolationMethod = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.TimeAnchor = []
         self.TimeValue = []
@@ -2639,7 +2639,7 @@ class TimeSeriesModel(ind.TimeSeriesModel):
         self.algorithmName = None
         self.bestFit = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.ARIMA = []
         self.ExponentialSmoothing = []
@@ -2662,7 +2662,7 @@ class TimeValue(ind.TimeValue):
         self.time = None
         self.value = None
         self.standardError = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Timestamp = []
         
@@ -2670,7 +2670,7 @@ class Timestamp(ind.Timestamp):
     """Represents a <Timestamp> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(Timestamp, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2681,7 +2681,7 @@ class TrainingInstances(ind.TrainingInstances):
         self.isTransformed = None
         self.recordCount = None
         self.fieldCount = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.InlineTable = []
@@ -2692,7 +2692,7 @@ class TransformationDictionary(ind.TransformationDictionary):
     """Represents a <TransformationDictionary> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(TransformationDictionary, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.DefineFunction = []
         self.DerivedField = []
@@ -2710,7 +2710,7 @@ class TreeModel(ind.TreeModel):
         self.noTrueChildStrategy = None
         self.splitCharacteristic = None
         self.isScorable = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.LocalTransformations = []
@@ -2730,7 +2730,7 @@ class Trend_ExpoSmooth(ind.Trend_ExpoSmooth):
         self.gamma = None
         self.phi = None
         self.smoothedValue = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         
@@ -2738,7 +2738,7 @@ class AlwaysTrue(ind.AlwaysTrue):
     """Represents a <AlwaysTrue> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(AlwaysTrue, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2752,7 +2752,7 @@ class UniformDistribution(ind.UniformDistribution):
         super(UniformDistribution, self).__init__()
         self.lower = None
         self.upper = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2762,7 +2762,7 @@ class UnivariateStats(ind.UnivariateStats):
         super(UnivariateStats, self).__init__()
         self.field = None
         self.weighted = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Anova = []
         self.ContStats = []
@@ -2778,7 +2778,7 @@ class Value(ind.Value):
         self.value = None
         self.displayValue = None
         self.property = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2787,7 +2787,7 @@ class VectorDictionary(ind.VectorDictionary):
     def __init__(self, attribs):
         super(VectorDictionary, self).__init__()
         self.numberOfVectors = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.VectorFields = []
@@ -2798,7 +2798,7 @@ class VectorFields(ind.VectorFields):
     def __init__(self, attribs):
         super(VectorFields, self).__init__()
         self.numberOfFields = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.FieldRef = []
@@ -2808,7 +2808,7 @@ class VectorInstance(ind.VectorInstance):
     def __init__(self, attribs):
         super(VectorInstance, self).__init__()
         self.id = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -2822,7 +2822,7 @@ class VerificationField(ind.VerificationField):
         self.column = None
         self.precision = None
         self.zeroThreshold = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2830,7 +2830,7 @@ class VerificationFields(ind.VerificationFields):
     """Represents a <VerificationFields> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(VerificationFields, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         self.VerificationField = []
@@ -2839,7 +2839,7 @@ class XCoordinates(ind.XCoordinates):
     """Represents a <XCoordinates> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(XCoordinates, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -2848,7 +2848,7 @@ class YCoordinates(ind.YCoordinates):
     """Represents a <YCoordinates> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(YCoordinates, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Array = []
         self.Extension = []
@@ -2865,7 +2865,7 @@ class binarySimilarity(ind.binarySimilarity):
         self.d01_parameter = None
         self.d10_parameter = None
         self.d11_parameter = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2873,7 +2873,7 @@ class chebychev(ind.chebychev):
     """Represents a <chebychev> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(chebychev, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2881,7 +2881,7 @@ class cityBlock(ind.cityBlock):
     """Represents a <cityBlock> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(cityBlock, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2889,7 +2889,7 @@ class euclidean(ind.euclidean):
     """Represents a <euclidean> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(euclidean, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2897,7 +2897,7 @@ class jaccard(ind.jaccard):
     """Represents a <jaccard> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(jaccard, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2906,7 +2906,7 @@ class minkowski(ind.minkowski):
     def __init__(self, attribs):
         super(minkowski, self).__init__()
         self.p_parameter = None
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2914,14 +2914,14 @@ class row(ind.row):
     """Represents a <row> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(row, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         
 class simpleMatching(ind.simpleMatching):
     """Represents a <simpleMatching> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(simpleMatching, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2929,7 +2929,7 @@ class squaredEuclidean(ind.squaredEuclidean):
     """Represents a <squaredEuclidean> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(squaredEuclidean, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         
@@ -2937,7 +2937,7 @@ class tanimoto(ind.tanimoto):
     """Represents a <tanimoto> tag in v4.1 and provides methods to convert to PFA."""
     def __init__(self, attribs):
         super(tanimoto, self).__init__()
-        for key, value in attribs.items():
+        for key, value in list(attribs.items()):
             setattr(self, key, value)
         self.Extension = []
         

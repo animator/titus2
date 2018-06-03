@@ -32,8 +32,8 @@ import titus.version
 
 setup(name="titus",
       version=titus.version.__version__,
-      author="Open Data Group",
-      author_email="support@opendatagroup.com",
+      author="Ankit Mahato",
+      author_email="ankmahato@gmail.com",
       packages=["titus",
                 "titus.producer",
                 "titus.lib",
@@ -43,10 +43,10 @@ setup(name="titus",
                 "titus.pmml",
                 "titus.inspector"],
       scripts = ["scripts/pfainspector", "scripts/pfachain", "scripts/pfaexternalize", "scripts/pfarandom", "scripts/pfasize"],
-      description="Python implementation of Portable Format for Analytics (PFA): producer, converter, and consumer.",
+      description="Python 3 implementation of Portable Format for Analytics (PFA): producer, converter, and consumer.",
       test_suite="test",
-      install_requires=["avro >= 1.7.6", "ply >= 3.4"],
-      tests_require=["avro >= 1.7.6", "ply >= 3.4", "PyYAML >= 3.10", "numpy >= 1.6.1", "pytz == 2015.4"],
+      install_requires=["avro-python3 >= 1.8.2", "ply >= 3.4"],
+      tests_require=["avro-python3 >= 1.8.2", "ply >= 3.4", "pyyaml >= 3.10", "numpy >= 1.6.1", "pytz == 2015.4"],
       )
 
 ### details of dependencies:

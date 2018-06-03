@@ -37,7 +37,7 @@ CONFIG_DIRECTORY = "~/.pfa"
 CONFIG_DIRECTORY_EXISTS = True
 
 if not os.path.exists(os.path.expanduser(CONFIG_DIRECTORY)):
-    if raw_input("Create {0} for configuration files? (Y/n): ".format(CONFIG_DIRECTORY)).upper().strip() in ("Y", ""):
+    if input("Create {0} for configuration files? (Y/n): ".format(CONFIG_DIRECTORY)).upper().strip() in ("Y", ""):
         os.mkdir(os.path.expanduser(CONFIG_DIRECTORY))
     else:
         CONFIG_DIRECTORY_EXISTS = False
@@ -252,7 +252,7 @@ def extcomplete(node, items):
 
     elif isinstance(node, (list, tuple)):
         formatter = "%%0%dd" % int(math.ceil(math.log10(len(node))))
-        return [quote(formatter % x) + (", " if isinstance(node[x], (list, tuple, dict)) else "]") for x in xrange(len(node))]
+        return [quote(formatter % x) + (", " if isinstance(node[x], (list, tuple, dict)) else "]") for x in range(len(node))]
 
     else:
         return []
@@ -333,7 +333,7 @@ def pipewait(proc):
     proc.stdin.close()
     returnCode = proc.wait()
     if returnCode != 0:
-        print "\nsubprocesses failed with exit code {0}".format(returnCode)
+        print("\nsubprocesses failed with exit code {0}".format(returnCode))
 
 class Model(object):
     """A loaded JSON or PFA file.
@@ -416,16 +416,16 @@ class Mode(object):
 
         while True:
             try:
-                line = raw_input(self.prompt)
+                line = input(self.prompt)
                 if line.strip() != "":
                     self.action(line)
             except EOFError:
-                print
+                print()
                 sys.exit(0)
             except KeyboardInterrupt:
-                print "(use control-D or exit to quit)"
+                print("(use control-D or exit to quit)")
             except InspectorError as err:
-                print err
+                print(err)
             except Exception as err:
                 traceback.print_exc()
 
@@ -517,7 +517,7 @@ class SimpleCommand(Command):
         """
 
         if self.help is not None and len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
         else:
             for arg in args:
                 if not isinstance(arg, parser.FilePath):
@@ -530,7 +530,7 @@ class SimpleCommand(Command):
 
             out = self._action(*[x.text for x in args])
             if out is not None:
-                print out
+                print(out)
 
 class CommandGroup(Command):
     """A pfainspector command that defers to a group of subcommands."""
@@ -588,7 +588,7 @@ class CommandGroup(Command):
                 raise InspectorError("command {0} requires a subcommand".format(self.name))
 
         elif len(args) == 1 and args[0] == parser.Word("help"):
-            print self.help
+            print(self.help)
 
         elif isinstance(args[0], parser.Word):
             try:

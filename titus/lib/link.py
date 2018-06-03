@@ -48,17 +48,17 @@ class SoftMax(LibFcn):
             raise PFARuntimeException("empty input", self.errcodeBase + 0, self.name, pos)
         if paramTypes[0]["type"] == "map":
             xx = x.copy()
-            tmp = map(abs, xx.values())
-            if xx.values()[tmp.index(max(tmp))] >= 0:
+            tmp = list(map(abs, list(xx.values())))
+            if list(xx.values())[tmp.index(max(tmp))] >= 0:
                 m = max(xx.values())
             else:
                 m = min(xx.values())
-            denom = sum([math.exp(v - m) for v in x.values()])
-            for key in x.keys():
+            denom = sum([math.exp(v - m) for v in list(x.values())])
+            for key in list(x.keys()):
                 xx[key] = float(math.exp(xx[key] - m)/denom)
             return xx
         else:
-            tmp = map(abs, x)
+            tmp = list(map(abs, x))
             if x[tmp.index(max(tmp))] >= 0:
                 m = max(x)
             else:
@@ -70,7 +70,7 @@ provide(SoftMax())
 def unwrapForNorm(x, func):
     if isinstance(x, dict):
         xx = x.copy()
-        for key, val in zip(x.keys(), x.values()):
+        for key, val in zip(list(x.keys()), list(x.values())):
             xx[key] = float(func(val))
         return xx
     elif isinstance(x, (tuple, list)):

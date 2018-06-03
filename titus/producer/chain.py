@@ -255,7 +255,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
     originalNameToNewName = {}
     for i, pfa in enumerate(pfas):
         originalNameToNewName[i] = {}
-        for typeName in pfa.inputPlaceholder.parser.names.names.keys():
+        for typeName in list(pfa.inputPlaceholder.parser.names.names.keys()):
             originalNameToNewName[i][typeName] = prefixType(i, pfa, typeName)
 
     # but any names in the input to the first and the output from the last should not be changed
@@ -335,7 +335,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
             return True
         else:
             return False
-    for i in xrange(len(pfas) - 1):
+    for i in range(len(pfas) - 1):
         first = pfas[i].output
         second = pfas[i + 1].input
         if not chainPair(i, first, second, set()):
@@ -448,7 +448,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
         lazyFcnReplacer = None
         def genericReplacer(expr, self):
             if isinstance(expr, FcnDef):
-                return FcnDef([{t.keys()[0]: newPlaceholder(i, t.values()[0])} for t in expr.params],
+                return FcnDef([{list(t.keys())[0]: newPlaceholder(i, list(t.values())[0])} for t in expr.params],
                               newPlaceholder(i, expr.ret),
                               [x.replace(lazyFcnReplacer) for x in expr.body],     # this is the one place where we should pass down fcnReplacer rather than self
                               expr.pos)
@@ -456,7 +456,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
                 return FcnRef(prefixFcnRef(i, pfa, expr.name), epxr.pos)
             elif isinstance(expr, FcnRefFill):
                 return FcnRefFill(prefixFcnRef(i, pfa, expr.name),
-                                  dict((k, v.replace(self)) for k, v in expr.fill.items()),
+                                  dict((k, v.replace(self)) for k, v in list(expr.fill.items())),
                                   expr.pos)
             elif isinstance(expr, CallUserFcn):   # TODO: need to change the symbols of the corresponding enum
                 return CallUserFcn(expr.name.replace(self),
@@ -476,7 +476,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
                                expr.value,
                                expr.pos)
             elif isinstance(expr, NewObject):
-                return NewObject(dict((k, v.replace(self)) for k, v in expr.fields.items()),
+                return NewObject(dict((k, v.replace(self)) for k, v in list(expr.fields.items())),
                                  newPlaceholder(i, expr.avroType),
                                  expr.pos)
             elif isinstance(expr, NewArray):
@@ -580,9 +580,9 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
                 action.append(Call("u." + thisActionFcnName, [Ref("input")]))
 
         # convert all of the user functions into user functions
-        for fcnName, fcnDef in pfa.fcns.items():
+        for fcnName, fcnDef in list(pfa.fcns.items()):
             # note: some of these user-defined functions may call emit; if so, they'll call the right emit
-            fcns[prefixFcnDef(i, pfa, fcnName)] = FcnDef([{t.keys()[0]: newPlaceholder(i, t.values()[0])} for t in fcnDef.paramsPlaceholder],
+            fcns[prefixFcnDef(i, pfa, fcnName)] = FcnDef([{list(t.keys())[0]: newPlaceholder(i, list(t.values())[0])} for t in fcnDef.paramsPlaceholder],
                                                          newPlaceholder(i, fcnDef.ret),
                                                          [x.replace(fcnReplacer) for x in fcnDef.body],
                                                          fcnDef.pos)
@@ -591,7 +591,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
 
     for i, pfa in enumerate(pfas):
         if verbose and len(pfa.cells) > 0: sys.stderr.write(time.asctime() + "     step {0}:\n".format(i + 1))
-        for cellName, cell in pfa.cells.items():
+        for cellName, cell in list(pfa.cells.items()):
             if verbose: sys.stderr.write(time.asctime() + "         cell {0}\n".format(cellName))
             newCell = Cell(newPlaceholder(i, cell.avroType), cell.init, cell.shared, cell.rollback, cell.source, cell.pos)
             cells[prefixCell(i, pfa, cellName)] = newCell
@@ -603,7 +603,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
                 
     for i, pfa in enumerate(pfas):
         if verbose and len(pfa.pools) > 0: sys.stderr.write(time.asctime() + "     step {0}:\n".format(i + 1))
-        for poolName, pool in pfa.pools.items():
+        for poolName, pool in list(pfa.pools.items()):
             if verbose: sys.stderr.write(time.asctime() + "         pool {0}\n".format(poolName))
             newPool = Pool(newPlaceholder(i, pool.avroType), pool.init, pool.shared, pool.rollback, pool.source, pool.pos)
             pools[prefixPool(i, pfa, poolName)] = newPool
@@ -621,7 +621,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
 
     for i, pfa in enumerate(pfas):
         if verbose and len(pfa.cells) > 0: sys.stderr.write(time.asctime() + "     step {0}:\n".format(i + 1))
-        for cellName, cell in pfa.cells.items():
+        for cellName, cell in list(pfa.cells.items()):
             if verbose: sys.stderr.write(time.asctime() + "         cell {0}\n".format(cellName))
             if cell.source == "embedded":
                 newCell = cells[prefixCell(i, pfa, cellName)]
@@ -629,7 +629,7 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
 
     for i, pfa in enumerate(pfas):
         if verbose and len(pfa.pools) > 0: sys.stderr.write(time.asctime() + "     step {0}:\n".format(i + 1))
-        for poolName, pool in pfa.pools.items():
+        for poolName, pool in list(pfa.pools.items()):
             if verbose: sys.stderr.write(time.asctime() + "         pool {0}\n".format(poolName))
             if pool.source == "embedded":
                 newPool = pools[prefixPool(i, pfa, poolName)]

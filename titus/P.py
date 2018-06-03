@@ -352,11 +352,11 @@ def toType(pat):
     elif isinstance(pat, Record) and pat.fullName is not None:
         namebits = pat.fullName.split(".")
         if len(namebits) == 1:
-            return AvroRecord([AvroField(k, toType(v)) for k, v in pat.fields.items()], namebits[-1], None)
+            return AvroRecord([AvroField(k, toType(v)) for k, v in list(pat.fields.items())], namebits[-1], None)
         else:
-            return AvroRecord([AvroField(k, toType(v)) for k, v in pat.fields.items()], namebits[-1], ".".join(namebits[:-1]))
+            return AvroRecord([AvroField(k, toType(v)) for k, v in list(pat.fields.items())], namebits[-1], ".".join(namebits[:-1]))
     elif isinstance(pat, Record):
-        return AvroRecord([AvroField(k, toType(v)) for k, v in pat.fields.items()])
+        return AvroRecord([AvroField(k, toType(v)) for k, v in list(pat.fields.items())])
 
     elif isinstance(pat, Fcn): return FcnType([toType(x) for x in pat.params()], toType(pat.ret()))
 

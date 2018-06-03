@@ -27,6 +27,7 @@ from titus.datatype import *
 from titus.errors import *
 from titus.util import callfcn, div
 import titus.P as P
+from functools import reduce
 
 provides = {}
 def provide(fcn):
@@ -45,7 +46,7 @@ def colKeys(x):
     if len(x) == 0:
         return set()
     else:
-        return reduce(lambda a, b: a.union(b), [set(xi.keys()) for xi in x.values()])
+        return reduce(lambda a, b: a.union(b), [set(xi.keys()) for xi in list(x.values())])
 
 def arraysToMatrix(x):
     return np().matrix(x, dtype=np().double)
@@ -66,17 +67,17 @@ def mapToRowVector(x, keys):
     return np().matrix([x.get(k, 0.0) for k in keys], dtype=np().double).T
 
 def rowVectorToMap(x, keys):
-    return dict(zip(keys, x.T.tolist()[0]))
+    return dict(list(zip(keys, x.T.tolist()[0])))
 
 def matrixToMaps(x, rows, cols):
-    return dict((row, dict(zip(cols, xi))) for row, xi in zip(rows, x.tolist()))
+    return dict((row, dict(list(zip(cols, xi)))) for row, xi in zip(rows, x.tolist()))
 
 def raggedArray(x):
-    collens = map(len, x)
+    collens = list(map(len, x))
     return max(collens) != min(collens)
 
 def raggedMap(x):
-    return len(set(len(xi) for xi in x.values())) != 1
+    return len(set(len(xi) for xi in list(x.values()))) != 1
 
 class MapApply(LibFcn):
     name = prefix + "map"
@@ -87,8 +88,8 @@ class MapApply(LibFcn):
         if isinstance(x, (list, tuple)) and all(isinstance(xi, (list, tuple)) for xi in x):
             return [[callfcn(state, scope, fcn, [xj]) for xj in xi] for xi in x]
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
-            return dict((i, dict((j, callfcn(state, scope, fcn, [xj])) for j, xj in xi.items())) for i, xi in x.items())
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
+            return dict((i, dict((j, callfcn(state, scope, fcn, [xj])) for j, xj in list(xi.items()))) for i, xi in list(x.items()))
 
 provide(MapApply())
 
@@ -105,9 +106,9 @@ class Scale(LibFcn):
         elif isinstance(x, (list, tuple)):
             return [xi * alpha for xi in x]
         elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x):
-            return dict((i, dict((j, xj * alpha) for j, xj in xi.items())) for i, xi in x.items())
+            return dict((i, dict((j, xj * alpha) for j, xj in list(xi.items()))) for i, xi in list(x.items()))
         else:
-            return dict((i, xi * alpha) for i, xi in x.items())
+            return dict((i, xi * alpha) for i, xi in list(x.items()))
 
 provide(Scale())
 
@@ -123,8 +124,8 @@ class ZipMap(LibFcn):
                 raise PFARuntimeException("misaligned matrices", self.errcodeBase + 0, self.name, pos)
             return [[callfcn(state, scope, fcn, [xj, yj]) for xj, yj in zip(xi, yi)] for xi, yi in zip(x, y)]
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()) and \
-             isinstance(y, dict) and all(isinstance(y[i], dict) for i in y.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())) and \
+             isinstance(y, dict) and all(isinstance(y[i], dict) for i in list(y.keys())):
             rows = rowKeys(x).union(rowKeys(y))
             cols = colKeys(x).union(colKeys(y))
             return dict((i, dict((j, callfcn(state, scope, fcn, [x.get(i, {}).get(j, 0.0), y.get(i, {}).get(j, 0.0)])) for j in cols)) for i in rows)
@@ -150,8 +151,8 @@ class Add(LibFcn):
                 raise PFARuntimeException("misaligned matrices", self.errcodeBase + 0, self.name, pos)
             return [xi + yi for xi, yi in zip(x, y)]
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()) and \
-             isinstance(y, dict) and all(isinstance(y[i], dict) for i in y.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())) and \
+             isinstance(y, dict) and all(isinstance(y[i], dict) for i in list(y.keys())):
             rows = rowKeys(x).union(rowKeys(y))
             cols = colKeys(x).union(colKeys(y))
             return dict((i, dict((j, x.get(i, {}).get(j, 0.0) + y.get(i, {}).get(j, 0.0)) for j in cols)) for i in rows)
@@ -181,8 +182,8 @@ class Sub(LibFcn):
                 raise PFARuntimeException("misaligned matrices", self.errcodeBase + 0, self.name, pos)
             return [xi - yi for xi, yi in zip(x, y)]
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()) and \
-             isinstance(y, dict) and all(isinstance(y[i], dict) for i in y.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())) and \
+             isinstance(y, dict) and all(isinstance(y[i], dict) for i in list(y.keys())):
             rows = rowKeys(x).union(rowKeys(y))
             cols = colKeys(x).union(colKeys(y))
             return dict((i, dict((j, x.get(i, {}).get(j, 0.0) - y.get(i, {}).get(j, 0.0)) for j in cols)) for i in rows)
@@ -233,8 +234,8 @@ class Dot(LibFcn):
         elif paramTypes[1]["type"] == "map":
             if isinstance(paramTypes[1]["values"], dict) and paramTypes[1]["values"]["type"] == "map":
                 # map matrix-matrix case
-                bad = any(any(math.isnan(z) or math.isinf(z) for z in row.values()) for row in x.values()) or \
-                      any(any(math.isnan(z) or math.isinf(z) for z in row.values()) for row in y.values())
+                bad = any(any(math.isnan(z) or math.isinf(z) for z in list(row.values())) for row in list(x.values())) or \
+                      any(any(math.isnan(z) or math.isinf(z) for z in list(row.values())) for row in list(y.values()))
                 rows = list(rowKeys(x))
                 inter = list(colKeys(x).union(rowKeys(y)))
                 cols = list(colKeys(y))
@@ -247,8 +248,8 @@ class Dot(LibFcn):
 
             else:
                 # map matrix-vector case
-                bad = any(any(math.isnan(z) or math.isinf(z) for z in row.values()) for row in x.values()) or \
-                      any(math.isnan(z) or math.isinf(z) for z in y.values())
+                bad = any(any(math.isnan(z) or math.isinf(z) for z in list(row.values())) for row in list(x.values())) or \
+                      any(math.isnan(z) or math.isinf(z) for z in list(y.values()))
                 rows = list(rowKeys(x))
                 cols = list(colKeys(x).union(rowKeys(y)))
                 xmat = mapsToMatrix(x, rows, cols)
@@ -275,9 +276,9 @@ class Transpose(LibFcn):
                 raise PFARuntimeException("too few rows/cols", self.errcodeBase + 0, self.name, pos)
             if raggedArray(x):
                 raise PFARuntimeException("ragged columns", self.errcodeBase + 1, self.name, pos)
-            return [[x[r][c] for r in xrange(rows)] for c in xrange(cols)]
+            return [[x[r][c] for r in range(rows)] for c in range(cols)]
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             rows = rowKeys(x)
             cols = colKeys(x)
             if len(rows) < 1 or len(cols) < 1:
@@ -305,7 +306,7 @@ class Inverse(LibFcn):
                 raise PFARuntimeException("ragged columns", self.errcodeBase + 1, self.name, pos)
             return matrixToArrays(arraysToMatrix(x).I)
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             rows = list(rowKeys(x))
             cols = list(colKeys(x))
             if len(rows) < 1 or len(cols) < 1:
@@ -329,9 +330,9 @@ class Trace(LibFcn):
                 cols = len(x[0])
                 if raggedArray(x):
                     raise PFARuntimeException("ragged columns", self.errcodeBase + 0, self.name, pos)
-                return sum(x[i][i] for i in xrange(min(rows, cols)))
+                return sum(x[i][i] for i in range(min(rows, cols)))
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             keys = rowKeys(x).intersection(colKeys(x))
             return sum(x[i][i] for i in keys)
 
@@ -359,11 +360,11 @@ class Det(LibFcn):
             else:
                 return float(np().linalg.det(arraysToMatrix(x)))
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             keys = list(rowKeys(x).union(colKeys(x)))
-            if len(keys) < 1 or all(len(row) == 0 for row in x.values()):
+            if len(keys) < 1 or all(len(row) == 0 for row in list(x.values())):
                 raise PFARuntimeException("too few rows/cols", self.errcodeBase + 0, self.name, pos)
-            if any(any(math.isnan(z) or math.isinf(z) for z in row.values()) for row in x.values()):
+            if any(any(math.isnan(z) or math.isinf(z) for z in list(row.values())) for row in list(x.values())):
                 return float("nan")
             else:
                 return float(np().linalg.det(mapsToMatrix(x, keys, keys)))
@@ -397,11 +398,11 @@ class Symmetric(LibFcn):
                 raise PFARuntimeException("ragged columns", self.errcodeBase + 1, self.name, pos)
             if rows != cols:
                 raise PFARuntimeException("non-square matrix", self.errcodeBase + 2, self.name, pos)
-            return all(all(self.same(x[i][j], x[j][i], tol) for j in xrange(cols)) for i in xrange(rows))
+            return all(all(self.same(x[i][j], x[j][i], tol) for j in range(cols)) for i in range(rows))
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             keys = list(rowKeys(x).union(colKeys(x)))
-            if len(keys) < 1 or all(len(row) == 0 for row in x.values()):
+            if len(keys) < 1 or all(len(row) == 0 for row in list(x.values())):
                 raise PFARuntimeException("too few rows/cols", self.errcodeBase + 0, self.name, pos)
             return all(all(self.same(x.get(i, {}).get(j, 0.0), x.get(j, {}).get(i, 0.0), tol) for j in keys) for i in keys)
 
@@ -418,14 +419,14 @@ class EigenBasis(LibFcn):
 
         evals, evects = np().linalg.eig(symm)
         evects = np().array(evects)
-        evects2 = [evects[:,i] * (-1.0 if evects[0,i] < 0.0 else 1.0) for i in xrange(size)]
+        evects2 = [evects[:,i] * (-1.0 if evects[0,i] < 0.0 else 1.0) for i in range(size)]
 
         eigvalm2 = [div(1.0, math.sqrt(abs(ei))) for ei in evals]
         order = np().argsort(eigvalm2)
 
         out = np().empty((size, size), dtype=np().double)
-        for i in xrange(size):
-            for j in xrange(size):
+        for i in range(size):
+            for j in range(size):
                 out[i,j] = evects2[order[i]][j] * eigvalm2[order[i]]
         return out
 
@@ -445,13 +446,13 @@ class EigenBasis(LibFcn):
                 raise PFARuntimeException("non-finite matrix", self.errcodeBase + 3, self.name, pos)
             return matrixToArrays(self.calculate(arraysToMatrix(x), rows))
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             keys = list(rowKeys(x).union(colKeys(x)))
-            if len(keys) < 1 or all(len(z) == 0 for z in x.values()):
+            if len(keys) < 1 or all(len(z) == 0 for z in list(x.values())):
                 raise PFARuntimeException("too few rows/cols", self.errcodeBase + 0, self.name, pos)
-            if any(any(math.isnan(z) or math.isinf(z) for z in row.values()) for row in x.values()):
+            if any(any(math.isnan(z) or math.isinf(z) for z in list(row.values())) for row in list(x.values())):
                 raise PFARuntimeException("non-finite matrix", self.errcodeBase + 3, self.name, pos)
-            return matrixToMaps(self.calculate(mapsToMatrix(x, keys, keys), len(keys)), map(str, xrange(len(keys))), keys)
+            return matrixToMaps(self.calculate(mapsToMatrix(x, keys, keys), len(keys)), list(map(str, range(len(keys)))), keys)
 
 provide(EigenBasis())
 
@@ -475,7 +476,7 @@ class Truncate(LibFcn):
                 raise PFARuntimeException("ragged columns", self.errcodeBase + 1, self.name, pos)
             return x[:keep]
 
-        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in x.keys()):
+        elif isinstance(x, dict) and all(isinstance(x[i], dict) for i in list(x.keys())):
             rows = rowKeys(x)
             cols = colKeys(x)
             if len(rows) < 1 or len(cols) < 1:

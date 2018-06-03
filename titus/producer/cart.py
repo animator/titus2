@@ -66,7 +66,7 @@ class Dataset(object):
 
             if self.tpe == numbers.Real:
                 self.data = numpy.array(self.data, dtype=numpy.dtype(float))
-            elif self.tpe == basestring:
+            elif self.tpe == str:
                 unique = sorted(set(self.data))
                 intToStr = dict(enumerate(unique))
                 strToInt = dict((x, i) for i, x in enumerate(unique))
@@ -103,7 +103,7 @@ class Dataset(object):
 
             if self.tpe == numbers.Real:
                 self.data = list(self.data)
-            elif self.tpe == basestring:
+            elif self.tpe == str:
                 converter = numpy.array([x for i, x in sorted(self.intToStr.items())], dtype=numpy.dtype(object))
                 self.data = list(converter[self.data])
             return self
@@ -134,13 +134,13 @@ class Dataset(object):
                 for word in line:
                     if isinstance(word, numbers.Real):
                         fields.append(cls.Field(numbers.Real))
-                    elif isinstance(word, basestring):
-                        fields.append(cls.Field(basestring))
+                    elif isinstance(word, str):
+                        fields.append(cls.Field(str))
                     else:
                         raise ValueError("record type must be a real number or a string, not {0}".format(type(word)))
                 if names is None:
                     formatter = "var{0:0%dd}" % len(str(len(line)))
-                    names = [formatter.format(i) for i in xrange(len(line))]
+                    names = [formatter.format(i) for i in range(len(line))]
                 else:
                     if len(names) != len(fields):
                         raise ValueError("number of columns in dataset is not the same as the number of names")
@@ -217,10 +217,10 @@ class TreeNode(object):
             except TypeError:
                 self.predictandUnique = numpy.unique1d(self.predictand.data)
 
-        elif self.predictand.tpe == basestring:
+        elif self.predictand.tpe == str:
             if self.datasetSize > 0:
                 self.predictandDistribution = []
-                for category in xrange(len(self.predictand.intToStr)):
+                for category in range(len(self.predictand.intToStr)):
                     frac = 1.0 * numpy.sum(self.predictand.data == category) / len(self.predictand.data)
                     self.predictandDistribution.append(frac)
             else:
@@ -269,7 +269,7 @@ class TreeNode(object):
 
         if self.predictand.tpe == numbers.Real:
             return len(self.predictandUnique) > 1
-        elif self.predictand.tpe == basestring:
+        elif self.predictand.tpe == str:
             return numpy.count_nonzero(self.predictandDistribution) > 0
         else:
             raise RuntimeError
@@ -279,7 +279,7 @@ class TreeNode(object):
 
         if self.predictand.tpe == numbers.Real:
             return numpy.mean(self.predictand.data)
-        elif self.predictand.tpe == basestring:
+        elif self.predictand.tpe == str:
             return self.predictand.intToStr[numpy.argmax(self.predictandDistribution)]
         else:
             raise RuntimeError
@@ -302,7 +302,7 @@ class TreeNode(object):
             for fieldIndex, field in enumerate(self.dataset.fields):
                 if field.tpe == numbers.Real:
                     gainTerm, split = self.numericalNVarianceGainTerm(field)
-                elif field.tpe == basestring:
+                elif field.tpe == str:
                     gainTerm, split = self.categoricalNVarianceGainTerm(field, self.maxSubsetSize)
                 else:
                     raise RuntimeError
@@ -318,7 +318,7 @@ class TreeNode(object):
                     self.field = field
             
         # build a classification tree using entropy as the metric to optimize
-        elif self.predictand.tpe == basestring:
+        elif self.predictand.tpe == str:
             # find the best split by maximizing entropic gain
             self.entropy = 0.0
             for frac in self.predictandDistribution:
@@ -334,7 +334,7 @@ class TreeNode(object):
                 # go to a function that finds the best choice for that field
                 if field.tpe == numbers.Real:
                     gainTerm, split = self.numericalEntropyGainTerm(field)
-                elif field.tpe == basestring:
+                elif field.tpe == str:
                     gainTerm, split = self.categoricalEntropyGainTerm(field, self.maxSubsetSize)
                 else:
                     raise RuntimeError
@@ -355,7 +355,7 @@ class TreeNode(object):
         # construct a new dataset by splitting the best field, best split
         if self.field.tpe == numbers.Real:
             passSelection = self.field.data <= self.split
-        elif self.field.tpe == basestring:
+        elif self.field.tpe == str:
             passSelection = numpy.in1d(self.field.data, self.split)
         failSelection = numpy.logical_not(passSelection)
 
@@ -395,7 +395,7 @@ class TreeNode(object):
 
         # sum over categories using a Python for loop
         # (dataset pre-processing has ensured that the N categories are integers from 0 to N-1, so xrange)
-        for category in xrange(len(self.predictand.intToStr)):
+        for category in range(len(self.predictand.intToStr)):
             # number of instances of this category for value <= cut
             numAtAndBeforeIndex = numpy.cumsum(categories == category)
 
@@ -449,27 +449,27 @@ class TreeNode(object):
         # get a selection array for each category of the variable we want to use to make the prediciton
         numPredictorCategories = len(field.strToInt)
         predictorSelection = numpy.zeros((self.datasetSize, numPredictorCategories), dtype=numpy.dtype(bool))
-        for predictorCategory in xrange(numPredictorCategories):
+        for predictorCategory in range(numPredictorCategories):
             predictorSelection[:,predictorCategory] = (field.data == predictorCategory)
 
         # get a selection array for each category that we want to predict
         numPredictandCategories = len(self.predictand.strToInt)
         predictandSelection = numpy.zeros((self.datasetSize, numPredictandCategories), dtype=numpy.dtype(bool))
-        for predictandCategory in xrange(numPredictandCategories):
+        for predictandCategory in range(numPredictandCategories):
             predictandSelection[:,predictandCategory] = (self.predictand.data == predictandCategory)
 
         # combine them for all combinations of predictor category and predictand category
         # bitwise_and is equivalent to logical_and (for these boolean arrays) and faster
         numInCategory = [numpy.array([numpy.sum(numpy.bitwise_and(predictorSelection[:,i], predictandSelection[:,j]))
-                          for i in xrange(numPredictorCategories)])
-                         for j in xrange(numPredictandCategories)]
+                          for i in range(numPredictorCategories)])
+                         for j in range(numPredictandCategories)]
 
         # for the denominators
-        numMarginal = numpy.array([numpy.sum(predictorSelection[:,i]) for i in xrange(numPredictorCategories)])
+        numMarginal = numpy.array([numpy.sum(predictorSelection[:,i]) for i in range(numPredictorCategories)])
 
         # only consider categories that still have instances at this depth of the tree
-        remainingPredictorCategories = [i for i in xrange(numPredictorCategories) if numMarginal[i] > 0]
-        remainingPredictandCategories = numpy.array([i for i in xrange(numPredictandCategories) if self.predictandDistribution[i] > 0])
+        remainingPredictorCategories = [i for i in range(numPredictorCategories) if numMarginal[i] > 0]
+        remainingPredictandCategories = numpy.array([i for i in range(numPredictandCategories) if self.predictandDistribution[i] > 0])
 
         # we will iterate over (N choose k) for all k from 1 to the highest informative k (half of N, rounding up)
         # or a user-supplied maxSubsetSize (to avoid very long calculations)
@@ -481,7 +481,7 @@ class TreeNode(object):
 
         bestGainTerm = None
         bestCombination = None
-        for howMany in xrange(1, maxSubsetSize + 1):
+        for howMany in range(1, maxSubsetSize + 1):
             # itertools.combinations does (N choose k) for a specific k
             for categorySet in itertools.combinations(remainingPredictorCategories, howMany):
                 selection = numpy.array(categorySet)
@@ -607,9 +607,9 @@ class TreeNode(object):
 
         bestGainTerm = None
         bestCombination = None
-        for howMany in xrange(1, maxSubsetSize + 1):
+        for howMany in range(1, maxSubsetSize + 1):
             # itertools.combinations does (N choose k) for a specific k
-            for categorySet in itertools.combinations(xrange(len(fieldUniques)), howMany):
+            for categorySet in itertools.combinations(range(len(fieldUniques)), howMany):
                 selection = numpy.array(categorySet)
 
                 # for the selection
@@ -696,7 +696,7 @@ class TreeNode(object):
                     if field["type"] not in ("int", "long", "float", "double"):
                         raise TypeError("dataType field \"{0}\" must be a numeric type, since this was a numeric type in the dataset training".format(field["name"]))
                     dataFieldTypes.append(field["type"])
-                elif self.dataset.fields[fieldIndex].tpe == basestring:
+                elif self.dataset.fields[fieldIndex].tpe == str:
                     if field["type"] != "string":
                         raise TypeError("dataType field \"{0}\" must be a string, since this was a string in the dataset training".format(field["name"]))
                     if self.maxSubsetSize == 1:
@@ -706,7 +706,7 @@ class TreeNode(object):
 
         asjson = [json.dumps(x) for x in dataFieldTypes]
         astypes = ForwardDeclarationParser().parse(asjson)
-        return LabelData.broadestType(astypes.values())
+        return LabelData.broadestType(list(astypes.values()))
 
     def pfaScoreType(self):
         """Create an Avro schema representing the score type.
@@ -717,7 +717,7 @@ class TreeNode(object):
 
         if self.predictand.tpe == numbers.Real:
             return "double"
-        elif self.predictand.tpe == basestring:
+        elif self.predictand.tpe == str:
             return "string"
         else:
             raise RuntimeError
@@ -767,7 +767,7 @@ class TreeNode(object):
             out["fields"].append({"name": "datasetSize", "type": "int"})
 
         if predictandDistribution:
-            if self.predictand.tpe != basestring:
+            if self.predictand.tpe != str:
                 raise TypeError("predictandDistribution can only be used if the predictand is a string (classification trees)")
             out["fields"].append({"name": "scoreDistribution", "type": {"type": "map", "values": "int"}})
 
@@ -775,7 +775,7 @@ class TreeNode(object):
             out["fields"].append({"name": "scoreValues", "type": {"type": "array", "items": scoreType}})
 
         if entropy:
-            if self.predictand.tpe != basestring:
+            if self.predictand.tpe != str:
                 raise TypeError("entropy can only be used if the predictand is a string (classification trees)")
             out["fields"].append({"name": "entropy", "type": "double"})
 
@@ -834,7 +834,7 @@ class TreeNode(object):
             if self.field.tpe == numbers.Real:
                 operator = "<="
                 value = self.split
-            elif self.field.tpe == basestring:
+            elif self.field.tpe == str:
                 if self.maxSubsetSize == 1:
                     operator = "=="
                     value = self.dataset.fields[self.fieldIndex].intToStr[self.split[0]]
@@ -857,9 +857,9 @@ class TreeNode(object):
             passBranch = self.passBranch.pfaValue(dataType, treeTypeName, nodeScores, datasetSize, predictandDistribution, predictandUnique, entropy, nTimesVariance, gain, valueType)
             failBranch = self.failBranch.pfaValue(dataType, treeTypeName, nodeScores, datasetSize, predictandDistribution, predictandUnique, entropy, nTimesVariance, gain, valueType)
 
-            if passBranch.keys() != [scoreType]:
+            if list(passBranch.keys()) != [scoreType]:
                 passBranch = {treeTypeName: passBranch}
-            if failBranch.keys() != [scoreType]:
+            if list(failBranch.keys()) != [scoreType]:
                 failBranch = {treeTypeName: failBranch}
 
             out = OrderedDict([("field", fieldName),
@@ -875,7 +875,7 @@ class TreeNode(object):
                 out["datasetSize"] = self.datasetSize
 
             if predictandDistribution:
-                if self.predictand.tpe != basestring:
+                if self.predictand.tpe != str:
                     raise TypeError("predictandDistribution can only be used if the predictand is a string (classification trees)")
                 out["scoreDistribution"] = OrderedDict(sorted((self.predictand.intToStr[i], x) for i, x in enumerate(self.predictandDistribution)))
 
@@ -888,7 +888,7 @@ class TreeNode(object):
                     raise RuntimeError
 
             if entropy:
-                if self.predictand.tpe != basestring:
+                if self.predictand.tpe != str:
                     raise TypeError("entropy can only be used if the predictand is a string (classification trees)")
                 out["entropy"] = self.entropy
 

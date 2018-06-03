@@ -135,7 +135,7 @@ class DynamicScope(object):
         :type nameExpr: dict from new variable names to their initial values
         :param nameExpr: variables and values to assign
         """
-        for symbol, init in nameExpr.items():
+        for symbol, init in list(nameExpr.items()):
             self.symbols[symbol] = init
 
     def set(self, nameExpr):
@@ -144,7 +144,7 @@ class DynamicScope(object):
         :type nameExpr: dict from new variable names to their new values
         :param nameExpr: variables and values to assign
         """
-        for symbol, value in nameExpr.items():
+        for symbol, value in list(nameExpr.items()):
             if symbol in self.symbols:
                 self.symbols[symbol] = value
             elif self.parent is not None:
@@ -172,7 +172,7 @@ def callfcn(state, scope, fcn, args):
     if hasattr(fcn, "paramNames"):
         callScope = DynamicScope(scope)
         if isinstance(args, (tuple, list)):
-            args = dict(zip(fcn.paramNames, args))
+            args = dict(list(zip(fcn.paramNames, args)))
         callScope.let(args)
         return fcn(state, callScope)
     else:
@@ -242,7 +242,7 @@ def case(clazz):
     try:
         code = clazz.__init__.__func__
     except AttributeError:
-        code = clazz.__init__.func_code
+        code = clazz.__init__.__code__
 
     context = dict(globals())
     context[clazz.__name__] = clazz
@@ -319,8 +319,8 @@ def untagUnion(expr, unionTypes):
     """
 
     if isinstance(expr, dict) and len(expr) == 1:
-        tag, = expr.keys()
-        value, = expr.values()
+        tag, = list(expr.keys())
+        value, = list(expr.values())
         for expectedTag in unionTypes:
             if isinstance(expectedTag, dict):
                 if expectedTag["type"] in ("record", "enum", "fixed"):
@@ -345,7 +345,7 @@ def avscToPretty(avsc, indent=0):
     :return: PrettyPFA representation
     """
 
-    if isinstance(avsc, basestring):
+    if isinstance(avsc, str):
         return " " * indent + avsc
     elif isinstance(avsc, dict) and "type" in avsc:
         tpe = avsc["type"]

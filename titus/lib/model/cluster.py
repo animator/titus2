@@ -111,7 +111,7 @@ class KMeansIteration(LibFcn):
         if length == 0:
             raise PFARuntimeException("no clusters", self.errcodeBase + 1, self.name, pos)
 
-        matched = [[] for i in xrange(length)]
+        matched = [[] for i in range(length)]
 
         for datum in data:
             besti = 0
@@ -146,22 +146,22 @@ class UpdateMean(LibFcn):
             raise PFARuntimeException("no data", self.errcodeBase + 0, self.name, pos)
 
         dimension = len(data[0])
-        summ = [0.0 for i in xrange(dimension)]
+        summ = [0.0 for i in range(dimension)]
 
         for vec in data:
             if len(vec) != dimension:
                 raise PFARuntimeException("dimensions of vectors do not match", self.errcodeBase + 1, self.name, pos)
-            for i in xrange(dimension):
+            for i in range(dimension):
                 summ[i] += vec[i]
 
         vec = cluster["center"]
         if len(vec) != dimension:
             raise PFARuntimeException("dimensions of vectors do not match", self.errcodeBase + 1, self.name, pos)
-        for i in xrange(dimension):
+        for i in range(dimension):
             summ[i] += weight * vec[i]
 
         denom = len(data) + weight
-        for i in xrange(dimension):
+        for i in range(dimension):
             summ[i] = div(summ[i], denom)
 
         return dict(cluster, center=summ)

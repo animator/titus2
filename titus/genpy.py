@@ -314,7 +314,7 @@ class GeneratePython(titus.pfaast.Task):
             return "self.f[" + repr(context.fcn.name) + "]"
 
         elif isinstance(context, FcnRefFill.Context):
-            reducedArgs = ["\"$" + str(x) + "\"" for x in xrange(len(context.fcnType.params))]
+            reducedArgs = ["\"$" + str(x) + "\"" for x in range(len(context.fcnType.params))]
             j = 0
             args = []
             for name in context.originalParamNames:
@@ -363,7 +363,7 @@ class GeneratePython(titus.pfaast.Task):
             return repr(titus.datatype.jsonDecoder(context.retType, json.loads(context.value)))
 
         elif isinstance(context, NewObject.Context):
-            return "{" + ", ".join(repr(k) + ": " + v for k, v in context.fields.items()) + "}"
+            return "{" + ", ".join(repr(k) + ": " + v for k, v in list(context.fields.items())) + "}"
 
         elif isinstance(context, NewArray.Context):
             return "[" + ", ".join(context.items) + "]"
@@ -687,7 +687,7 @@ def update(state, scope, obj, path, to, arrayErrCode, mapErrCode, fcnName, pos):
             if len(tail) > 0 and head not in obj:
                 raise PFARuntimeException("map key not found", mapErrCode, fcnName, pos)
             out = {}
-            for k, v in obj.items():
+            for k, v in list(obj.items()):
                 if k == head:
                     out[k] = update(state, scope, v, tail, to, arrayErrCode, mapErrCode, fcnName, pos)
                 else:
@@ -941,7 +941,7 @@ def doForkeyval(state, scope, forkey, forval, mapping, loopBody):
 
     loopScope = DynamicScope(scope)
     bodyScope = DynamicScope(loopScope)
-    for key, val in mapping.items():
+    for key, val in list(mapping.items()):
         state.checkTime()
         loopScope.let({forkey: key, forval: val})
         loopBody(state, bodyScope)
@@ -974,8 +974,8 @@ def cast(state, scope, expr, fromType, cases, partial, parser):
         toType = parser.getAvroType(toType)
 
         if isinstance(fromType, titus.datatype.AvroUnion) and isinstance(expr, dict) and len(expr) == 1:
-            tag, = expr.keys()
-            value, = expr.values()
+            tag, = list(expr.keys())
+            value, = list(expr.values())
 
             if not ((tag == toType.name) or \
                     (tag == "int" and toType.name in ("long", "float", "double")) or \
@@ -1029,10 +1029,10 @@ def untagUnions(nameExpr, nameType):
     """
 
     out = {}
-    for name, expr in nameExpr.items():
+    for name, expr in list(nameExpr.items()):
         if isinstance(expr, dict) and len(expr) == 1:
-            tag, = expr.keys()
-            value, = expr.values()
+            tag, = list(expr.keys())
+            value, = list(expr.values())
 
             expectedTag = json.loads(nameType[name])
             if isinstance(expectedTag, dict):
@@ -1070,7 +1070,7 @@ def ifNotNull(state, scope, nameExpr, nameType, thenClause):
     :return: nothing
     """
 
-    if all(x is not None for x in nameExpr.values()):
+    if all(x is not None for x in list(nameExpr.values())):
         thenScope = DynamicScope(scope)
         thenScope.let(untagUnions(nameExpr, nameType))
         thenClause(state, thenScope)
@@ -1094,7 +1094,7 @@ def ifNotNullElse(state, scope, nameExpr, nameType, thenClause, elseClause):
     :return: if all expressions are not ``None``, returns the result of ``thenClause``, otherwise returns the result of ``elseClause``
     """
 
-    if all(x is not None for x in nameExpr.values()):
+    if all(x is not None for x in list(nameExpr.values())):
         thenScope = DynamicScope(scope)
         thenScope.let(untagUnions(nameExpr, nameType))
         return thenClause(state, thenScope)
@@ -1289,9 +1289,9 @@ def genericLog(message, namespace):
     """
 
     if namespace is None:
-        print " ".join(map(json.dumps, message))
+        print(" ".join(map(json.dumps, message)))
     else:
-        print namespace + ": " + " ".join(map(json.dumps, message))
+        print(namespace + ": " + " ".join(map(json.dumps, message)))
     
 class FakeEmitForExecution(titus.fcn.Fcn):
     """Placeholder so that the ``emit`` function looks like any other function to PFA."""
@@ -1446,7 +1446,7 @@ class PFAEngine(object):
 
         context, code = engineConfig.walk(GeneratePython.makeTask(style), titus.pfaast.SymbolTable.blank(), functionTable, engineOptions, pfaVersion)
         if debug:
-            print code
+            print(code)
 
         sandbox = {# Scoring engine architecture
                    "PFAEngine": PFAEngine,
@@ -1483,33 +1483,33 @@ class PFAEngine(object):
                    }
 
         exec(code, sandbox)
-        cls = [x for x in sandbox.values() if getattr(x, "__bases__", None) == (PFAEngine,)][0]
+        cls = [x for x in list(sandbox.values()) if getattr(x, "__bases__", None) == (PFAEngine,)][0]
         cls.parser = context.parser
 
         if sharedState is None:
             sharedState = SharedState()
 
-        for cellName, cellConfig in engineConfig.cells.items():
+        for cellName, cellConfig in list(engineConfig.cells.items()):
             if cellConfig.shared and cellName not in sharedState.cells:
                 value = titus.datatype.jsonDecoder(cellConfig.avroType, cellConfig.initJsonNode)
                 sharedState.cells[cellName] = Cell(value, cellConfig.shared, cellConfig.rollback, cellConfig.source)
 
-        for poolName, poolConfig in engineConfig.pools.items():
+        for poolName, poolConfig in list(engineConfig.pools.items()):
             if poolConfig.shared and poolName not in sharedState.pools:
                 value = titus.datatype.jsonDecoder(titus.datatype.AvroMap(poolConfig.avroType), poolConfig.initJsonNode)
                 sharedState.pools[poolName] = Pool(value, poolConfig.shared, poolConfig.rollback, poolConfig.source)
 
         out = []
-        for index in xrange(multiplicity):
+        for index in range(multiplicity):
             cells = dict(sharedState.cells)
             pools = dict(sharedState.pools)
 
-            for cellName, cellConfig in engineConfig.cells.items():
+            for cellName, cellConfig in list(engineConfig.cells.items()):
                 if not cellConfig.shared:
                     value = titus.datatype.jsonDecoder(cellConfig.avroType, cellConfig.initJsonNode)
                     cells[cellName] = Cell(value, cellConfig.shared, cellConfig.rollback, cellConfig.source)
 
-            for poolName, poolConfig in engineConfig.pools.items():
+            for poolName, poolConfig in list(engineConfig.pools.items()):
                 if not poolConfig.shared:
                     value = titus.datatype.jsonDecoder(titus.datatype.AvroMap(poolConfig.avroType), poolConfig.initJsonNode)
                     pools[poolName] = Pool(value, poolConfig.shared, poolConfig.rollback, poolConfig.source)
@@ -1523,7 +1523,7 @@ class PFAEngine(object):
                 rand = random.Random()
             else:
                 rand = random.Random(engineConfig.randseed)
-                for skip in xrange(index):
+                for skip in range(index):
                     rand = random.Random(rand.randint(0, 2**31 - 1))
 
             engine = cls(cells, pools, engineConfig, engineOptions, genericLog, genericEmit, zero, index, rand)
@@ -1618,8 +1618,8 @@ class PFAEngine(object):
         Note that you can call ``toJson`` on the ``EngineConfig`` to get a string that can be written to a PFA file.
         """
 
-        newCells = dict((k, AstCell(self.config.cells[k].avroPlaceholder, json.dumps(v.value), v.shared, v.rollback, v.source)) for k, v in self.cells.items())
-        newPools = dict((k, AstPool(self.config.pools[k].avroPlaceholder, dict((kk, json.dumps(vv)) for kk, vv in v.value.items()), v.shared, v.rollback, v.source)) for k, v in self.pools.items())
+        newCells = dict((k, AstCell(self.config.cells[k].avroPlaceholder, json.dumps(v.value), v.shared, v.rollback, v.source)) for k, v in list(self.cells.items()))
+        newPools = dict((k, AstPool(self.config.pools[k].avroPlaceholder, dict((kk, json.dumps(vv)) for kk, vv in list(v.value.items())), v.shared, v.rollback, v.source)) for k, v in list(self.pools.items()))
 
         return EngineConfig(
             self.config.name,
@@ -1768,31 +1768,31 @@ class FastAvroCorrector(object):
     def __iter__(self):
         return self
 
-    def next(self):
-        return self.correctFastAvro(self.reader.next(), self.avroType)
+    def __next__(self):
+        return self.correctFastAvro(next(self.reader), self.avroType)
 
     def correctFastAvro(self, x, avroType):
         if isinstance(avroType, (titus.datatype.AvroString, titus.datatype.AvroEnum)) and isinstance(x, str):
             return x.decode("utf-8", "replace")
 
-        elif isinstance(avroType, (titus.datatype.AvroBytes, titus.datatype.AvroFixed)) and isinstance(x, unicode):
+        elif isinstance(avroType, (titus.datatype.AvroBytes, titus.datatype.AvroFixed)) and isinstance(x, str):
             return x.encode("utf-8", "replace")
 
         elif isinstance(avroType, titus.datatype.AvroArray):
             itemType = avroType.items
-            for i in xrange(len(x)):
+            for i in range(len(x)):
                 x[i] = self.correctFastAvro(x[i], itemType)
 
         elif isinstance(avroType, titus.datatype.AvroMap):
             valueType = avroType.values
             out = {}
-            for key, value in x.items():
+            for key, value in list(x.items()):
                 out[key.decode("utf-8", "replace")] = self.correctFastAvro(value, valueType)
             return out
 
         elif isinstance(avroType, titus.datatype.AvroRecord):
             fields = avroType.fieldsDict
-            if fields.keys() != x.keys():
+            if list(fields.keys()) != list(x.keys()):
                 raise KeyError("datum {0} does not match record schema\n{1}".format(x, avroType))
             for key in fields:
                 x[key] = self.correctFastAvro(x[key], fields[key].avroType)
@@ -1801,12 +1801,12 @@ class FastAvroCorrector(object):
         elif isinstance(avroType, titus.datatype.AvroUnion):
             for tpe in avroType.types:
                 if (isinstance(tpe, (titus.datatype.AvroString, titus.datatype.AvroEnum)) and isinstance(x, str)) or \
-                   (isinstance(tpe, (titus.datatype.AvroBytes, titus.datatype.AvroFixed)) and isinstance(x, unicode)) or \
+                   (isinstance(tpe, (titus.datatype.AvroBytes, titus.datatype.AvroFixed)) and isinstance(x, str)) or \
                    (isinstance(tpe, titus.datatype.AvroArray) and isinstance(x, (list, tuple))) or \
                    (isinstance(tpe, titus.datatype.AvroMap) and isinstance(x, dict)):
                     return self.correctFastAvro(x, tpe)
 
-                elif (isinstance(tpe, (titus.datatype.AvroString, titus.datatype.AvroEnum)) and isinstance(x, unicode)) or \
+                elif (isinstance(tpe, (titus.datatype.AvroString, titus.datatype.AvroEnum)) and isinstance(x, str)) or \
                      (isinstance(tpe, (titus.datatype.AvroBytes, titus.datatype.AvroFixed)) and isinstance(x, str)):
                     return x
 

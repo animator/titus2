@@ -71,7 +71,7 @@ class Keys(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}], P.Array(P.String()))
     errcodeBase = 26010
     def __call__(self, state, scope, pos, paramTypes, m):
-        return m.keys()
+        return list(m.keys())
 provide(Keys())
 
 class Values(LibFcn):
@@ -79,7 +79,7 @@ class Values(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}], P.Array(P.Wildcard("A")))
     errcodeBase = 26020
     def __call__(self, state, scope, pos, paramTypes, m):
-        return m.values()
+        return list(m.values())
 provide(Values())
 
 #################################################################### searching
@@ -106,12 +106,12 @@ class ContainsValue(LibFcn):
     errcodeBase = 26040
     def __call__(self, state, scope, pos, paramTypes, m, value):
         if callable(value):
-            for v in m.values():
+            for v in list(m.values()):
                 if callfcn(state, scope, value, [v]):
                     return True
             return False
         else:
-            for v in m.values():
+            for v in list(m.values()):
                 if v == value:
                     return True
             return False
@@ -152,7 +152,7 @@ class Only(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}, {"keys": P.Array(P.String())}], P.Map(P.Wildcard("A")))
     errcodeBase = 26070
     def __call__(self, state, scope, pos, paramTypes, m, keys):
-        return dict((k, v) for k, v in m.items() if k in keys)
+        return dict((k, v) for k, v in list(m.items()) if k in keys)
 provide(Only())
 
 class Except(LibFcn):
@@ -160,7 +160,7 @@ class Except(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}, {"keys": P.Array(P.String())}], P.Map(P.Wildcard("A")))
     errcodeBase = 26080
     def __call__(self, state, scope, pos, paramTypes, m, keys):
-        return dict((k, v) for k, v in m.items() if k not in keys)
+        return dict((k, v) for k, v in list(m.items()) if k not in keys)
 provide(Except())
 
 class Update(LibFcn):
@@ -168,7 +168,7 @@ class Update(LibFcn):
     sig = Sig([{"base": P.Map(P.Wildcard("A"))}, {"overlay": P.Map(P.Wildcard("A"))}], P.Map(P.Wildcard("A")))
     errcodeBase = 26090
     def __call__(self, state, scope, pos, paramTypes, base, overlay):
-        return dict(base.items() + overlay.items())
+        return dict(list(base.items()) + list(overlay.items()))
 provide(Update())
 
 class Split(LibFcn):
@@ -176,7 +176,7 @@ class Split(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}], P.Array(P.Map(P.Wildcard("A"))))
     errcodeBase = 26100
     def __call__(self, state, scope, pos, paramTypes, m):
-        return [{k: v} for k, v in m.items()]
+        return [{k: v} for k, v in list(m.items())]
 provide(Split())
 
 class Join(LibFcn):
@@ -186,7 +186,7 @@ class Join(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, a):
         out = []
         for m in a:
-            out.extend(m.items())
+            out.extend(list(m.items()))
         return dict(out)
 provide(Join())    
 
@@ -194,7 +194,7 @@ provide(Join())
 
 def argHighestN(m, n, lt):
     out = []
-    for k, x in m.items():
+    for k, x in list(m.items()):
         found = False
         for index, (bestk, bestx) in enumerate(out):
             if lt(bestx, x) or (not lt(x, bestx) and bestk > k):
@@ -212,7 +212,7 @@ def argHighestN(m, n, lt):
 
 def argLowestN(m, n, lt):
     out = []
-    for k, x in m.items():
+    for k, x in list(m.items()):
         found = False
         for index, (bestk, bestx) in enumerate(out):
             if lt(x, bestx) or (not lt(bestx, x) and bestk > k):
@@ -339,7 +339,7 @@ class FromSet(LibFcn, ObjKey):
     sig = Sig([{"s": P.Map(P.Wildcard("A"))}], P.Array(P.Wildcard("A")))
     errcodeBase = 26210
     def __call__(self, state, scope, pos, paramTypes, s):
-        return s.values()
+        return list(s.values())
 provide(FromSet())
 
 class In(LibFcn, ObjKey):
@@ -355,7 +355,7 @@ class Union(LibFcn):
     sig = Sig([{"a": P.Map(P.Wildcard("A"))}, {"b": P.Map(P.Wildcard("A"))}], P.Map(P.Wildcard("A")))
     errcodeBase = 26230
     def __call__(self, state, scope, pos, paramTypes, a, b):
-        return dict(a.items() + b.items())
+        return dict(list(a.items()) + list(b.items()))
 provide(Union())
 
 class Intersection(LibFcn):
@@ -363,7 +363,7 @@ class Intersection(LibFcn):
     sig = Sig([{"a": P.Map(P.Wildcard("A"))}, {"b": P.Map(P.Wildcard("A"))}], P.Map(P.Wildcard("A")))
     errcodeBase = 26240
     def __call__(self, state, scope, pos, paramTypes, a, b):
-        return dict((k, v) for k, v in a.items() if k in b)
+        return dict((k, v) for k, v in list(a.items()) if k in b)
 provide(Intersection())
 
 class Diff(LibFcn):
@@ -371,7 +371,7 @@ class Diff(LibFcn):
     sig = Sig([{"a": P.Map(P.Wildcard("A"))}, {"b": P.Map(P.Wildcard("A"))}], P.Map(P.Wildcard("A")))
     errcodeBase = 26250
     def __call__(self, state, scope, pos, paramTypes, a, b):
-        return dict((k, v) for k, v in a.items() if k not in b)
+        return dict((k, v) for k, v in list(a.items()) if k not in b)
 provide(Diff())
 
 class SymDiff(LibFcn):
@@ -380,7 +380,7 @@ class SymDiff(LibFcn):
     errcodeBase = 26260
     def __call__(self, state, scope, pos, paramTypes, a, b):
         cc = set(a.keys()).symmetric_difference(set(b.keys()))
-        return dict((k, v) for k, v in a.items() + b.items() if k in cc)
+        return dict((k, v) for k, v in list(a.items()) + list(b.items()) if k in cc)
 provide(SymDiff())
 
 class Subset(LibFcn):
@@ -388,7 +388,7 @@ class Subset(LibFcn):
     sig = Sig([{"little": P.Map(P.Wildcard("A"))}, {"big": P.Map(P.Wildcard("A"))}], P.Boolean())
     errcodeBase = 26270
     def __call__(self, state, scope, pos, paramTypes, little, big):
-        return all(k in big for k in little.keys())
+        return all(k in big for k in list(little.keys()))
 provide(Subset())
 
 class Disjoint(LibFcn):
@@ -406,7 +406,7 @@ class MapApply(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}, {"fcn": P.Fcn([P.Wildcard("A")], P.Wildcard("B"))}], P.Map(P.Wildcard("B")))
     errcodeBase = 26290
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
-        return dict((k, callfcn(state, scope, fcn, [v])) for k, v in m.items())
+        return dict((k, callfcn(state, scope, fcn, [v])) for k, v in list(m.items()))
 provide(MapApply())
 
 class MapWithKey(LibFcn):
@@ -414,7 +414,7 @@ class MapWithKey(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}, {"fcn": P.Fcn([P.String(), P.Wildcard("A")], P.Wildcard("B"))}], P.Map(P.Wildcard("B")))
     errcodeBase = 26300
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
-        return dict((k, callfcn(state, scope, fcn, [k, v])) for k, v in m.items())
+        return dict((k, callfcn(state, scope, fcn, [k, v])) for k, v in list(m.items()))
 provide(MapWithKey())
 
 class Filter(LibFcn):
@@ -422,7 +422,7 @@ class Filter(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}, {"fcn": P.Fcn([P.Wildcard("A")], P.Boolean())}], P.Map(P.Wildcard("A")))
     errcodeBase = 26310
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
-        return dict((k, v) for k, v in m.items() if callfcn(state, scope, fcn, [v]))
+        return dict((k, v) for k, v in list(m.items()) if callfcn(state, scope, fcn, [v]))
 provide(Filter())
 
 class FilterWithKey(LibFcn):
@@ -430,7 +430,7 @@ class FilterWithKey(LibFcn):
     sig = Sig([{"m": P.Map(P.Wildcard("A"))}, {"fcn": P.Fcn([P.String(), P.Wildcard("A")], P.Boolean())}], P.Map(P.Wildcard("A")))
     errcodeBase = 26320
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
-        return dict((k, v) for k, v in m.items() if callfcn(state, scope, fcn, [k, v]))
+        return dict((k, v) for k, v in list(m.items()) if callfcn(state, scope, fcn, [k, v]))
 provide(FilterWithKey())
 
 class FilterMap(LibFcn):
@@ -440,11 +440,11 @@ class FilterMap(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
         typeNames = [jsonNodeToAvroType(t).name for t in paramTypes[1]["ret"] if t != "null"]
         out = {}
-        for k, v in m.items():
+        for k, v in list(m.items()):
             vv = callfcn(state, scope, fcn, [v])
             if vv is not None:
-                if isinstance(vv, dict) and len(vv) == 1 and vv.keys()[0] in typeNames:
-                    tag, value = vv.items()[0]
+                if isinstance(vv, dict) and len(vv) == 1 and list(vv.keys())[0] in typeNames:
+                    tag, value = list(vv.items())[0]
                 else:
                     value = vv
                 out[k] = value
@@ -458,11 +458,11 @@ class FilterMapWithKey(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
         typeNames = [jsonNodeToAvroType(t).name for t in paramTypes[1]["ret"] if t != "null"]
         out = {}
-        for k, v in m.items():
+        for k, v in list(m.items()):
             vv = callfcn(state, scope, fcn, [k, v])
             if vv is not None:
-                if isinstance(vv, dict) and len(vv) == 1 and vv.keys()[0] in typeNames:
-                    tag, value = vv.items()[0]
+                if isinstance(vv, dict) and len(vv) == 1 and list(vv.keys())[0] in typeNames:
+                    tag, value = list(vv.items())[0]
                 else:
                     value = vv
                 out[k] = value
@@ -475,8 +475,8 @@ class FlatMap(LibFcn):
     errcodeBase = 26350
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
         out = {}
-        for key, value in m.items():
-            for k, v in callfcn(state, scope, fcn, [value]).items():
+        for key, value in list(m.items()):
+            for k, v in list(callfcn(state, scope, fcn, [value]).items()):
                 out[k] = v
         return out
 provide(FlatMap())
@@ -487,8 +487,8 @@ class FlatMapWithKey(LibFcn):
     errcodeBase = 26360
     def __call__(self, state, scope, pos, paramTypes, m, fcn):
         out = {}
-        for key, value in m.items():
-            for k, v in callfcn(state, scope, fcn, [key, value]).items():
+        for key, value in list(m.items()):
+            for k, v in list(callfcn(state, scope, fcn, [key, value]).items()):
                 out[k] = v
         return out
 provide(FlatMapWithKey())
@@ -502,9 +502,9 @@ class ZipMap(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, *args):
         fcn = args[-1]
         maps = args[:-1]
-        keys = maps[0].keys()
+        keys = list(maps[0].keys())
         for m in maps:
-            if keys != m.keys():
+            if keys != list(m.keys()):
                 raise PFARuntimeException("misaligned maps", self.errcodeBase + 0, self.name, pos)
         out = {}
         for k in keys:
@@ -521,9 +521,9 @@ class ZipMapWithKey(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, *args):
         fcn = args[-1]
         maps = args[:-1]
-        keys = maps[0].keys()
+        keys = list(maps[0].keys())
         for m in maps:
-            if keys != m.keys():
+            if keys != list(m.keys()):
                 raise PFARuntimeException("misaligned maps", self.errcodeBase + 0, self.name, pos)
         out = {}
         for k in keys:

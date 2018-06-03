@@ -19,7 +19,7 @@
 
 import json
 import base64
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import io
 import re
 
@@ -103,7 +103,7 @@ def jsonToAst(jsonInput):
 
     if isinstance(jsonInput, file):
         jsonInput = jsonInput.read()
-    if isinstance(jsonInput, basestring):
+    if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
     
     avroTypeBuilder = AvroTypeBuilder()
@@ -125,7 +125,7 @@ def yamlToAst(yamlInput):
     def read(parser):
         try:
             while True:
-                event = parser.next()
+                event = next(parser)
         
                 if isinstance(event, yaml.ScalarEvent):
                     if not event.implicit[0]:
@@ -172,7 +172,7 @@ def yamlToAst(yamlInput):
 
                         elif isinstance(key, yaml.events.Event):
                             raise PFASyntaxException("malformed YAML", "line {0}".format(event.end_mark.line))
-                        elif not isinstance(key, basestring):
+                        elif not isinstance(key, str):
                             raise PFASyntaxException("YAML keys must be strings, not {0}".format(key), "line {0}".format(event.end_mark.line))
 
                         value = read(parser)
@@ -203,7 +203,7 @@ def jsonToExpressionAst(jsonInput, where=""):
     """
     if isinstance(jsonInput, file):
         jsonInput = jsonInput.read()
-    if isinstance(jsonInput, basestring):
+    if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
 
     avroTypeBuilder = AvroTypeBuilder()
@@ -224,7 +224,7 @@ def jsonToExpressionsAst(jsonInput, where=""):
     """
     if isinstance(jsonInput, file):
         jsonInput = jsonInput.read()
-    if isinstance(jsonInput, basestring):
+    if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
 
     avroTypeBuilder = AvroTypeBuilder()
@@ -245,7 +245,7 @@ def jsonToFcnDef(jsonInput, where=""):
     """
     if isinstance(jsonInput, file):
         jsonInput = jsonInput.read()
-    if isinstance(jsonInput, basestring):
+    if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
 
     avroTypeBuilder = AvroTypeBuilder()
@@ -266,7 +266,7 @@ def jsonToFcnDefs(jsonInput, where=""):
     """
     if isinstance(jsonInput, file):
         jsonInput = jsonInput.read()
-    if isinstance(jsonInput, basestring):
+    if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
 
     avroTypeBuilder = AvroTypeBuilder()
@@ -285,7 +285,7 @@ def _trunc(x):
 
 def _stripAtSigns(data):
     if isinstance(data, dict):
-        return dict((k, _stripAtSigns(v)) for k, v in data.items() if k != "@")
+        return dict((k, _stripAtSigns(v)) for k, v in list(data.items()) if k != "@")
     elif isinstance(data, (list, tuple)):
         return [_stripAtSigns(x) for x in data]
     else:
@@ -297,7 +297,7 @@ def _readEngineConfig(data, avroTypeBuilder):
     if not isinstance(data, dict):
         raise PFASyntaxException("PFA engine must be a JSON object, not " + _trunc(repr(data)), at)
 
-    keys = set(x for x in data.keys() if x != "@")
+    keys = set(x for x in list(data.keys()) if x != "@")
 
     _method = Method.MAP
     _begin = []
@@ -386,7 +386,7 @@ def _readJsonNodeMap(data, dot):
 def _readJsonToStringMap(data, dot):
     if isinstance(data, dict):
         at = data.get("@")
-        return dict((k, _readJsonToString(v, dot + " -> " + k)) for k, v in data.items() if k != "@")
+        return dict((k, _readJsonToString(v, dot + " -> " + k)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of JSON objects, not " + _trunc(repr(data)), dot)
 
@@ -397,7 +397,7 @@ def _readBoolean(data, dot):
         raise PFASyntaxException("expected boolean, not " + _trunc(repr(data)), dot)
 
 def _readInt(data, dot):
-    if isinstance(data, (int, long)):
+    if isinstance(data, int):
         if -2147483648 <= data <= 2147483647:
             return data
         else:
@@ -406,7 +406,7 @@ def _readInt(data, dot):
         raise PFASyntaxException("expected int, not " + _trunc(repr(data)), dot)
 
 def _readLong(data, dot):
-    if isinstance(data, (int, long)):
+    if isinstance(data, int):
         if -9223372036854775808 <= data <= 9223372036854775807:
             return data
         else:
@@ -415,13 +415,13 @@ def _readLong(data, dot):
         raise PFASyntaxException("expected long, not " + _trunc(repr(data)), dot)
 
 def _readFloat(data, dot):
-    if isinstance(data, (int, long, float)):
+    if isinstance(data, (int, float)):
         return float(data)
     else:
         raise PFASyntaxException("expected float, not " + _trunc(repr(data)), dot)
 
 def _readDouble(data, dot):
-    if isinstance(data, (int, long, float)):
+    if isinstance(data, (int, float)):
         return float(data)
     else:
         raise PFASyntaxException("expected double, not " + _trunc(repr(data)), dot)
@@ -437,7 +437,7 @@ def _readStringExpressionPairs(data, dot, avroTypeBuilder):
                 pass
             if len(pair) != 1:
                 raise PFASyntaxException("expected array of {string: expression} pairs, found map of length " + str(len(pair)), dot)
-            out.extend(pair.items())
+            out.extend(list(pair.items()))
         return out
     else:
         return PFASyntaxException("expected array of {string: expression} pairs, found " + _trunc(repr(data)), dot)
@@ -456,7 +456,7 @@ def _readStringPairs(data, dot):
                 pass
             if len(pair) != 1:
                 raise PFASyntaxException("expected array of {string: string} pairs, found map of length " + str(len(pair)), dot)
-            out.extend(pair.items())
+            out.extend(list(pair.items()))
         return out
     else:
         raise PFASyntaxException("expected array of {string: string} pairs, found " + _trunc(repr(data)), dot)
@@ -476,24 +476,24 @@ def _readStringOrIntArray(data, dot):
 def _readStringMap(data, dot):
     if isinstance(data, dict):
         at = data.get("@")
-        return dict((k, _readString(v, dot + " -> " + k)) for k, v in data.items() if k != "@")
+        return dict((k, _readString(v, dot + " -> " + k)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of strings, not " + _trunc(repr(data)), dot)
 
 def _readString(data, dot):
-    if isinstance(data, basestring):
+    if isinstance(data, str):
         return data
     else:
         raise PFASyntaxException("expected string, not " + _trunc(repr(data)), dot)
 
 def _readStringOrInt(data, dot):
-    if isinstance(data, (basestring, int, long)):
+    if isinstance(data, (str, int)):
         return data
     else:
         raise PFASyntaxException("expected string or int, not " + _trunc(repr(data)), dot)
 
 def _readBase64(data, dot):
-    if isinstance(data, basestring):
+    if isinstance(data, str):
         return base64.b64decode(data)
     else:
         raise PFASyntaxException("expected base64 data, not " + _trunc(repr(data)), dot)
@@ -507,7 +507,7 @@ def _readExpressionArray(data, dot, avroTypeBuilder):
 def _readExpressionMap(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        return dict((k, _readExpression(v, dot + " -> " + k, avroTypeBuilder)) for k, v in data.items() if k != "@")
+        return dict((k, _readExpression(v, dot + " -> " + k, avroTypeBuilder)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of expressions, not " + _trunc(repr(data)), dot)
 
@@ -520,7 +520,7 @@ def _readCastCaseArray(data, dot, avroTypeBuilder):
 def _readCastCase(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        keys = set(x for x in data.keys() if x != "@")
+        keys = set(x for x in list(data.keys()) if x != "@")
 
         for key in keys:
             if key == "as": _as = _readAvroPlaceholder(data[key], dot + " -> " + key, avroTypeBuilder)
@@ -558,7 +558,7 @@ def _readArgumentArray(data, dot, avroTypeBuilder):
 def _readArgumentMap(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        return dict((k, _readArgument(v, dot + " -> " + k, avroTypeBuilder)) for k, v in data.items() if k != "@")
+        return dict((k, _readArgument(v, dot + " -> " + k, avroTypeBuilder)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of arguments, found " + _trunc(repr(data)), dot)
 
@@ -567,7 +567,7 @@ def _readArgument(data, dot, avroTypeBuilder):
         return LiteralNull(dot)
     elif isinstance(data, bool):
         return LiteralBoolean(data, dot)
-    elif isinstance(data, (int, long)):
+    elif isinstance(data, int):
         if -2147483648 <= data <= 2147483647:
             return LiteralInt(data, dot)
         elif -9223372036854775808 <= data <= 9223372036854775807:
@@ -576,14 +576,14 @@ def _readArgument(data, dot, avroTypeBuilder):
             raise PFASyntaxException("integer out of range: " + str(data), dot)
     elif isinstance(data, float):
         return LiteralDouble(data, dot)
-    elif isinstance(data, basestring):
+    elif isinstance(data, str):
         if "." in data:
             words = data.split(".")
             ref = words[0]
             rest = words[1:]
             if not validSymbolName(ref):
                 raise PFASyntaxException("\"{0}\" is not a valid symbol name".format(ref), dot)
-            for i in xrange(len(rest)):
+            for i in range(len(rest)):
                 try:
                     asint = int(rest[i])
                 except ValueError:
@@ -597,14 +597,14 @@ def _readArgument(data, dot, avroTypeBuilder):
             raise PFASyntaxException("\"{0}\" is not a valid symbol name".format(data), dot)
 
     elif isinstance(data, (list, tuple)):
-        if len(data) == 1 and isinstance(data[0], basestring):
+        if len(data) == 1 and isinstance(data[0], str):
             return LiteralString(data[0], dot)
         else:
             raise PFASyntaxException("expecting expression, which may be [\"string\"], but no other array can be used as an expression", dot)
 
     elif isinstance(data, dict):
         at = data.get("@")
-        keys = set(x for x in data.keys() if x != "@")
+        keys = set(x for x in list(data.keys()) if x != "@")
 
         _path = []
         _seq = True
@@ -813,17 +813,17 @@ def _readArgument(data, dot, avroTypeBuilder):
 def _readFcnDefMap(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        for k in data.keys():
+        for k in list(data.keys()):
             if k != "@" and not validFunctionName(k):
                 raise PFASyntaxException("\"{0}\" is not a valid function name".format(k), pos(dot, at))
-        return dict((k, _readFcnDef(v, dot + " -> " + k, avroTypeBuilder)) for k, v in data.items() if k != "@")
+        return dict((k, _readFcnDef(v, dot + " -> " + k, avroTypeBuilder)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of function definitions, not " + _trunc(repr(data)), pos(dot, at))
 
 def _readFcnDef(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        keys = set(x for x in data.keys() if x != "@")
+        keys = set(x for x in list(data.keys()) if x != "@")
 
         for key in keys:
             if key == "params": _params = _readParams(data[key], dot + " -> " + key, avroTypeBuilder)
@@ -853,7 +853,7 @@ def _readParams(data, dot, avroTypeBuilder):
 def _readParam(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        keys = set(x for x in data.keys() if x != "@")
+        keys = set(x for x in list(data.keys()) if x != "@")
         if len(keys) != 1:
             raise PFASyntaxException("function parameter name-type map should have only one pair", pos(dot, at))
         n = list(keys)[0]
@@ -868,10 +868,10 @@ def _readParam(data, dot, avroTypeBuilder):
 def _readCells(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        for k in data.keys():
+        for k in list(data.keys()):
             if k != "@" and not validSymbolName(k):
                 raise PFASyntaxException("\"{0}\" is not a valid symbol name".format(k), pos(dot, at))
-        return dict((k, _readCell(data[k], dot, avroTypeBuilder)) for k, v in data.items() if k != "@")
+        return dict((k, _readCell(data[k], dot, avroTypeBuilder)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of cells, not " + _trunc(repr(data)), pos(dot, at))
 
@@ -881,7 +881,7 @@ def _readCell(data, dot, avroTypeBuilder):
         _shared = False
         _rollback = False
         _source = "embedded"
-        keys = set(x for x in data.keys() if x != "@")
+        keys = set(x for x in list(data.keys()) if x != "@")
         for key in keys:
             if key == "type": _avroType = _readAvroPlaceholder(data[key], dot + " -> " + key, avroTypeBuilder)
             elif key == "init": _init = _readJsonToString(data[key], dot + " -> " + key)
@@ -896,20 +896,20 @@ def _readCell(data, dot, avroTypeBuilder):
         else:
             if _source == "avro":
                 url = json.loads(_init)
-                if not isinstance(url, basestring):
+                if not isinstance(url, str):
                     raise PFASyntaxException("source: avro requires init to be a string", pos(dot, at))
                 def getit(avroType):
-                    reader = DataFileReader(urllib.urlopen(url), DatumReader())
+                    reader = DataFileReader(urllib.request.urlopen(url), DatumReader())
                     return reader.read()
                 _init = getit
 
             elif _source == "json":
                 url = json.loads(_init)
-                if not isinstance(url, basestring):
+                if not isinstance(url, str):
                     raise PFASyntaxException("source: json requires init to be a string", pos(dot, at))
                 def getit(avroType):
                     if re.match("^[a-zA-Z][a-zA-Z0-9\+\-\.]*://", url) is not None:
-                        return urllib.urlopen(url).read()
+                        return urllib.request.urlopen(url).read()
                     else:
                         return open(url).read()
                 _init = getit
@@ -932,10 +932,10 @@ def _readCell(data, dot, avroTypeBuilder):
 def _readPools(data, dot, avroTypeBuilder):
     if isinstance(data, dict):
         at = data.get("@")
-        for k in data.keys():
+        for k in list(data.keys()):
             if k != "@" and not validSymbolName(k):
                 raise PFASyntaxException("\"{0}\" is not a valid symbol name".format(k), pos(dot, at))
-        return dict((k, _readPool(data[k], dot, avroTypeBuilder)) for k, v in data.items() if k != "@")
+        return dict((k, _readPool(data[k], dot, avroTypeBuilder)) for k, v in list(data.items()) if k != "@")
     else:
         raise PFASyntaxException("expected map of pools, not " + _trunc(repr(data)), None)
 
@@ -946,7 +946,7 @@ def _readPool(data, dot, avroTypeBuilder):
         _shared = False
         _rollback = False
         _source = "embedded"
-        keys = set(x for x in data.keys() if x != "@")
+        keys = set(x for x in list(data.keys()) if x != "@")
         for key in keys:
             if key == "type": _avroType = _readAvroPlaceholder(data[key], dot + " -> " + key, avroTypeBuilder)
             elif key == "init": _init = _readJsonToStringMap(data[key], dot + " -> " + key)
@@ -959,20 +959,20 @@ def _readPool(data, dot, avroTypeBuilder):
         else:
             if _source == "avro":
                 url = json.loads(_init)
-                if not isinstance(url, basestring):
+                if not isinstance(url, str):
                     raise PFASyntaxException("source: avro requires init to be a string", pos(dot, at))
                 def getit(avroType):
-                    reader = DataFileReader(urllib.urlopen(url), DatumReader())
+                    reader = DataFileReader(urllib.request.urlopen(url), DatumReader())
                     return reader.read()
                 _init = getit
 
             elif _source == "json":
                 url = json.loads(_init)
-                if not isinstance(url, basestring):
+                if not isinstance(url, str):
                     raise PFASyntaxException("source: json requires init to be a string", pos(dot, at))
                 def getit(avroType):
                     if re.match("^[a-zA-Z][a-zA-Z0-9\+\-\.]*://", url) is not None:
-                        return urllib.urlopen(url).read()
+                        return urllib.request.urlopen(url).read()
                     else:
                         return open(url).read()
                 _init = getit
