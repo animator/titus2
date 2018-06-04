@@ -77,6 +77,22 @@ class PFAVersion(object):
     def __repr__(self):
         """Represent a PFAVersion as a dotted triple on the screen."""
         return "{0}.{1}.{2}".format(self.major, self.minor, self.release)
+    def __lt__(self, other):
+        """Strict ordering on PFAVersions: check major number first, then minor, then release."""
+        if self.major == other.major and self.minor == other.minor:
+            return (self.release < other.release)
+        elif self.major == other.major:
+            return (self.minor < other.minor)
+        else:
+            return (self.major < other.major)
+    def __ge__(self, other):
+        """Strict ordering on PFAVersions: check major number first, then minor, then release."""
+        if self.major == other.major and self.minor == other.minor:
+            return (self.release >= other.release)
+        elif self.major == other.major:
+            return (self.minor >= other.minor)
+        else:
+            return (self.major >= other.major)     
     def __cmp__(self, other):
         """Strict ordering on PFAVersions: check major number first, then minor, then release."""
         if self.major == other.major and self.minor == other.minor:
