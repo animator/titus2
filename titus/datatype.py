@@ -183,7 +183,7 @@ class AvroType(Type):
 
     def __hash__(self):
         """Return a unique hash of the type."""
-        return hash(self.schema)
+        return hash(str(self.schema))
 
     def _recordFieldsOkay(self, other, memo, checkRecord):
         for xf in self.fields:
