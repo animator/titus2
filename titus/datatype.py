@@ -690,7 +690,7 @@ class AvroFilledPlaceholder(AvroPlaceholder):
 
 def parseAvroType(obj):
     """Parse an AVSC object without any memory of named types."""
-    return schemaToAvroType(avro.schema.make_avsc_object(obj, avro.schema.Names()))
+    return schemaToAvroType(avro.schema.SchemaFromJSONData(obj, avro.schema.Names()))
 
 class ForwardDeclarationParser(object):
     """Container that stores Avro types as they're collected from a PFA file, returning titus.datatype.AvroPlaceholder objects, and then resolves those types independent of the order in which they were read from the file."""
@@ -727,7 +727,7 @@ class ForwardDeclarationParser(object):
                         oldnames = dict(self.names.names)
 
                         try:
-                            gotit = avro.schema.make_avsc_object(obj, self.names)
+                            gotit = avro.schema.SchemaFromJSONData(obj, self.names)
                         except avro.schema.SchemaParseException as err:
                             self.names.names = oldnames
                             errorMessages[jsonString] = str(err)
