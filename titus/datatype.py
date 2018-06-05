@@ -474,8 +474,7 @@ class AvroArray(AvroContainer):
         :type items: titus.datatype.AvroType
         :param items: type of the contained objects
         """
-        self._schema = avro.schema.ArraySchema("null", avro.schema.Names())
-        self._schema.set_prop("items", items.schema)
+        self._schema = avro.schema.ArraySchema(items.schema)
     @property
     def items(self):
         """Type of the contained objects."""
@@ -494,8 +493,7 @@ class AvroMap(AvroContainer, AvroMapping):
         :type values: titus.datatype.AvroType
         :param values: type of the contained objects
         """
-        self._schema = avro.schema.MapSchema("null")
-        self._schema.set_prop("values", values.schema)
+        self._schema = avro.schema.MapSchema(values.schema)
     @property
     def values(self):
         """Type of the contained objects."""
