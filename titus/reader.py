@@ -101,7 +101,7 @@ def jsonToAst(jsonInput):
     :return: a PFA configuration that has passed syntax but not semantics checks
     """
 
-    if isinstance(jsonInput, file):
+    if isinstance(jsonInput, io.IOBase):
         jsonInput = jsonInput.read()
     if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
@@ -201,7 +201,7 @@ def jsonToExpressionAst(jsonInput, where=""):
     :rtype: titus.pfaast.Expression
     :return: parsed expression as a single abstract syntax tree
     """
-    if isinstance(jsonInput, file):
+    if isinstance(jsonInput, io.IOBase):
         jsonInput = jsonInput.read()
     if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
@@ -222,7 +222,7 @@ def jsonToExpressionsAst(jsonInput, where=""):
     :rtype: list of titus.pfaast.Expression
     :return: parsed expressions as a list of abstract syntax trees
     """
-    if isinstance(jsonInput, file):
+    if isinstance(jsonInput, io.IOBase):
         jsonInput = jsonInput.read()
     if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
@@ -243,7 +243,7 @@ def jsonToFcnDef(jsonInput, where=""):
     :rtype: titus.pfaast.FcnDef
     :return: parsed function as a single abstract syntax tree
     """
-    if isinstance(jsonInput, file):
+    if isinstance(jsonInput, io.IOBase):
         jsonInput = jsonInput.read()
     if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
@@ -264,7 +264,7 @@ def jsonToFcnDefs(jsonInput, where=""):
     :rtype: dict of titus.pfaast.FcnDef
     :return: parsed functions as abstract syntax trees
     """
-    if isinstance(jsonInput, file):
+    if isinstance(jsonInput, io.IOBase):
         jsonInput = jsonInput.read()
     if isinstance(jsonInput, str):
         jsonInput = json.loads(jsonInput)
