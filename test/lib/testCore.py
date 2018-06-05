@@ -68,7 +68,7 @@ action:
   - {+: [input, -10]}
 ''')
         self.assertEqual(engine.action(-9223372036854775798), -9223372036854775808)
-        self.assertRaises(PFARuntimeException, lambda: engine.action(-9223372036854775799L))
+        self.assertRaises(PFARuntimeException, lambda: engine.action(-9223372036854775799))
 
     def testDoSubtraction(self):
         engine, = PFAEngine.fromYaml('''

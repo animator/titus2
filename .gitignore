@@ -3,5 +3,6 @@ build/*
 dist/*
 titus.egg-info/*
 *.pyc
+*.py.bak
 .eggs/*
 backup/*

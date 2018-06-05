@@ -855,17 +855,17 @@ fcns:
 
         template = '''<CR1>name:<WS1>Test<WS2><CR2>input:<WS3>double<WS4><CR3>output:<WS5>double<WS6><CR4>action:<WS7>2<WS8>+<WS9>2<WS10>'''
 
-        for x in xrange(100):
+        for x in range(100):
             test = template.replace("<WS1>", ws()).replace("<WS2>", ws()).replace("<WS3>", ws()).replace("<WS4>", ws()).replace("<WS5>", ws()).replace("<WS6>", ws()).replace("<WS7>", ws()).replace("<WS8>", ws()).replace("<WS9>", ws()).replace("<WS10>", ws()).replace("<CR1>", cr()).replace("<CR2>", cr()).replace("<CR3>", cr()).replace("<CR4>", cr())
             try:
                 tested = titus.prettypfa.jsonNode(test, lineNumbers=False, check=False)
             except PrettyPfaException:
-                print
-                print test
+                print()
+                print(test)
             else:
                 if tested != asjson:
-                    print
-                    print test
+                    print()
+                    print(test)
                 self.assertEqual(tested, asjson)
 
     def testTypedefs(self):

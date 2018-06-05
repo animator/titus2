@@ -473,7 +473,7 @@ output: int
 action: 12
 ''')
         self.assertEqual(engine.action(None), 12)
-        self.assertTrue(isinstance(engine.action(None), (int, long)))
+        self.assertTrue(isinstance(engine.action(None), int))
 
     def testLiteralLong(self):
         engine, = PFAEngine.fromYaml('''
@@ -482,7 +482,7 @@ output: long
 action: {long: 12}
 ''')
         self.assertEqual(engine.action(None), 12)
-        self.assertTrue(isinstance(engine.action(None), (int, long)))
+        self.assertTrue(isinstance(engine.action(None), int))
 
     def testLiteralFloat(self):
         engine, = PFAEngine.fromYaml('''
@@ -509,7 +509,7 @@ output: string
 action: [["hello world"]]
 ''')
         self.assertEqual(engine.action(None), "hello world")
-        self.assertTrue(isinstance(engine.action(None), basestring))
+        self.assertTrue(isinstance(engine.action(None), str))
 
         engine, = PFAEngine.fromYaml('''
 input: "null"
@@ -517,7 +517,7 @@ output: string
 action: {string: "hello world"}
 ''')
         self.assertEqual(engine.action(None), "hello world")
-        self.assertTrue(isinstance(engine.action(None), basestring))
+        self.assertTrue(isinstance(engine.action(None), str))
 
     def testLiteralBase64(self):
         engine, = PFAEngine.fromYaml('''
@@ -526,7 +526,7 @@ output: bytes
 action: {base64: "aGVsbG8="}
 ''')
         self.assertEqual(engine.action(None), "hello")
-        self.assertTrue(isinstance(engine.action(None), basestring))
+        self.assertTrue(isinstance(engine.action(None), str))
 
     def testComplexLiterals(self):
         engine, = PFAEngine.fromYaml('''
@@ -1971,7 +1971,7 @@ output: bytes
 action:
   pack: [{pad: null}, {boolean: true}, {boolean: false}, {byte: 12}, {short: 12}, {int: 12}, {long: 12}, {float: 12}, {double: 12}]
 ''')
-        self.assertEqual(map(signed, engine.action(None)), [0, 1, 0, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 12, 65, 64, 0, 0, 64, 40, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(list(map(signed, engine.action(None))), [0, 1, 0, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 12, 65, 64, 0, 0, 64, 40, 0, 0, 0, 0, 0, 0])
 
     def testPackUnsignedBigEndian(self):
         engine, = PFAEngine.fromYaml('''
@@ -1980,7 +1980,7 @@ output: bytes
 action:
   pack: [{"pad": null}, {"boolean": true}, {"boolean": false}, {"unsigned byte": 12}, {"unsigned short": 12}, {"unsigned int": 12}, {"unsigned long": 12}, {"float": 12}, {"double": 12}]
 ''')
-        self.assertEqual(map(signed, engine.action(None)), [0, 1, 0, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 12, 65, 64, 0, 0, 64, 40, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(list(map(signed, engine.action(None))), [0, 1, 0, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 12, 65, 64, 0, 0, 64, 40, 0, 0, 0, 0, 0, 0])
 
         engine2, = PFAEngine.fromYaml('''
 input: "null"
@@ -1988,7 +1988,7 @@ output: bytes
 action:
   pack: [{"pad": null}, {"boolean": true}, {"boolean": false}, {"unsigned byte": 255}, {"unsigned short": 65535}, {"unsigned int": 4294967295}, {"unsigned long": {double: 1000000000000000000}}, {"float": 12}, {"double": 12}]
 ''')
-        self.assertEqual(map(signed, engine2.action(None)), [0, 1, 0, -1, -1, -1, -1, -1, -1, -1, 13, -32, -74, -77, -89, 100, 0, 0, 65, 64, 0, 0, 64, 40, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(list(map(signed, engine2.action(None))), [0, 1, 0, -1, -1, -1, -1, -1, -1, -1, 13, -32, -74, -77, -89, 100, 0, 0, 65, 64, 0, 0, 64, 40, 0, 0, 0, 0, 0, 0])
 
 
     def testPackSignedLittleEndian(self):
@@ -1998,7 +1998,7 @@ output: bytes
 action:
   pack: [{pad: null}, {boolean: true}, {boolean: false}, {byte: 12}, {"little short": 12}, {"little int": 12}, {"little long": 12}, {"little float": 12}, {"little double": 12}]
 ''')
-        self.assertEqual(map(signed, engine.action(None)), [0, 1, 0, 12, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 65, 0, 0, 0, 0, 0, 0, 40, 64])
+        self.assertEqual(list(map(signed, engine.action(None))), [0, 1, 0, 12, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 65, 0, 0, 0, 0, 0, 0, 40, 64])
 
     def testPackUnsignedLittleEndian(self):
         engine, = PFAEngine.fromYaml('''
@@ -2007,7 +2007,7 @@ output: bytes
 action:
   pack: [{"pad": null}, {"boolean": true}, {"boolean": false}, {"unsigned byte": 12}, {"little unsigned short": 12}, {"little unsigned int": 12}, {"little unsigned long": 12}, {"little float": 12}, {"little double": 12}]
 ''')
-        self.assertEqual(map(signed, engine.action(None)), [0, 1, 0, 12, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 65, 0, 0, 0, 0, 0, 0, 40, 64])
+        self.assertEqual(list(map(signed, engine.action(None))), [0, 1, 0, 12, 12, 0, 12, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 65, 0, 0, 0, 0, 0, 0, 40, 64])
 
         engine2, = PFAEngine.fromYaml('''
 input: "null"
@@ -2015,7 +2015,7 @@ output: bytes
 action:
   pack: [{"pad": null}, {"boolean": true}, {"boolean": false}, {"unsigned byte": 255}, {"little unsigned short": 65535}, {"little unsigned int": 4294967295}, {"little unsigned long": {double: 1000000000000000000}}, {"little float": 12}, {"little double": 12}]
 ''')
-        self.assertEqual(map(signed, engine2.action(None)), [0, 1, 0, -1, -1, -1, -1, -1, -1, -1, 0, 0, 100, -89, -77, -74, -32, 13, 0, 0, 64, 65, 0, 0, 0, 0, 0, 0, 40, 64])
+        self.assertEqual(list(map(signed, engine2.action(None))), [0, 1, 0, -1, -1, -1, -1, -1, -1, -1, 0, 0, 100, -89, -77, -74, -32, 13, 0, 0, 64, 65, 0, 0, 0, 0, 0, 0, 40, 64])
 
     def testPackByteArraysAsRaw(self):
         engine, = PFAEngine.fromYaml('''
@@ -2028,9 +2028,9 @@ action:
 merge:
   pack: [{raw: tallyOne}, {raw: tallyTwo}]
 ''')
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [1, 2, 3])))), [1, 2, 3])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [4, 5, 6])))), [1, 2, 3, 4, 5, 6])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [7, 8, 9])))), [1, 2, 3, 4, 5, 6, 7, 8, 9])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [1, 2, 3]))))), [1, 2, 3])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [4, 5, 6]))))), [1, 2, 3, 4, 5, 6])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [7, 8, 9]))))), [1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     def testPackByteArraysAsRaw3(self):
         engine, = PFAEngine.fromYaml('''
@@ -2043,9 +2043,9 @@ action:
 merge:
   pack: [{raw: tallyOne}, {raw: tallyTwo}]
 ''')
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [1, 2, 3])))), [1, 2, 3])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [4, 5, 6])))), [1, 2, 3, 4, 5, 6])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [7, 8, 9])))), [1, 2, 3, 4, 5, 6, 7, 8, 9])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [1, 2, 3]))))), [1, 2, 3])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [4, 5, 6]))))), [1, 2, 3, 4, 5, 6])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [7, 8, 9]))))), [1, 2, 3, 4, 5, 6, 7, 8, 9])
         self.assertRaises(PFARuntimeException, lambda: engine.action("".join(map(chr, [0, 0]))))
 
     def testPackByteArraysAsNullTerminated(self):
@@ -2059,9 +2059,9 @@ action:
 merge:
   pack: [{"null terminated": tallyOne}, {"null terminated": tallyTwo}]
 ''')
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [1, 2, 3])))), [0, 1, 2, 3, 0])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [4, 5, 6])))), [0, 1, 2, 3, 0, 0, 4, 5, 6, 0])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [7, 8, 9])))), [0, 1, 2, 3, 0, 0, 4, 5, 6, 0, 0, 7, 8, 9, 0])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [1, 2, 3]))))), [0, 1, 2, 3, 0])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [4, 5, 6]))))), [0, 1, 2, 3, 0, 0, 4, 5, 6, 0])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [7, 8, 9]))))), [0, 1, 2, 3, 0, 0, 4, 5, 6, 0, 0, 7, 8, 9, 0])
 
     def testPackByteArraysAsLengthPrefixed(self):
         engine, = PFAEngine.fromYaml('''
@@ -2074,9 +2074,9 @@ action:
 merge:
   pack: [{"length prefixed": tallyOne}, {"length prefixed": tallyTwo}]
 ''')
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [1, 2, 3])))), [0, 3, 1, 2, 3])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [4, 5, 6])))), [5, 0, 3, 1, 2, 3, 3, 4, 5, 6])
-        self.assertEqual(map(signed, engine.action("".join(map(chr, [7, 8, 9])))), [10, 5, 0, 3, 1, 2, 3, 3, 4, 5, 6, 3, 7, 8, 9])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [1, 2, 3]))))), [0, 3, 1, 2, 3])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [4, 5, 6]))))), [5, 0, 3, 1, 2, 3, 3, 4, 5, 6])
+        self.assertEqual(list(map(signed, engine.action("".join(map(chr, [7, 8, 9]))))), [10, 5, 0, 3, 1, 2, 3, 3, 4, 5, 6, 3, 7, 8, 9])
 
     def testUnpackNull(self):
         engine, = PFAEngine.fromYaml('''

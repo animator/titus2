@@ -29,7 +29,7 @@ class TestLib1La(unittest.TestCase):
             return sum((xi - yi)**2 for xi, yi in zip(x, y))
         elif isinstance(x, dict) and isinstance(y, dict):
             self.assertEqual(set(x.keys()), set(y.keys()))
-            return sum((x[k] - y[k])**2 for k in x.keys())
+            return sum((x[k] - y[k])**2 for k in list(x.keys()))
         else:
             raise Exception
 
@@ -40,12 +40,12 @@ class TestLib1La(unittest.TestCase):
             for xi, yi in zip(x, y):
                 self.assertEqual(len(xi), len(yi))
             return sum(sum((xj - yj)**2 for xj, yj in zip(xi, yi)) for xi, yi in zip(x, y))
-        elif isinstance(x, dict) and all(isinstance(xi, dict) for xi in x.values()) and \
-             isinstance(y, dict) and all(isinstance(yi, dict) for yi in y.values()):
+        elif isinstance(x, dict) and all(isinstance(xi, dict) for xi in list(x.values())) and \
+             isinstance(y, dict) and all(isinstance(yi, dict) for yi in list(y.values())):
             self.assertEqual(set(x.keys()), set(y.keys()))
-            for k in x.keys():
+            for k in list(x.keys()):
                 self.assertEqual(set(x[k].keys()), set(y[k].keys()))
-            return sum(sum((x[i][j] - y[i][j])**2 for j in x[i].keys()) for i in x.keys())
+            return sum(sum((x[i][j] - y[i][j])**2 for j in list(x[i].keys())) for i in list(x.keys()))
 
     def testMapArrays(self):
         engine, = PFAEngine.fromYaml('''

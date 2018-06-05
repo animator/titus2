@@ -47,9 +47,9 @@ action: {parse.long: [input, 10]}
         self.assertEqual(engine.action("   123   "), 123)
         self.assertEqual(engine.action("   +123   "), 123)
         self.assertEqual(engine.action("   -123   "), -123)
-        self.assertEqual(engine.action("   9223372036854775807   "), 9223372036854775807L)
+        self.assertEqual(engine.action("   9223372036854775807   "), 9223372036854775807)
         self.assertRaises(PFARuntimeException, lambda: engine.action("   9223372036854775808   "))
-        self.assertEqual(engine.action("   -9223372036854775808   "), -9223372036854775808L)
+        self.assertEqual(engine.action("   -9223372036854775808   "), -9223372036854775808)
         self.assertRaises(PFARuntimeException, lambda: engine.action("   -9223372036854775809   "))
 
     def testParseFloat(self):

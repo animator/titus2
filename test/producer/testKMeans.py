@@ -32,7 +32,7 @@ class TestProducerKMeans(unittest.TestCase):
     def testSuperSimple(self):
         dataset = numpy.array([[50.0], [30.0]])
         kmeans = KMeans(1, dataset)
-        print
+        print()
         kmeans.optimize(whileall(printValue("g"), moving(), maxIterations(10)))
 
     @staticmethod
