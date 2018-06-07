@@ -2483,8 +2483,8 @@ class LiteralBase64(LiteralValue):
         if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, str):
-            raise PFASyntaxException("\"value\" must be a string", pos)
+        if not isinstance(value, bytes):
+            raise PFASyntaxException("\"value\" must be a bytes", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
         """Walk over tree applying a titus.pfaast.Task while checking for semantic errors.
@@ -6038,9 +6038,10 @@ class Error(Expression):
 
         if not isinstance(message, str):
             raise PFASyntaxException("\"message\" must be a string", pos)
-
-        if (not isinstance(code, int) and not code is None) or not code < 0:
-            raise PFASyntaxException("\"code\" must be a negative int or None", pos)
+        
+        if not code is None:
+            if not isinstance(code, int) or not code < 0:
+                raise PFASyntaxException("\"code\" must be a negative int or None", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
         """Walk over tree applying a titus.pfaast.Task while checking for semantic errors.

@@ -525,8 +525,8 @@ input: "null"
 output: bytes
 action: {base64: "aGVsbG8="}
 ''')
-        self.assertEqual(engine.action(None), "hello")
-        self.assertTrue(isinstance(engine.action(None), str))
+        self.assertEqual(engine.action(None), b'hello')
+        self.assertTrue(isinstance(engine.action(None), bytes))
 
     def testComplexLiterals(self):
         engine, = PFAEngine.fromYaml('''
