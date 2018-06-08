@@ -518,8 +518,7 @@ class AvroRecord(AvroContainer, AvroMapping, AvroCompiled):
         """
         if name is None:
             name = titus.util.uniqueRecordName()
-        self._schema = avro.schema.RecordSchema(name, namespace, [], avro.schema.Names(), "record")
-        self._schema.set_prop("fields", [x.schema for x in fields])
+        self._schema = avro.schema.RecordSchema(name, namespace, [x.schema for x in fields], None, avro.schema.Names(), "record")
     @property
     def fields(self):
         """Get the fields as a list of titus.datatype.AvroField objects."""
@@ -560,8 +559,7 @@ class AvroUnion(AvroType):
             raise titus.errors.AvroException("duplicate in union: " + ", ".join(map(ts, types)))
         if "union" in names:
             raise titus.errors.AvroException("nested union: " + ", ".join(map(ts, types)))
-        self._schema = avro.schema.UnionSchema([], avro.schema.Names())
-        self._schema._schemas = [x.schema for x in types]
+        self._schema = avro.schema.UnionSchema([x.schema for x in types])
     @property
     def types(self):
         """Get the possible types for this union as a list of titus.datatype.AvroType."""
@@ -580,7 +578,7 @@ class AvroField(object):
         out = AvroField.__new__(AvroField)
         out._schema = schema
         return out
-    def __init__(self, name, avroType, default=None, order=None):
+    def __init__(self, name, avroType, index=None, default=None, order=None):
         """Create an AvroField manually.
 
         :type name: string
@@ -592,7 +590,7 @@ class AvroField(object):
         :type order: "ascending", "descending", or "ignore"
         :param order: sort order (used in Hadoop secondary sort)
         """
-        self._schema = avro.schema.Field(avroType.schema.to_json(), name, default is not None, default, order, avro.schema.Names())
+        self._schema = avro.schema.Field(avroType.schema.to_json(), name, index, default is not None, default, order, avro.schema.Names())
     @property
     def schema(self):
         """Get the field type as an avro.schema.Schema."""
@@ -1267,7 +1265,7 @@ def checkData(data, avroType):
             raise TypeError("expecting {0}, found {1}".format(ts(avroType), data))
 
     elif isinstance(avroType, (AvroString, AvroEnum)):
-        if isinstance(data, str):
+        if isinstance(data, bytes):
             return data.decode("utf-8", "replace")
         elif isinstance(data, str):
             return data
@@ -1285,7 +1283,7 @@ def checkData(data, avroType):
             newData = {}
             for key in data:
                 value = checkData(data[key], avroType.values)
-                if isinstance(key, str):
+                if isinstance(key, bytes):
                     newData[key.decode("utf-8", "replace")] = value
                 elif isinstance(key, str):
                     newData[key] = value
