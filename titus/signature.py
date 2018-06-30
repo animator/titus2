@@ -485,19 +485,29 @@ class Sig(Signature):
 
         elif isinstance(pat, P.Fixed) and isinstance(arg, AvroFixed):
             if pat.fullName is not None:
-                return pat.fullName == arg.fullName
+                # Change in avro.schema.Name class in Py3 lead to "." at the begining of arg.fullName
+                if "." == arg.fullName[0]:
+                    return pat.fullName == arg.name
+                else:
+                    return pat.fullName == arg.fullName
             else:
                 return pat.size == arg.size
 
         elif isinstance(pat, P.Enum) and isinstance(arg, AvroEnum):
             if pat.fullName is not None:
-                return pat.fullName == arg.fullName
+                if "." == arg.fullName[0]:
+                    return pat.fullName == arg.name
+                else:
+                    return pat.fullName == arg.fullName
             else:
                 return pat.symbols == arg.symbols
 
         elif isinstance(pat, P.Record) and isinstance(arg, AvroRecord):
             if pat.fullName is not None:
-                return pat.fullName == arg.fullName
+                if "." == arg.fullName[0]:
+                    return pat.fullName == arg.name
+                else:
+                    return pat.fullName == arg.fullName
             else:
                 amap = dict((x.name, x) for x in arg.fields)
 
