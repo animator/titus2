@@ -159,7 +159,7 @@ class Enum(Pattern):
         :type fullName: string or ``None``
         :param fullName: optional name of the enum pattern (if not provided, enum types of any name would match)
         """
-        self._symbols = symbols
+        self._symbols = tuple(symbols)
         self._fullName = fullName
     @property
     def symbols(self):
