@@ -590,7 +590,7 @@ class AvroField(object):
         :type order: "ascending", "descending", or "ignore"
         :param order: sort order (used in Hadoop secondary sort)
         """
-        self._schema = avro.schema.Field(avroType.schema.to_json(), name, index, default is not None, default, order, avro.schema.Names())
+        self._schema = avro.schema.Field(avroType.schema, name, index, default is not None, default, order, avro.schema.Names())
     @property
     def schema(self):
         """Get the field type as an avro.schema.Schema."""
@@ -608,7 +608,10 @@ class AvroField(object):
     @property
     def default(self):
         """Get the field default value."""
-        return self.schema.default
+        if self.schema.has_default:
+            return self.schema.default
+        else:
+            return None
     @property
     def order(self):
         """Get the field order."""
