@@ -274,7 +274,7 @@ class CastAvro(LibFcn):
     sig = Sig([{"x": P.Wildcard("A")}], P.Bytes())
     errcodeBase = 17110
     def __call__(self, state, scope, pos, paramTypes, x):
-        schema = avro.schema.parse(json.dumps(paramTypes[0]))
+        schema = avro.schema.Parse(json.dumps(paramTypes[0]))
         x = untagUnion(x, paramTypes[0])
         bytes = io.BytesIO()
         writer = DatumWriter(schema)
