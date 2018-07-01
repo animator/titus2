@@ -96,11 +96,11 @@ class PFAVersion(object):
     def __cmp__(self, other):
         """Strict ordering on PFAVersions: check major number first, then minor, then release."""
         if self.major == other.major and self.minor == other.minor:
-            return cmp(self.release, other.release)
+            return ((self.release > other.release) - (self.release < other.release))
         elif self.major == other.major:
-            return cmp(self.minor, other.minor)
+            return ((self.minor > other.minor) - (self.minor < other.minor))
         else:
-            return cmp(self.major, other.major)
+            return ((self.major > other.major) - (self.major < other.major))
     @staticmethod
     def fromString(x):
         """Create a ``PFAVersion`` from a dotted string.

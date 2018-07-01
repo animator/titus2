@@ -1045,13 +1045,13 @@ def compare(avroType, x, y):
     if isinstance(avroType, AvroNull) and x is None and y is None:
         return 0
     elif isinstance(avroType, AvroBoolean) and (x is True or x is False) and (y is True or y is False):
-        return cmp(x, y)    # agrees with Java
+        return (x > y) - (x < y)   # agrees with Java
     elif isinstance(avroType, AvroInt) and isinstance(x, int) and x is not True and x is not False and isinstance(y, int) and y is not True and y is not False:
-        return cmp(x, y)
+        return (x > y) - (x < y)
     elif isinstance(avroType, AvroLong) and isinstance(x, int) and x is not True and x is not False and isinstance(y, int) and y is not True and y is not False:
-        return cmp(x, y)
+        return (x > y) - (x < y)
     elif isinstance(avroType, AvroFloat) and isinstance(x, (int, float)) and x is not True and x is not False and isinstance(y, (int, float)) and y is not True and y is not False:
-        return cmp(x, y)
+        return (x > y) - (x < y)
         if math.isnan(x):
             if math.isnan(y):
                 return 0
@@ -1061,7 +1061,7 @@ def compare(avroType, x, y):
             if math.isnan(y):
                 return -1
             else:
-                return cmp(x, y)
+                return (x > y) - (x < y)
     elif isinstance(avroType, AvroDouble) and isinstance(x, (int, float)) and x is not True and x is not False and isinstance(y, (int, float)) and y is not True and y is not False:
         if math.isnan(x):
             if math.isnan(y):
@@ -1072,13 +1072,13 @@ def compare(avroType, x, y):
             if math.isnan(y):
                 return -1
             else:
-                return cmp(x, y)
+                return (x > y) - (x < y)
     elif isinstance(avroType, AvroBytes) and isinstance(x, str) and isinstance(y, str):
-        return cmp(x, y)
+        return (x > y) - (x < y)
     elif isinstance(avroType, AvroFixed) and isinstance(x, str) and isinstance(y, str):
-        return cmp(x, y)
+        return (x > y) - (x < y)
     elif isinstance(avroType, AvroString) and isinstance(x, str) and isinstance(y, str):
-        return cmp(x, y)
+        return (x > y) - (x < y)
     elif isinstance(avroType, AvroEnum) and isinstance(x, str) and x in avroType.symbols and isinstance(y, str) and y in avroType.symbols:
         comparison = avroType.symbols.index(x) - avroType.symbols.index(y)
         if comparison < 0:

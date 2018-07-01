@@ -40,7 +40,7 @@ def convert(xsdFileName):
     pmmlXsd = etree.parse(xsdFileName)
 
     elements = pmmlXsd.getroot().getchildren()
-    elements.sort(lambda a, b: cmp(a.attrib["name"], b.attrib["name"]))
+    elements.sort(lambda a, b: ((a.attrib["name"] > b.attrib["name"]) - (a.attrib["name"] < b.attrib["name"]))) 
 
     pyFileName = xsdFileName.replace("schemae/", "").replace("pmml-", "version_").replace("-", "_").replace(".xsd", ".py")
     if os.path.exists(pyFileName):
