@@ -907,7 +907,7 @@ def jsonDecoder(avroType, value):
             pass
     elif isinstance(avroType, AvroBytes):
         if isinstance(value, str):
-            return bytes(value)
+            return value
     elif isinstance(avroType, AvroFixed):
         if isinstance(value, str):
             out = bytes(value)
@@ -1260,8 +1260,8 @@ def checkData(data, avroType):
             raise TypeError("expecting {0}, found {1}".format(ts(avroType), data))
 
     elif isinstance(avroType, (AvroBytes, AvroFixed)):
-        if isinstance(data, str):
-            return data.encode("utf-8", "replace")
+        if isinstance(data, bytes):
+            return data.decode("utf-8", "replace")
         elif isinstance(data, str):
             return data
         else:
