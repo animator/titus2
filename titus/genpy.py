@@ -1118,31 +1118,42 @@ def pack(state, scope, exprsDeclareRes, pos):
 
     out = []
     for value, (v, f, l) in exprsDeclareRes:
+        if isinstance(value, str):
+            if len(value)==0:
+                value = value.encode()
+                
         if f == "raw":
             if l is not None and len(value) != l:
                 raise PFARuntimeException("raw bytes does not have specified size", 3000, "pack", pos)
-            out.append(value)
+            if isinstance(value, bytes):
+                out.append(value)
+            else:
+                out.append(bytes(map(ord, value)))
 
         elif f == "tonull":
-            out.append(value)
-            out.append(chr(0))
+            if isinstance(value, bytes):
+                out.append(value)
+            else:
+                out.append(bytes(map(ord, value)))
+            out.append(bytes([0]))
 
         elif f == "prefixed":
             if len(value) > 255:
                 raise PFARuntimeException("length prefixed bytes is larger than 255 bytes", 3001, "pack", pos)
-            out.append(chr(len(value)))
-            out.append(value)
+            out.append(bytes([len(value)]))
+            if isinstance(value, bytes):
+                out.append(value)
+            else:
+                out.append(bytes(map(ord, value)))
 
         elif f == "x":
-            out.append(chr(0))
+            out.append(bytes([0]))
         
         elif ("Q" in f) or ("q" in f):
             out.append(struct.pack(f, int(value)))
 
         else:
             out.append(struct.pack(f, value))
-    
-    out = [byte_item if isinstance(byte_item, bytes) else byte_item.encode() for byte_item in out] 
     
     return b"".join(out)
 
