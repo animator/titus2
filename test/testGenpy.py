@@ -31,10 +31,16 @@ def unsigned(x):
         return chr(x)
     
 def signed(x):
-    if ord(x) >= 128:
-        return ord(x) - 256
+    if isinstance(x, int):
+        if x >= 128:
+            return x - 256
+        else:
+            return x
     else:
-        return ord(x)
+        if ord(x) >= 128:
+            return ord(x) - 256
+        else:
+            return ord(x)
 
 class TestGeneratePython(unittest.TestCase):
     def testMetadataAccessName(self):
