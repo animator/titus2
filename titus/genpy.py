@@ -1135,11 +1135,16 @@ def pack(state, scope, exprsDeclareRes, pos):
 
         elif f == "x":
             out.append(chr(0))
+        
+        elif ("Q" in f) or ("q" in f):
+            out.append(struct.pack(f, int(value)))
 
         else:
             out.append(struct.pack(f, value))
-
-    return "".join(out)
+    
+    out = [byte_item if isinstance(byte_item, bytes) else byte_item.encode() for byte_item in out] 
+    
+    return b"".join(out)
 
 class MisalignedPacking(Exception):
     """Exception to raise if the packed length doesn't fit the format."""
