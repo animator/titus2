@@ -312,7 +312,7 @@ class GaussianProcess(LibFcn):
         Xnorm = (X - X.mean(axis=0))/X.std(axis=0)
         ynorm = (y - y.mean(axis=0))/y.std(axis=0)
 
-        n_nonzero_cross_dist = n_samples * (n_samples - 1) / 2
+        n_nonzero_cross_dist = n_samples * (n_samples - 1) // 2
         ij = np().zeros((n_nonzero_cross_dist, 2), dtype=np().int)
         r = np().zeros(n_nonzero_cross_dist)
         ll_1 = 0
