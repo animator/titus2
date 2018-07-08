@@ -20,6 +20,7 @@
 import math
 import random
 from collections import OrderedDict
+from functools import cmp_to_key
 
 import numpy
 
@@ -551,7 +552,7 @@ class KMeans(object):
                 out[clusterIndex]["population"] = int(numpy.sum(indexOfClosestCluster == clusterIndex))
 
         if sort:
-            indexes = [i for i, x in sorted(list(enumerate(self.clusters)), lambda a, b: ((list(a[1]) > list(b[1])) - (list(a[1]) < list(b[1]))))]  
+            indexes = [i for i, x in sorted(list(enumerate(self.clusters)), key=cmp_to_key(lambda a, b: ((list(a[1]) > list(b[1])) - (list(a[1]) < list(b[1])))))]  
             out = list(numpy.array(out, dtype=object)[indexes])
 
         for idi, cluster in zip(ids, out):
