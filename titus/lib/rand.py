@@ -183,7 +183,7 @@ class RandomBytes(LibFcn):
         elif len(args) == 1:
             if len(args[0]) == 0:
                 raise PFARuntimeException("population must be non-empty", self.errcodeBase + 3, self.name, pos)
-            return "".join(args[0][state.rand.randint(0, len(args[0]) - 1)] for x in range(size))
+            return "".join(args[0].decode()[state.rand.randint(0, len(args[0]) - 1)] for x in range(size))
         else:
             low, high = args
             if high <= low: raise PFARuntimeException("high must be greater than low", self.errcodeBase + 1, self.name, pos)
