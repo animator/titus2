@@ -39,7 +39,7 @@ class TestClustering(unittest.TestCase):
 
         # get a dataset for the k-means generator
         dataset = []
-        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader()):
+        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader()):
             mag, dist, mass, radius = record.get("mag"), record.get("dist"), record.get("mass"), record.get("radius")
             if mag is not None and dist is not None and mass is not None and radius is not None:
                 dataset.append([mag, dist, mass, radius])
@@ -52,7 +52,7 @@ class TestClustering(unittest.TestCase):
         if engine.config.method == "emit":
             engine.emit = lambda x: x
 
-        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader()):
+        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader()):
             engine.action(record)
 
     #################################################################################################################
@@ -196,7 +196,7 @@ action:
 
         # get a dataset for the k-means generator
         dataset = []
-        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader()):
+        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader()):
             mag, dist, mass, radius = record.get("mag"), record.get("dist"), record.get("mass"), record.get("radius")
             if mag is not None and dist is not None and mass is not None and radius is not None:
                 dataset.append([mag, dist, mass, radius])
