@@ -1261,16 +1261,14 @@ def checkData(data, avroType):
 
     elif isinstance(avroType, (AvroBytes, AvroFixed)):
         if isinstance(data, bytes):
-            return data.decode("utf-8", "replace")
+            return data
         elif isinstance(data, str):
             return data
         else:
             raise TypeError("expecting {0}, found {1}".format(ts(avroType), data))
 
     elif isinstance(avroType, (AvroString, AvroEnum)):
-        if isinstance(data, bytes):
-            return data.decode("utf-8", "replace")
-        elif isinstance(data, str):
+        if isinstance(data, str):
             return data
         else:
             raise TypeError("expecting {0}, found {1}".format(ts(avroType), data))

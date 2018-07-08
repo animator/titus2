@@ -1161,44 +1161,47 @@ class MisalignedPacking(Exception):
     """Exception to raise if the packed length doesn't fit the format."""
     pass
 
-def unpackOne(bytes, scope, s, f, l):
+def unpackOne(byte_s, scope, s, f, l):
     """Helper function for unpack."""
 
     if f == "raw":
-        this, that = bytes[:l], bytes[l:]
+        this, that = byte_s[:l], byte_s[l:]
         if len(this) != l:
             raise MisalignedPacking()
         scope.let({s: this})
 
     elif f == "tonull":
         try:
-            nullbyte = bytes.index(chr(0))
+            nullbyte = byte_s.index(bytes([0]))
         except ValueError:
             raise MisalignedPacking()
         else:
-            this = bytes[:nullbyte]
-            that = bytes[(nullbyte + 1):]
+            this = byte_s[:nullbyte]
+            that = byte_s[(nullbyte + 1):]
             scope.let({s: this})
 
     elif f == "prefixed":
-        if len(bytes) < 1:
+        if len(byte_s) < 1:
             raise MisalignedPacking()
-        length = ord(bytes[0])
-        this = bytes[1:(length + 1)]
-        that = bytes[(length + 1):]
+        if isinstance(byte_s[0], int):
+            length = byte_s[0]
+        else:
+            length = ord(byte_s[0])
+        this = byte_s[1:(length + 1)]
+        that = byte_s[(length + 1):]
         if len(this) != length:
             raise MisalignedPacking()
         scope.let({s: this})
 
     elif f == "x":
-        this, that = bytes[:l], bytes[l:]
+        this, that = byte_s[:l], byte_s[l:]
         if len(this) != l:
             raise MisalignedPacking()
         struct.unpack(f, this)
         scope.let({s: None})
         
     else:
-        this, that = bytes[:l], bytes[l:]
+        this, that = byte_s[:l], byte_s[l:]
         if len(this) != l:
             raise MisalignedPacking()
         value, = struct.unpack(f, this)
@@ -1206,15 +1209,15 @@ def unpackOne(bytes, scope, s, f, l):
 
     return that
 
-def unpack(state, scope, bytes, format, thenClause):
+def unpack(state, scope, byte_s, format, thenClause):
     """Helper function for unpack as an expression.
 
     :type state: titus.genpy.ExecutionState
     :param state: exeuction state
     :type scope: titus.util.DynamicScope
     :param scope: dynamic scope object
-    :type bytes: string
-    :param bytes: byte array to unpack
+    :type byte_s: string
+    :param byte_s: byte array to unpack
     :type format: list of (variable name, format, length) triples
     :type thenClause: callable
     :param thenClause: function that is called if there was no titus.genpy.MisalignedPacking exception
@@ -1225,22 +1228,22 @@ def unpack(state, scope, bytes, format, thenClause):
     thenScope = DynamicScope(scope)
     try:
         for s, f, l in format:
-            bytes = unpackOne(bytes, thenScope, s, f, l)
+            byte_s = unpackOne(byte_s, thenScope, s, f, l)
     except MisalignedPacking:
         pass
     else:
-        if len(bytes) == 0:
+        if len(byte_s) == 0:
             thenClause(state, thenScope)
 
-def unpackElse(state, scope, bytes, format, thenClause, elseClause):
+def unpackElse(state, scope, byte_s, format, thenClause, elseClause):
     """Helper function for unpack with an else clause as an expression.
 
     :type state: titus.genpy.ExecutionState
     :param state: exeuction state
     :type scope: titus.util.DynamicScope
     :param scope: dynamic scope object
-    :type bytes: string
-    :param bytes: byte array to unpack
+    :type byte_s: string
+    :param byte_s: byte array to unpack
     :type format: list of (variable name, format, length) triples
     :type thenClause: callable
     :param thenClause: function that is called if there was no titus.genpy.MisalignedPacking exception
@@ -1253,11 +1256,11 @@ def unpackElse(state, scope, bytes, format, thenClause, elseClause):
     thenScope = DynamicScope(scope)
     try:
         for s, f, l in format:
-            bytes = unpackOne(bytes, thenScope, s, f, l)
+            byte_s = unpackOne(byte_s, thenScope, s, f, l)
     except MisalignedPacking:
         return elseClause(state, scope)
     else:
-        if len(bytes) != 0:
+        if len(byte_s) != 0:
             return elseClause(state, scope)
         else:
             return thenClause(state, thenScope)
