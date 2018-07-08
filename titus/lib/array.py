@@ -33,7 +33,7 @@ from titus.lib.core import INT_MAX_VALUE
 from titus.lib.core import LONG_MIN_VALUE
 from titus.lib.core import LONG_MAX_VALUE
 import titus.P as P
-from functools import reduce
+from functools import reduce, cmp_to_key
 
 provides = {}
 def provide(fcn):
@@ -371,7 +371,7 @@ class Sort(LibFcn):
     sig = Sig([{"a": P.Array(P.Wildcard("A"))}], P.Array(P.Wildcard("A")))
     errcodeBase = 15200
     def __call__(self, state, scope, pos, paramTypes, a):
-        return sorted(a, lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y))
+        return sorted(a, key=cmp_to_key(lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y)))
 provide(Sort())
 
 class SortLT(LibFcn):
@@ -379,7 +379,7 @@ class SortLT(LibFcn):
     sig = Sig([{"a": P.Array(P.Wildcard("A"))}, {"lessThan": P.Fcn([P.Wildcard("A"), P.Wildcard("A")], P.Boolean())}], P.Array(P.Wildcard("A")))
     errcodeBase = 15210
     def __call__(self, state, scope, pos, paramTypes, a, lessThan):
-        return sorted(a, toCmp(state, scope, lessThan))
+        return sorted(a, key=cmp_to_key(toCmp(state, scope, lessThan)))
 provide(SortLT())
 
 class Shuffle(LibFcn):
@@ -754,8 +754,8 @@ class Median(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, a):
         if len(a) == 0:
             raise PFARuntimeException("empty array", self.errcodeBase + 0, self.name, pos)
-        sa = sorted(a, lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y))
-        half = len(sa) / 2
+        sa = sorted(a, key=cmp_to_key(lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y)))
+        half = len(sa) // 2
         dataType = paramTypes[-1]
 
         if len(sa) % 2:
@@ -803,7 +803,7 @@ class NTile(LibFcn):
             return lowestN(a, 1, lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y) < 0)[0]
         if p >= 1.0:
             return highestN(a, 1, lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y) < 0)[0]
-        sa = sorted(a, lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y))
+        sa = sorted(a, key=cmp_to_key(lambda x, y: compare(jsonNodeToAvroType(paramTypes[0]).items, x, y)))
         k = (len(a) - 1.0)*p
         f = math.floor(k)
         dataType = paramTypes[-1]
