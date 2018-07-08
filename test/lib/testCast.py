@@ -19,6 +19,7 @@
 
 import math
 import unittest
+import json
 
 from titus.genpy import PFAEngine
 from titus.errors import *
@@ -650,7 +651,7 @@ output: string
 action: {cast.json: input}
 ''')[0].action(12), '''{"int":12}''')
 
-        self.assertEqual(PFAEngine.fromYaml('''
+        self.assertDictEqual(json.loads(PFAEngine.fromYaml('''
 input:
   type: record
   name: Input
@@ -660,7 +661,7 @@ input:
     - {name: three, type: string}
 output: string
 action: {cast.json: input}
-''')[0].action({"one": 1, "two": 2.2, "three": "THREE"}), '{"three":"THREE","two":2.2,"one":1}')
+''')[0].action({"one": 1, "two": 2.2, "three": "THREE"})), json.loads('{"three":"THREE","two":2.2,"one":1}'))
 
 if __name__ == "__main__":
     unittest.main()
