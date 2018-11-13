@@ -552,7 +552,7 @@ class KMeans(object):
                 out[clusterIndex]["population"] = int(numpy.sum(indexOfClosestCluster == clusterIndex))
 
         if sort:
-            indexes = [i for i, x in sorted(list(enumerate(self.clusters)), key=cmp_to_key(lambda a, b: ((list(a[1]) > list(b[1])) - (list(a[1]) < list(b[1])))))]  
+            indexes = [i for x, i in sorted(list(zip(map(list, self.clusters), range(len(self.clusters)))))]  
             out = list(numpy.array(out, dtype=object)[indexes])
 
         for idi, cluster in zip(ids, out):
