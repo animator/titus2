@@ -53,7 +53,7 @@ class TestProducerKMeans(unittest.TestCase):
         numpy.seterr(divide="ignore", invalid="ignore")
 
         dataset = numpy.empty((100000, 3), dtype=numpy.dtype(float))
-        for i, x in enumerate(TestProducerKMeans.data([1, 1, 1], [3, 2, 5], [8, 2, 7], [5, 8, 5], [1, 1, 9])):
+        for i, x in enumerate(TestProducerKMeans.data([2, 1, 1], [3, 2, 5], [8, 2, 7], [5, 8, 5], [1, 1, 9])):
             if i >= dataset.shape[0]:
                 break
             dataset[i,:] = x
@@ -62,25 +62,25 @@ class TestProducerKMeans(unittest.TestCase):
         kmeans.optimize(whileall(moving(), maxIterations(1000)))
 
         centers = kmeans.centers()
-        self.assertArrayAlmostEqual(centers[0], [1.00, 1.01, 1.00], places=2)
-        self.assertArrayAlmostEqual(centers[1], [1.01, 1.00, 9.01], places=2)
-        self.assertArrayAlmostEqual(centers[2], [3.01, 2.01, 5.00], places=2)
-        self.assertArrayAlmostEqual(centers[3], [4.99, 8.00, 4.99], places=2)
-        self.assertArrayAlmostEqual(centers[4], [8.02, 2.00, 7.01], places=2)
+        self.assertArrayAlmostEqual(centers[0], [1.01, 1.00, 9.01], places=1)        
+        self.assertArrayAlmostEqual(centers[1], [2.00, 1.01, 1.00], places=1)
+        self.assertArrayAlmostEqual(centers[2], [3.01, 2.01, 5.00], places=1)
+        self.assertArrayAlmostEqual(centers[3], [4.99, 8.00, 4.99], places=1)
+        self.assertArrayAlmostEqual(centers[4], [8.02, 2.00, 7.01], places=1)
 
         doc = kmeans.pfaDocument("Cluster", ["one", "two", "three", "four", "five"])
         # look(doc, maxDepth=8)
 
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][0]["center"], [1.00, 1.01, 1.00], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][1]["center"], [1.01, 1.00, 9.01], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][2]["center"], [3.01, 2.01, 5.00], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][3]["center"], [4.99, 8.00, 4.99], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][4]["center"], [8.02, 2.00, 7.01], places=2)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][0]["center"], [1.01, 1.00, 9.01], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][1]["center"], [2.00, 1.01, 1.00], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][2]["center"], [3.01, 2.01, 5.00], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][3]["center"], [4.99, 8.00, 4.99], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][4]["center"], [8.02, 2.00, 7.01], places=1)
 
         engine, = PFAEngine.fromJson(doc)
 
-        self.assertEqual(engine.action([1.00, 1.01, 1.00]), "one")
-        self.assertEqual(engine.action([1.01, 1.00, 9.01]), "two")
+        self.assertEqual(engine.action([1.01, 1.00, 9.01]), "one")
+        self.assertEqual(engine.action([2.00, 1.01, 1.00]), "two")
         self.assertEqual(engine.action([3.01, 2.01, 5.00]), "three")
         self.assertEqual(engine.action([4.99, 8.00, 4.99]), "four")
         self.assertEqual(engine.action([8.02, 2.00, 7.01]), "five")
@@ -90,7 +90,7 @@ class TestProducerKMeans(unittest.TestCase):
         numpy.seterr(divide="ignore", invalid="ignore")
 
         dataset = numpy.empty((100000, 3), dtype=numpy.dtype(float))
-        for i, (x, y, z) in enumerate(TestProducerKMeans.data([1, 1, 1], [3, 2, 5], [8, 2, 7], [5, 8, 5], [1, 1, 9])):
+        for i, (x, y, z) in enumerate(TestProducerKMeans.data([2, 1, 1], [3, 2, 5], [8, 2, 7], [5, 8, 5], [1, 1, 9])):
             if i >= dataset.shape[0]:
                 break
             dataset[i,:] = [x * 10.0, y * 20.0, z * 30.0]
@@ -100,8 +100,8 @@ class TestProducerKMeans(unittest.TestCase):
         kmeans.optimize(whileall(moving(), maxIterations(1000)))
 
         centers = kmeans.centers()
-        self.assertArrayAlmostEqual(centers[0], [1.00, 1.01, 1.00], places=1)
-        self.assertArrayAlmostEqual(centers[1], [1.01, 1.00, 9.01], places=1)
+        self.assertArrayAlmostEqual(centers[0], [1.01, 1.00, 9.01], places=1)
+        self.assertArrayAlmostEqual(centers[1], [2.00, 1.01, 1.00], places=1)
         self.assertArrayAlmostEqual(centers[2], [3.01, 2.01, 5.00], places=1)
         self.assertArrayAlmostEqual(centers[3], [4.99, 8.00, 4.99], places=1)
         self.assertArrayAlmostEqual(centers[4], [8.02, 2.00, 7.01], places=1)
@@ -112,16 +112,16 @@ class TestProducerKMeans(unittest.TestCase):
                                                       x="input[0]", y="input[1]", z="input[2]"))
         # look(doc, maxDepth=10)
 
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][0]["center"], [1.00, 1.01, 1.00], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][1]["center"], [1.01, 1.00, 9.01], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][2]["center"], [3.01, 2.01, 5.00], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][3]["center"], [4.99, 8.00, 4.99], places=2)
-        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][4]["center"], [8.02, 2.00, 7.01], places=2)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][0]["center"], [1.01, 1.00, 9.01], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][1]["center"], [2.00, 1.01, 1.00], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][2]["center"], [3.01, 2.01, 5.00], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][3]["center"], [4.99, 8.00, 4.99], places=1)
+        self.assertArrayAlmostEqual(doc["cells"]["clusters"]["init"][4]["center"], [8.02, 2.00, 7.01], places=1)
 
         engine, = PFAEngine.fromJson(doc)
 
-        self.assertEqual(engine.action([1.00 * 10, 1.01 * 20, 1.00 * 30]), "one")
-        self.assertEqual(engine.action([1.01 * 10, 1.00 * 20, 9.01 * 30]), "two")
+        self.assertEqual(engine.action([1.01 * 10, 1.00 * 20, 9.01 * 30]), "one")
+        self.assertEqual(engine.action([2.00 * 10, 1.01 * 20, 1.00 * 30]), "two")
         self.assertEqual(engine.action([3.01 * 10, 2.01 * 20, 5.00 * 30]), "three")
         self.assertEqual(engine.action([4.99 * 10, 8.00 * 20, 4.99 * 30]), "four")
         self.assertEqual(engine.action([8.02 * 10, 2.00 * 20, 7.01 * 30]), "five")
