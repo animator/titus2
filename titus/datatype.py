@@ -909,10 +909,12 @@ def jsonDecoder(avroType, value):
         if isinstance(value, str):
             return value
     elif isinstance(avroType, AvroFixed):
+        if isinstance(value, bytes):
+            if len(value) == avroType.size:
+                return value
         if isinstance(value, str):
-            out = bytes(value)
-            if len(out) == avroType.size:
-                return out
+            if len(value) == avroType.size:
+                return value
     elif isinstance(avroType, AvroString):
         if isinstance(value, str):
             return value
