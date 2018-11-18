@@ -18,7 +18,7 @@
 # limitations under the License.
 
 import unittest
-
+import avro
 from titus.genpy import PFAEngine
 from titus.errors import *
     
@@ -65,7 +65,7 @@ output: "null"
 action:
   - {impute.defaultOnNull: [input, "null"]}
 ''')
-        self.assertRaises(SchemaParseException, bad)
+        self.assertRaises(avro.schema.AvroException, bad)
 
         def bad():
             PFAEngine.fromYaml('''
@@ -74,7 +74,7 @@ output: [int, string]
 action:
   - {impute.defaultOnNull: [input, 12]}
 ''')
-        self.assertRaises(SchemaParseException, bad)
+        self.assertRaises(avro.schema.AvroException, bad)
 
         def bad():
             PFAEngine.fromYaml('''
