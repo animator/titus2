@@ -462,7 +462,7 @@ class Truncate(LibFcn):
                 Sig([{"x": P.Map(P.Map(P.Double()))}, {"keep": P.Array(P.String())}], P.Map(P.Map(P.Double())))])
     errcodeBase = 24120
     def __call__(self, state, scope, pos, paramTypes, x, keep):
-        if keep < 0:
+        if isinstance(keep, int) and keep < 0:
             keep = 0
 
         if isinstance(x, (list, tuple)) and all(isinstance(xi, (list, tuple)) for xi in x):
