@@ -2518,7 +2518,7 @@ class LiteralBase64(LiteralValue):
         :return: JSON representation
         """
         out = self.startDict(lineNumbers)
-        out["base64"] = base64.b64encode(self.value)
+        out["base64"] = base64.b64encode(self.value).decode()
         return out
 
     desc = "(bytes)"
