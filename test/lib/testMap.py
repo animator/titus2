@@ -226,7 +226,8 @@ output: {type: array, items: {type: map, values: int}}
 action:
   map.split: input
 ''')
-        self.assertEqual(sorted(engine.action({"a": 1, "b": 2, "c": 3})), sorted([{"a": 1}, {"b": 2}, {"c": 3}]))
+        self.assertEqual(sorted(engine.action({"a": 1, "b": 2, "c": 3}), key=lambda x: list(x.keys())[0]), 
+                         sorted([{"a": 1}, {"b": 2}, {"c": 3}], key=lambda x: list(x.keys())[0]))
 
     def testJoin(self):
         engine, = PFAEngine.fromYaml('''

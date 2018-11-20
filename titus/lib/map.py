@@ -46,7 +46,7 @@ class ObjKey(object):
         writer = DatumWriter(avroType.schema)
         writer.write(x, BinaryEncoder(bytes))
         bytes.flush()
-        return base64.b64encode(bytes.getvalue())
+        return (base64.b64encode(bytes.getvalue())).decode()
 
     def fromKey(self, key, avroType):
         bytes = io.BytesIO(base64.b64decode(key))
