@@ -313,6 +313,8 @@ class AvroCompiled(AvroType):
     @property
     def fullName(self):
         """Optional namespace and name joined with a dot."""
+        if self.schema.namespace is None or self.schema.namespace == '':
+            return self.schema.name
         return self.schema.fullname
 
 class AvroNumber(AvroType):
