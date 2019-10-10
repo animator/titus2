@@ -1,4 +1,4 @@
-In Development - Please do not use until release
+In Development
 =======
 
 
