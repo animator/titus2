@@ -39,7 +39,7 @@ prefix = "re."
 
 ## try to import clib (give warning if user doesnt have it)
 ## wrap clib for either ubuntu linux or mac after checking system
-#    - works on sys.platform -> darwin, sys.platform -> linux2
+#    - works on sys.platform -> darwin, sys.platform -> linux
 ## expose clib regex functionality to Regexer
 
 # this class holds info about clib regex compile settings
@@ -47,10 +47,10 @@ prefix = "re."
 class RegexSpecs(object):
     def __init__(self):
         system = sys.platform
-        if system == "linux2":
+        if system == "linux":
             # tested on
             self.libname = "libc.so.6"
-            self._linux2Specs()
+            self._linuxSpecs()
             self.importSuccessfull = True
         elif system == "darwin":
             # tested on
@@ -69,7 +69,7 @@ class RegexSpecs(object):
         self.field_rm_so = ("rm_so", ctypes.c_ulong)
         self.field_rm_co = ("rm_co", ctypes.c_ulong)
 
-    def _linux2Specs(self):
+    def _linuxSpecs(self):
         self.multilineFlag = 1
         self.posixExtendedSyntaxFlag = 1
         self.numNullPointersBefore_re_nsub = 6
