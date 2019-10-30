@@ -11,7 +11,11 @@ python:
   
 # command to install dependencies
 install:
-  - pip install avro-python3, ply, pyyaml, numpy, pytz
+  - pip install avro-python3
+  - pip install ply
+  - pip install pyyaml
+  - pip install numpy
+  - pip install pytz
   
 # command to run tests
 script:
