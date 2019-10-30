@@ -30,6 +30,10 @@ from titus.genpy import PFAEngine
 from titus.producer.kmeans import *
 
 class TestClustering(unittest.TestCase):
+    schemaFile = open("test/prettypfa/exoplanetsSchema.ppfa")
+    recordSchema = schemaFile.read()
+    schemaFile.close()
+
     def runEngine(self, engine):
         last = [None]
 
@@ -38,13 +42,17 @@ class TestClustering(unittest.TestCase):
                 last[0] = x
             engine.emit = emit
 
-            for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader()):
+            reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader())
+            for record in reader:
                 engine.action(record)
+            reader.close()
 
         else:
-            for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader()):
+            reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader())
+            for record in reader:
                 last[0] = engine.action(record)
-
+            reader.close()
+            
         return last[0]
 
     def testTop5List(self):
@@ -68,7 +76,7 @@ fcns:
   // our comparison function
   morePlanets = fcn(x: Star, y: Star -> boolean) a.len(x.planets) < a.len(y.planets)
 
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()), check=False, lineNumbers=False)
+'''.replace("<<INPUT>>", TestClustering.recordSchema), check=False, lineNumbers=False)
 
         engine, = PFAEngine.fromJson(pfaDocument)
         self.assertEqual(self.runEngine(engine), ["KOI-351", "HD 40307", "GJ 667C", "Kepler-11", "HD 10180"])
@@ -106,7 +114,7 @@ action:
       emit(histogram to fcn(old: Histogram -> Histogram)
           stat.sample.fillHistogram2d(mass, radius, 1.0, old))
 
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()), check=False, lineNumbers=False)
+'''.replace("<<INPUT>>", TestClustering.recordSchema), check=False, lineNumbers=False)
 
         engine, = PFAEngine.fromJson(pfaDocument)
         self.assertEqual(self.runEngine(engine), {"values": [[6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [3.0, 33.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 8.0, 118.0, 28.0, 6.0, 0.0, 1.0, 1.0, 0.0, 0.0], [0.0, 0.0, 33.0, 184.0, 72.0, 25.0, 8.0, 4.0, 0.0, 1.0], [0.0, 0.0, 1.0, 12.0, 45.0, 34.0, 20.0, 3.0, 4.0, 1.0], [0.0, 0.0, 0.0, 1.0, 1.0, 4.0, 4.0, 4.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]], "xhigh": 3.0, "yhigh": 3.0, "ynumbins": 10, "xnumbins": 10, "ylow": 0.0, "xlow": 0.0})

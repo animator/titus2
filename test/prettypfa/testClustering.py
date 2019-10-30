@@ -33,16 +33,21 @@ class TestClustering(unittest.TestCase):
     # most examples use the same clusters; only compute them the first time
     clusterNames = ["cluster{0:d}".format(x) for x in range(5)]
     kmeansResult = None
+    schemaFile = open("test/prettypfa/exoplanetsSchema.ppfa")
+    recordSchema = schemaFile.read()
+    schemaFile.close()
 
     def doKmeans(self):
         numpy.seterr(divide="ignore", invalid="ignore")
 
         # get a dataset for the k-means generator
         dataset = []
-        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader()):
+        reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader())
+        for record in reader:
             mag, dist, mass, radius = record.get("mag"), record.get("dist"), record.get("mass"), record.get("radius")
             if mag is not None and dist is not None and mass is not None and radius is not None:
                 dataset.append([mag, dist, mass, radius])
+        reader.close()
 
         # set up and run the k-means generator
         TestClustering.kmeansResult = KMeans(len(self.clusterNames), numpy.array(dataset))
@@ -52,9 +57,11 @@ class TestClustering(unittest.TestCase):
         if engine.config.method == "emit":
             engine.emit = lambda x: x
 
-        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader()):
+        reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader())
+        for record in reader:
             engine.action(record)
-
+        reader.close()
+        
     #################################################################################################################
     def testSimpleKMeansWithStrings(self):
         # define the workflow, leaving clusters as an empty array for now
@@ -79,7 +86,7 @@ action:
     else
         "MISSING"
 
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()))
+'''.replace("<<INPUT>>", TestClustering.recordSchema))
 
         # fill in the clusters with the k-means result
         if self.kmeansResult is None: self.doKmeans()
@@ -107,7 +114,7 @@ action:
     else
         ClusterId@MISSING
 
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()))
+'''.replace("<<INPUT>>", TestClustering.recordSchema))
 
         if self.kmeansResult is None: self.doKmeans()
         pfaDocument["cells"]["clusters"]["init"] = self.kmeansResult.pfaValue(self.clusterNames)
@@ -131,7 +138,7 @@ action:
                                    clusters,
                                    metric.simpleEuclidean)["id"])
 
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()))
+'''.replace("<<INPUT>>", TestClustering.recordSchema))
 
         if self.kmeansResult is None: self.doKmeans()
         pfaDocument["cells"]["clusters"]["init"] = self.kmeansResult.pfaValue(self.clusterNames)
@@ -157,7 +164,7 @@ action:
     }
     else
         null
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()))
+'''.replace("<<INPUT>>", TestClustering.recordSchema))
 
         if self.kmeansResult is None: self.doKmeans()
         pfaDocument["cells"]["clusters"]["init"] = self.kmeansResult.pfaValue(self.clusterNames)
@@ -182,7 +189,7 @@ action:
                               metric.simpleEuclidean)["population"]
     else
         null
-'''.replace("<<INPUT>>", open("test/prettypfa/exoplanetsSchema.ppfa").read()))
+'''.replace("<<INPUT>>", TestClustering.recordSchema))
 
         if self.kmeansResult is None: self.doKmeans()
         pfaDocument["cells"]["clusters"]["init"] = self.kmeansResult.pfaValue(self.clusterNames, populations=True)
@@ -196,10 +203,12 @@ action:
 
         # get a dataset for the k-means generator
         dataset = []
-        for record in DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader()):
+        reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader())
+        for record in reader:
             mag, dist, mass, radius = record.get("mag"), record.get("dist"), record.get("mass"), record.get("radius")
             if mag is not None and dist is not None and mass is not None and radius is not None:
                 dataset.append([mag, dist, mass, radius])
+        reader.close()
         dataset = numpy.array(dataset)
 
         # compute the normalization (1st to 99th percentile instead of strict min/max)
@@ -221,7 +230,7 @@ action:
 
         # put the transformation into PFA by string replacement
         # this re.subs will replace French quotes (<< >>) with Python variable values
-        inputSchema = open("test/prettypfa/exoplanetsSchema.ppfa").read()
+        inputSchema = TestClustering.recordSchema
         namesToSubstitute = locals()
         pfaDocument = titus.prettypfa.jsonNode(
             re.sub("<<[A-Za-z0-9]+>>",
