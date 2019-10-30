@@ -19,7 +19,7 @@ install:
   
 # command to run tests
 script:
-  - coverage run --source=titus\ setup.py test
+  - coverage run setup.py test
   - coverage report
   
 # Push the results back to codecov
