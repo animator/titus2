@@ -1,12 +1,10 @@
 [![Build Status](https://travis-ci.org/animator/python3-titus.svg?branch=master)](https://travis-ci.org/animator/python3-titus)
+![GitHub](https://img.shields.io/github/license/animator/python3-titus)
 
 Python 3 port of the Portable Format for Analytics (PFA) implementation Titus
 ========
 
 Fork of a subset of [Hadrian: implementations of the PFA specification](https://github.com/opendatagroup/hadrian).
-
-
-**As of version 0.8.4, Titus is available with the Apache License v2.0**
 
 **Version v.0.8.4**
 
