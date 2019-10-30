@@ -16,7 +16,12 @@ install:
   - pip install pyyaml
   - pip install numpy
   - pip install pytz
+  - pip install codecov
   
 # command to run tests
 script:
-  - python setup.py test
+  - coverage run setup.py test
+
+# Push the results back to codecov
+after_success:
+  - codecov
