@@ -486,9 +486,9 @@ action:
 "my"
 "ragtime"
 "gal"
-"three"
-"two"
 "one"
+"two"
+"three"
 ''')
 
     def testTutorial2_12(self):
