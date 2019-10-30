@@ -119,7 +119,7 @@ class Regexer(object):
         regex_t = Regexer.Regex_t()
         try:
             comp = Regexer.libc.regcomp(ctypes.byref(regex_t), pattern.encode("utf-8"), Regexer.clibSpecs.posixExtendedSyntaxFlag)
-        except UnicodeDecodeError:
+        except AttributeError:
             comp = Regexer.libc.regcomp(ctypes.byref(regex_t), pattern, Regexer.clibSpecs.posixExtendedSyntaxFlag)
 
         if (comp != 0):
