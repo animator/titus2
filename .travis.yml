@@ -15,12 +15,12 @@ install:
   - pip install pyyaml
   - pip install numpy
   - pip install pytz
-  - pip install codecov
+  - pip install coverage
   
 # command to run tests
 script:
-  - coverage run setup.py test
-  - codecov
+  - coverage run --source=titus\ setup.py test
+  - coverage report
   
 # Push the results back to codecov
 # after_success:
