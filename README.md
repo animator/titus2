@@ -1,5 +1,8 @@
+![Maintenance](https://img.shields.io/maintenance/yes/2019)
 [![Build Status](https://travis-ci.org/animator/python3-titus.svg?branch=master)](https://travis-ci.org/animator/python3-titus)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/titus)
 ![GitHub](https://img.shields.io/github/license/animator/python3-titus)
+![Twitter Follow](https://img.shields.io/twitter/follow/ankitmahato?label=Follow&style=social)
 
 Python 3 port of the Portable Format for Analytics (PFA) implementation Titus
 ========
