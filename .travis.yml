@@ -1,0 +1,18 @@
+#
+# Python 3 Titus travis.yml config file
+#
+# YAML Validator:   http://lint.travis-ci.org/
+#
+
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  
+# command to install dependencies
+install:
+  - pip install avro-python3, ply, pyyaml, numpy, pytz
+  
+# command to run tests
+script:
+  - python setup.py test
