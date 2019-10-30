@@ -118,7 +118,7 @@ class Regexer(object):
         # compile pattern into regex_t object
         regex_t = Regexer.Regex_t()
         try:
-            comp = Regexer.libc.regcomp(ctypes.byref(regex_t), bytes(pattern, "utf-8"), Regexer.clibSpecs.posixExtendedSyntaxFlag)
+            comp = Regexer.libc.regcomp(ctypes.byref(regex_t), pattern.encode("utf-8"), Regexer.clibSpecs.posixExtendedSyntaxFlag)
         except AttributeError:
             comp = Regexer.libc.regcomp(ctypes.byref(regex_t), pattern, Regexer.clibSpecs.posixExtendedSyntaxFlag)
 
