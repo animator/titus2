@@ -45,8 +45,8 @@ setup(name="titus",
       scripts = ["scripts/pfainspector", "scripts/pfachain", "scripts/pfaexternalize", "scripts/pfarandom", "scripts/pfasize"],
       description="Python 3 implementation of Portable Format for Analytics (PFA): producer, converter, and consumer.",
       test_suite="test",
-      install_requires=["avro-python3 >= 1.8.2", "ply >= 3.4"],
-      tests_require=["avro-python3 >= 1.8.2", "ply >= 3.4", "pyyaml >= 3.10", "numpy >= 1.6.1", "pytz == 2015.4"],
+      install_requires=["avro-python3 >= 1.8.2", "ply >= 3.4", "pyyaml >= 3.10", "numpy >= 1.6.1", "pytz >= 2015.4"],
+      tests_require=["avro-python3 >= 1.8.2", "ply >= 3.4", "pyyaml >= 3.10", "numpy >= 1.6.1", "pytz >= 2015.4"],
       )
 
 ### details of dependencies:
