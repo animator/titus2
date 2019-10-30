@@ -6,3 +6,5 @@ titus.egg-info/*
 *.py.bak
 .eggs/*
 backup/*
+htmlcov/*
+.coverage

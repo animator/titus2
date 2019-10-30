@@ -19,6 +19,7 @@ install:
   
 # command to run tests
 script:
+  - python -c "import sys; print(sys.platform)"
   - coverage run setup.py test
 
 # Push the results back to codecov
