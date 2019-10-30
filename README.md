@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/animator/python3-titus.svg?branch=master)](https://travis-ci.org/animator/python3-titus)
+
 In Development
 =======
 
