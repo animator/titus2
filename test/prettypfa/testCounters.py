@@ -42,13 +42,13 @@ class TestClustering(unittest.TestCase):
                 last[0] = x
             engine.emit = emit
 
-            reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader())
+            reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader())
             for record in reader:
                 engine.action(record)
             reader.close()
 
         else:
-            reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "r"), DatumReader())
+            reader = DataFileReader(open("test/prettypfa/exoplanets.avro", "rb"), DatumReader())
             for record in reader:
                 last[0] = engine.action(record)
             reader.close()
