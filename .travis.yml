@@ -25,3 +25,5 @@ script:
 # Push the results back to codecov
 # after_success:
 #   - codecov
+notifications:
+  email: false
