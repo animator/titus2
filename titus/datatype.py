@@ -298,7 +298,7 @@ class AvroType(Type):
     def avroType(self): return self
 
     def __repr__(self):
-        return json.dumps(self.schema.to_json())
+        return str(self.schema)
 
 class AvroCompiled(AvroType):
     """AvroTypes that would be compiled in Java (AvroRecord, AvroFixed, AvroEnum)."""
