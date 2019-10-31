@@ -529,7 +529,7 @@ class ReplaceAll(LibFcn):
         region = re.getRegion()
         beg = 0
         end = region.beg[0]
-        out = b"" if isinstance(haystack, bytes) else ""
+        out = "" if paramTypes[0] == "string" else b""
         if found:
             while found:
                 out = out + to(haystack[beg:end]) + replacement
