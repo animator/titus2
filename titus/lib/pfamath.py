@@ -114,10 +114,13 @@ class Ceil(LibFcn):
     name = prefix + "ceil"
     sig = Sig([{"x": P.Double()}], P.Double())
     errcodeBase = 27070
-    def genpy(self, paramTypes, args, pos):
-        return "math.ceil({0})".format(*args)
+#    def genpy(self, paramTypes, args, pos):
+#        return "math.ceil({0})".format(*args)
     def __call__(self, state, scope, pos, paramTypes, x):
-        return math.ceil(x)
+        if math.isinf(x) or math.isnan(x):
+            return x
+        else:
+            return math.ceil(x)
 provide(Ceil())
 
 class CopySign(LibFcn):
@@ -173,10 +176,13 @@ class Floor(LibFcn):
     name = prefix + "floor"
     sig = Sig([{"x": P.Double()}], P.Double())
     errcodeBase = 27130
-    def genpy(self, paramTypes, args, pos):
-        return "math.floor({0})".format(*args)
+#    def genpy(self, paramTypes, args, pos):
+#        return "math.floor({0})".format(*args)
     def __call__(self, state, scope, pos, paramTypes, x):
-        return math.floor(x)
+        if math.isinf(x) or math.isnan(x):
+            return x
+        else:        
+            return math.floor(x)
 provide(Floor())
 
 class Hypot(LibFcn):
@@ -259,7 +265,12 @@ class Round(LibFcn):
                 Sig([{"x": P.Double()}], P.Long())])
     errcodeBase = 27190
     def __call__(self, state, scope, pos, paramTypes, x):
-        return int(checkForOverflow(paramTypes[-1], math.floor(x + 0.5), self.errcodeBase + 0, self.errcodeBase + 1, self.name, pos))
+        out = None
+        if math.isinf(x) or math.isnan(x):
+            out = x
+        else:
+            out = math.floor(x + 0.5)
+        return int(checkForOverflow(paramTypes[-1], out, self.errcodeBase + 0, self.errcodeBase + 1, self.name, pos))
 provide(Round())
 
 class RInt(LibFcn):
