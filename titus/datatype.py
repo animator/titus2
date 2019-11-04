@@ -911,9 +911,6 @@ def jsonDecoder(avroType, value):
         if isinstance(value, str):
             return value
     elif isinstance(avroType, AvroFixed):
-        if isinstance(value, bytes):
-            if len(value) == avroType.size:
-                return value
         if isinstance(value, str):
             if len(value) == avroType.size:
                 return value
@@ -983,9 +980,8 @@ def jsonEncoder(avroType, value, tagged=True):
     elif isinstance(avroType, AvroBytes) and isinstance(value, str):
         return value
     elif isinstance(avroType, AvroFixed) and isinstance(value, str):
-        out = bytes(value)
-        if len(out) == avroType.size:
-            return out
+        if len(value) == avroType.size:
+            return value
     elif isinstance(avroType, AvroString) and isinstance(value, str):
         return value
     elif isinstance(avroType, AvroEnum) and isinstance(value, str) and value in avroType.symbols:
@@ -1267,7 +1263,7 @@ def checkData(data, avroType):
         if isinstance(data, bytes):
             return data
         elif isinstance(data, str):
-            return data
+            return bytes(map(ord, list(data)))
         else:
             raise TypeError("expecting {0}, found {1}".format(ts(avroType), data))
 

@@ -72,7 +72,9 @@ action:
   bytes.isAscii: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbb", 104, 101, 108, 108, 111)), True)
+        self.assertEqual(engine.action('hello'), True)
         self.assertEqual(engine.action(struct.pack("bbbbb", 104, 101, 108, -127, 111)), False)
+        self.assertEqual(engine.action('hel\x81o'), False)
 
     def testCheckLatin1(self):
         engine, = PFAEngine.fromYaml('''
@@ -100,6 +102,7 @@ action:
   bytes.isUtf16: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbbbbbbbbb", -1, -2, 104, 0, 101, 0, 108, 0, 108, 0, 111, 0)), True)
+        self.assertEqual(engine.action("\xff\xfeh\x00e\x00l\x00l\x00o\x00"), True)
 
     def testCheckUtf16be(self):
         engine, = PFAEngine.fromYaml('''
@@ -109,6 +112,7 @@ action:
   bytes.isUtf16be: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbbbbbbb", 0, 104, 0, 101, 0, 108, 0, 108, 0, 111)), True)
+        self.assertEqual(engine.action('\x00h\x00e\x00l\x00l\x00o'), True)
 
     def testCheckUtf16le(self):
         engine, = PFAEngine.fromYaml('''
@@ -118,6 +122,7 @@ action:
   bytes.isUtf16le: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbbbbbbb", 104, 0, 101, 0, 108, 0, 108, 0, 111, 0)), True)
+        self.assertEqual(engine.action('h\x00e\x00l\x00l\x00o\x00'), True)
 
 #################################################################### decoders
 
@@ -129,6 +134,7 @@ action:
   bytes.decodeAscii: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbb", 104, 101, 108, 108, 111)), "hello")
+        self.assertEqual(engine.action('hello'), "hello")
         self.assertRaises(PFARuntimeException, lambda: engine.action(struct.pack("bbbbb", 104, 101, 108, -127, 111)))
 
     def testDecodeLatin1(self):
@@ -139,6 +145,7 @@ action:
   bytes.decodeLatin1: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbb", 104, 101, 108, 108, 111)), "hello")
+        self.assertEqual(engine.action('hello'), "hello")
 
     def testDecodeUtf8(self):
         engine, = PFAEngine.fromYaml('''
@@ -148,6 +155,7 @@ action:
   bytes.decodeUtf8: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbb", 104, 101, 108, 108, 111)), "hello")
+        self.assertEqual(engine.action('hello'), "hello")
 
     def testDecodeUtf16(self):
         engine, = PFAEngine.fromYaml('''
@@ -157,6 +165,7 @@ action:
   bytes.decodeUtf16: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbbbbbbbbb", -1, -2, 104, 0, 101, 0, 108, 0, 108, 0, 111, 0)), "hello")
+        self.assertEqual(engine.action('\xff\xfeh\x00e\x00l\x00l\x00o\x00'), "hello")
 
     def testDecodeUtf16be(self):
         engine, = PFAEngine.fromYaml('''
@@ -166,6 +175,7 @@ action:
   bytes.decodeUtf16be: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbbbbbbb", 0, 104, 0, 101, 0, 108, 0, 108, 0, 111)), "hello")
+        self.assertEqual(engine.action('\x00h\x00e\x00l\x00l\x00o'), "hello")
 
     def testDecodeUtf16le(self):
         engine, = PFAEngine.fromYaml('''
@@ -175,6 +185,7 @@ action:
   bytes.decodeUtf16le: input
 ''')
         self.assertEqual(engine.action(struct.pack("bbbbbbbbbb", 104, 0, 101, 0, 108, 0, 108, 0, 111, 0)), "hello")
+        self.assertEqual(engine.action('h\x00e\x00l\x00l\x00o\x00'), "hello")
 
 #################################################################### encoders
 
