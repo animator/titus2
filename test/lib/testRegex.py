@@ -162,9 +162,9 @@ output: {type: array, items: int}
 action:
   - re.index: [input, {bytes.encodeUtf8: {string: "ab(c|d)*"}}]
 ''')
-        self.assertEqual(engine.action(bytes("abcccdc", "utf8")), [0,7])
-        self.assertEqual(engine.action(bytes("对讲机abcccdc", "utf8")), [9,16])
-        self.assertEqual(engine.action(bytes("对讲机abcccdc讲机", "utf8")), [9,16])
+        self.assertEqual(engine.action("abcccdc"), [0,7])
+        self.assertEqual(engine.action("对讲机abcccdc"), [9,16])
+        self.assertEqual(engine.action("对讲机abcccdc讲机"), [9,16])
 
 
     def testContains(self):
@@ -205,8 +205,8 @@ output: boolean
 action:
   - re.contains: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
-        self.assertEqual(engine.action(bytes("abcccdc", "utf8")), False)
-        self.assertEqual(engine.action(bytes("xyzzzz对讲机机abcc", "utf8")), True)
+        self.assertEqual(engine.action("abcccdc"), False)
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc"), True)
 
 
     def testCount(self):
@@ -265,8 +265,8 @@ output: int
 action:
   - re.count: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
-        self.assertEqual(engine.action(bytes("abcccdc", "utf8")), 0)
-        self.assertEqual(engine.action(bytes("xyzzzz对讲机机机abcc对讲机机机mmmmm对讲机机aa", "utf8")), 3)
+        self.assertEqual(engine.action("abcccdc"), 0)
+        self.assertEqual(engine.action("xyzzzz对讲机机机abcc对讲机机机mmmmm对讲机机aa"), 3)
 
 
     def testrIndex(self):
@@ -308,8 +308,8 @@ output: {type: array, items: int}
 action:
   - re.rindex: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
-        self.assertEqual(engine.action(bytes("abcccdc", "utf8")), [])
-        self.assertEqual(engine.action(bytes("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa", "utf8")), [39,51])
+        self.assertEqual(engine.action("abcccdc"), [])
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [39,51])
 
 
     def testGroups(self):
@@ -362,8 +362,8 @@ output: {type: array, items: {type: array, items: int}}
 action:
   - re.groups: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
-        self.assertEqual(engine.action(bytes("abcccdc", "utf8")), [])
-        self.assertEqual(engine.action(bytes("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa", "utf8")), [[6,18], [15,18]])
+        self.assertEqual(engine.action("abcccdc"), [])
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,18], [15,18]])
 
 
     def testindexAll(self):
@@ -403,8 +403,8 @@ output: {type: array, items: {type: array, items: int}}
 action:
   - re.indexall: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]   
 """)
-        self.assertEqual(engine.action(bytes("abcccdc", "utf8")), [])
-        self.assertEqual(engine.action(bytes("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa", "utf8")), [[6,18], [22,34], [39,51]])
+        self.assertEqual(engine.action("abcccdc"), [])
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,18], [22,34], [39,51]])
 
 
     def testfindAll(self):
@@ -434,8 +434,8 @@ output: {type: array, items: bytes}
 action:
   - re.findall: [input, {bytes.encodeUtf8: {string: "ab+"}}]
 """)
-        self.assertEqual(engine.action(bytes("xyz", "utf8")), [])
-        self.assertEqual(engine.action(bytes("abc机机abcabc", "utf8")), [bytes("ab", "utf8"), bytes("ab", "utf8"), bytes("ab", "utf8")] )
+        self.assertEqual(engine.action("xyz"), [])
+        self.assertEqual(engine.action("abc机机abcabc"), ["ab", "ab", "ab"] )
 
 
     def testfindFirst(self):
@@ -465,8 +465,8 @@ output: [bytes, "null"]
 action:
   - re.findfirst: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
-        self.assertEqual(engine.action(bytes("abcde对讲机讲fgg对讲机讲h", "utf8")), {"bytes": bytes("对讲机讲", "utf8")})
-        self.assertEqual(engine.action(bytes("abcdefghijk", "utf8")), None)
+        self.assertEqual(engine.action("abcde对讲机讲fgg对讲机讲h"), {"bytes": "对讲机讲"})
+        self.assertEqual(engine.action("abcdefghijk"), None)
 
 
     def testfindGroupsFirst(self):
@@ -512,8 +512,8 @@ output: {type: array, items: bytes}
 action:
   - re.findgroupsfirst: [input, {bytes.encodeUtf8: {string: "机(机)"}}]
 """)
-        self.assertEqual(engine.action(bytes("abc机机abca机机bc", "utf8")), [bytes("机机", "utf8"),bytes("机", "utf8")] )
-        self.assertEqual(engine.action(bytes("abcd", "utf8")), [])
+        self.assertEqual(engine.action("abc机机abca机机bc"), ["机机","机"] )
+        self.assertEqual(engine.action("abcd"), [])
 
 
     def testfindGroupsAll(self):
@@ -550,8 +550,8 @@ output: {type: array, items: {type: array, items: bytes}}
 action:
   - re.findgroupsall: [input, {bytes.encodeUtf8: {string: "机(机)"}}]
 """)
-        self.assertEqual(engine.action(bytes("abc机机abca机机bc", "utf8")), [[bytes("机机", "utf8"), bytes("机", "utf8")], [bytes("机机", "utf8"), bytes("机", "utf8")]])
-        self.assertEqual(engine.action(bytes("abcd", "utf8")), [])
+        self.assertEqual(engine.action("abc机机abca机机bc"), [["机机", "机"], ["机机", "机"]])
+        self.assertEqual(engine.action("abcd"), [])
 
 
     def testgroupsAll(self):
@@ -579,7 +579,7 @@ output: {type: array, items: {type: array, items: {type: array, items: int}}}
 action:
   - re.groupsall: [input, {bytes.encodeUtf8: {string: "(机)机"}}]
 """)
-        self.assertEqual(engine.action(bytes("abc机机abca机机bc", "utf8")), [[[3,9], [3,6]], [[13,19], [13,16]]])
+        self.assertEqual(engine.action("abc机机abca机机bc"), [[[3,9], [3,6]], [[13,19], [13,16]]])
 
 
     def testreplaceFirst(self):
@@ -616,7 +616,7 @@ output: bytes
 action:
   - {re.replacefirst: [input, {bytes.encodeUtf8: {string: "对讲机+"}}, {bytes.encodeUtf8: {string: "walkie talkie"}}]}
 """)
-        self.assertEqual(engine.action(bytes("This 对讲机 works better than that 对讲机.", "utf8")), bytes("This walkie talkie works better than that 对讲机.", "utf8"))
+        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This walkie talkie works better than that 对讲机.")
 
 
     def testreplaceLast(self):
@@ -645,7 +645,7 @@ output: bytes
 action:
   - {re.replacelast: [input, {bytes.encodeUtf8: {string: "对讲机+"}}, {bytes.encodeUtf8: {string: "walkie talkie"}}]}
 """)
-        self.assertEqual(engine.action(bytes("This 对讲机 works better than that 对讲机.", "utf8")), bytes("This 对讲机 works better than that walkie talkie.", "utf8"))
+        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This 对讲机 works better than that walkie talkie.")
 
 
     def testreplaceAll(self):
@@ -693,7 +693,7 @@ output: bytes
 action:
   - {re.replaceall: [input, {bytes.encodeUtf8: {string: "对讲机+"}}, {bytes.encodeUtf8: {string: "walkie talkie"}}]}
 """)
-        self.assertEqual(engine.action(bytes("This 对讲机 works better than that 对讲机.", "utf8")), bytes("This walkie talkie works better than that walkie talkie.", "utf8"))
+        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This walkie talkie works better than that walkie talkie.")
 
 
     def testsplit(self):
@@ -732,8 +732,8 @@ output: {type: array, items: bytes}
 action:
   - re.split: [input, {bytes.encodeUtf8: {string: "机机+"}}]
 """)
-        self.assertEqual(engine.action(bytes("xyz", "utf8")), [bytes("xyz", "utf8")])
-        self.assertEqual(engine.action(bytes("ab机机ab机机abc机机abc", "utf8")), [bytes("ab", "utf8"), bytes("ab", "utf8"), bytes("abc", "utf8"), bytes("abc", "utf8")])
+        self.assertEqual(engine.action("xyz"), ["xyz"])
+        self.assertEqual(engine.action("ab机机ab机机abc机机abc"), ["ab", "ab", "abc", "abc"])
 
 
 
