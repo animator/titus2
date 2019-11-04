@@ -236,6 +236,8 @@ class ToBase64(LibFcn):
     sig = Sig([{"x": P.Bytes()}], P.String())
     errcodeBase = 16210
     def __call__(self, state, scope, pos, paramTypes, x):
+        if isinstance(x, str):
+            x = bytes(map(ord, list(x)))
         return base64.b64encode(x).decode()
 provide(ToBase64())
 

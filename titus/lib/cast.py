@@ -276,11 +276,11 @@ class CastAvro(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, x):
         schema = avro.schema.Parse(json.dumps(paramTypes[0]))
         x = untagUnion(x, paramTypes[0])
-        bytes = io.BytesIO()
+        bytes_io = io.BytesIO()
         writer = DatumWriter(schema)
-        writer.write(x, BinaryEncoder(bytes))
-        bytes.flush()
-        return bytes.getvalue()
+        writer.write(x, BinaryEncoder(bytes_io))
+        bytes_io.flush()
+        return ''.join(map(chr, list(bytes_io.getvalue())))
 provide(CastAvro())
 
 class CastJson(LibFcn):
