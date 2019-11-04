@@ -35,6 +35,8 @@ class ToBytes(LibFcn):
     sig = Sig([{"x": P.WildFixed("A")}], P.Bytes())
     errcodeBase = 20000
     def __call__(self, state, scope, pos, paramTypes, x):
+        if isinstance(x, bytes):
+            return ''.join(map(chr, list(x)))
         return x
 provide(ToBytes())
 
@@ -43,6 +45,10 @@ class FromBytes(LibFcn):
     sig = Sig([{"original": P.WildFixed("A")}, {"replacement": P.Bytes()}], P.Wildcard("A"))
     errcodeBase = 20010
     def __call__(self, state, scope, pos, paramTypes, original, replacement):
+        if isinstance(original, bytes):
+            original = ''.join(map(chr, list(original)))
+        if isinstance(replacement, bytes):
+            replacement = ''.join(map(chr, list(replacement)))    
         length = min(len(original), len(replacement))
         return replacement[0:length] + original[length:len(original)]
 provide(FromBytes())

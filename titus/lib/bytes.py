@@ -53,7 +53,10 @@ class Subseq(LibFcn):
     sig = Sig([{"x": P.Bytes()}, {"start": P.Int()}, {"end": P.Int()}], P.Bytes())
     errcodeBase = 16010
     def __call__(self, state, scope, pos, paramTypes, x, start, end):
-        return x[start:end]
+        if isinstance(x, str):
+            return x[start:end]
+        else:
+            return ''.join(map(chr, list(x[start:end])))
 provide(Subseq())
 
 class SubseqTo(LibFcn):
@@ -61,10 +64,14 @@ class SubseqTo(LibFcn):
     sig = Sig([{"x": P.Bytes()}, {"start": P.Int()}, {"end": P.Int()}, {"replacement": P.Bytes()}], P.Bytes())
     errcodeBase = 16020
     def __call__(self, state, scope, pos, paramTypes, x, start, end, replacement):
+        if isinstance(replacement, str):
+            replacement = bytes(map(ord, list(replacement)))
+        if isinstance(x, str):
+            x = bytes(map(ord, list(x)))
         normStart, normEnd = startEnd(len(x), start, end)
         before = x[:normStart]
         after = x[normEnd:]
-        return before + replacement + after
+        return ''.join(map(chr, list(before + replacement + after)))
 provide(SubseqTo())
 
 #################################################################### testers
@@ -132,6 +139,8 @@ class Decoder(LibFcn):
     codec = None
     def __call__(self, state, scope, pos, paramTypes, x):
         try:
+            if isinstance(x, str):
+                x = bytes(map(ord, list(x)))
             return codecs.decode(x, self.codec, "strict")
         except UnicodeDecodeError as err:
             raise PFARuntimeException("invalid bytes", self.errcodeBase + 0, self.name, pos)
@@ -179,7 +188,8 @@ class Encoder(LibFcn):
     codec = None
     def __call__(self, state, scope, pos, paramTypes, x):
         try:
-            return codecs.encode(x, self.codec, "strict")
+            out_bytes = codecs.encode(x, self.codec, "strict")
+            return ''.join(map(chr, list(out_bytes)))
         except UnicodeEncodeError:
             raise PFARuntimeException("invalid string", self.errcodeBase + 0, self.name, pos)
 
@@ -237,7 +247,8 @@ class FromBase64(LibFcn):
         try:
             if re.match("^[A-Za-z0-9\+/]*=*$", s) is None:
                 raise TypeError
-            return base64.b64decode(s)
+            out = base64.b64decode(s)
+            return ''.join(map(chr, list(out)))
         except TypeError:
             raise PFARuntimeException("invalid base64", self.errcodeBase + 0, self.name, pos)
 provide(FromBase64())

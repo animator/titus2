@@ -196,7 +196,7 @@ output: bytes
 action:
   bytes.encodeAscii: input
 ''')
-        self.assertEqual(engine.action("hello"), struct.pack("bbbbb", 104, 101, 108, 108, 111))
+        self.assertEqual(engine.action("hello"), 'hello')
         self.assertRaises(PFARuntimeException, lambda: engine.action("hel\x81o"))
 
     def testEncodeLatin1(self):
@@ -206,7 +206,7 @@ output: bytes
 action:
   bytes.encodeLatin1: input
 ''')
-        self.assertEqual(engine.action("hello"), struct.pack("bbbbb", 104, 101, 108, 108, 111))
+        self.assertEqual(engine.action("hello"), 'hello')
 
     def testEncodeUtf8(self):
         engine, = PFAEngine.fromYaml('''
@@ -215,7 +215,7 @@ output: bytes
 action:
   bytes.encodeUtf8: input
 ''')
-        self.assertEqual(engine.action("hello"), struct.pack("bbbbb", 104, 101, 108, 108, 111))
+        self.assertEqual(engine.action("hello"), 'hello')
 
     def testEncodeUtf16(self):
         engine, = PFAEngine.fromYaml('''
@@ -224,7 +224,7 @@ output: bytes
 action:
   bytes.encodeUtf16: input
 ''')
-        self.assertEqual(engine.action("hello"), struct.pack("bbbbbbbbbbbb", -1, -2, 104, 0, 101, 0, 108, 0, 108, 0, 111, 0))
+        self.assertEqual(engine.action("hello"), '\xff\xfeh\x00e\x00l\x00l\x00o\x00')
 
     def testEncodeUtf16be(self):
         engine, = PFAEngine.fromYaml('''
@@ -233,7 +233,7 @@ output: bytes
 action:
   bytes.encodeUtf16be: input
 ''')
-        self.assertEqual(engine.action("hello"), struct.pack("bbbbbbbbbb", 0, 104, 0, 101, 0, 108, 0, 108, 0, 111))
+        self.assertEqual(engine.action("hello"), '\x00h\x00e\x00l\x00l\x00o')
 
     def testEncodeUtf16le(self):
         engine, = PFAEngine.fromYaml('''
@@ -242,7 +242,7 @@ output: bytes
 action:
   bytes.encodeUtf16le: input
 ''')
-        self.assertEqual(engine.action("hello"), struct.pack("bbbbbbbbbb", 104, 0, 101, 0, 108, 0, 108, 0, 111, 0))
+        self.assertEqual(engine.action("hello"), 'h\x00e\x00l\x00l\x00o\x00')
 
 #################################################################### encoders
 
@@ -253,7 +253,7 @@ output: string
 action:
   bytes.toBase64: input
 ''')
-        self.assertEqual(engine.action(struct.pack("bbbbb", 0, 127, 64, 38, 22)), "AH9AJhY=")
+        self.assertEqual(engine.action('\x00\x7f@&\x16'), "AH9AJhY=")
 
     def testConvertFromBase64(self):
         engine, = PFAEngine.fromYaml('''
@@ -262,4 +262,4 @@ output: bytes
 action:
   bytes.fromBase64: input
 ''')
-        self.assertEqual(engine.action("AH9AJhY="), struct.pack("bbbbb", 0, 127, 64, 38, 22))
+        self.assertEqual(engine.action("AH9AJhY="), '\x00\x7f@&\x16')
