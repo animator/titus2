@@ -184,7 +184,15 @@ def convert(haystack, pattern, paramType0):
     if paramType0 == "string":
         return haystack.encode("utf-8"), pattern.encode("utf-8"), lambda x: x.decode("utf-8")
     else:
-        return haystack, pattern, lambda x: x
+        if isinstance(haystack, bytes):
+            cnvtHaystack = haystack
+        else:
+            cnvtHaystack = bytes(map(ord, list(haystack)))
+        if isinstance(pattern, bytes):
+            cnvtPattern = pattern
+        else:
+            cnvtPattern = bytes(map(ord, list(pattern)))        
+        return cnvtHaystack, cnvtPattern, lambda x: "".join(map(chr, list(x)))
 
 ############################################################# Index
 class Index(LibFcn):
