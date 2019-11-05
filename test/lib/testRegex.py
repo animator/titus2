@@ -146,14 +146,14 @@ action:
         self.assertEqual(engine.action("cat"),         [])
 
 # test non ascii strings
-#        engine, = PFAEngine.fromYaml('''
-#input: string
-#output: {type: array, items: int}
-#action:
-#  - {re.index: [input, {string: "对讲(机|p)*"}]}
-#''')
-#        self.assertEqual(engine.action("对讲机机机机机机"),  [0,8])
-#        self.assertEqual(engine.action("对讲pppppppppp"), [0,12])
+        engine, = PFAEngine.fromYaml('''
+input: string
+output: {type: array, items: int}
+action:
+ - {re.index: [input, {string: "对讲(机|p)*"}]}
+''')
+        self.assertEqual(engine.action("对讲机机机机机机"),  [0,8])
+        self.assertEqual(engine.action("对讲pppppppppp"), [0,12])
 
 # check byte input
         engine, = PFAEngine.fromYaml('''
@@ -163,8 +163,8 @@ action:
   - re.index: [input, {bytes.encodeUtf8: {string: "ab(c|d)*"}}]
 ''')
         self.assertEqual(engine.action("abcccdc"), [0,7])
-        self.assertEqual(engine.action("对讲机abcccdc"), [9,16])
-        self.assertEqual(engine.action("对讲机abcccdc讲机"), [9,16])
+        self.assertEqual(engine.action("\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xbaabcccdc"), [9,16])
+        self.assertEqual(engine.action("\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xbaabcccdc\xe8\xae\xb2\xe6\x9c\xba"), [9,16])
 
 
     def testContains(self):
@@ -188,14 +188,14 @@ action:
         self.assertEqual(engine.action("928373cat"),     False)
 
 # check non ascii strings
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: boolean
-#action:
-#  - {re.contains: [input, [对讲机(讲|机)*]]}
-#""")
-#        self.assertEqual(engine.action("abcccdc"),  False)
-#        self.assertEqual(engine.action("xyzzzz对讲机机abcc"), True)
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: boolean
+action:
+ - {re.contains: [input, [对讲机(讲|机)*]]}
+""")
+        self.assertEqual(engine.action("abcccdc"),  False)
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc"), True)
 
 
 # check byte input
@@ -206,7 +206,7 @@ action:
   - re.contains: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
         self.assertEqual(engine.action("abcccdc"), False)
-        self.assertEqual(engine.action("xyzzzz对讲机机abcc"), True)
+        self.assertEqual(engine.action('xyzzzz\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaabcc'), True)
 
 
     def testCount(self):
@@ -249,14 +249,14 @@ action:
         self.assertEqual(engine.action("ababababababababababa"), 10)
 
 # check non ascii strings
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: int
-#action:
-#  - {re.count: [input, [对+]]}
-#""")
-#        self.assertEqual(engine.action("abcccdc"), 0)
-#        self.assertEqual(engine.action("xyzzzz对对对对讲机机abcc对讲机机mmmmm对对对讲机机aa"), 3)
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: int
+action:
+ - {re.count: [input, [对+]]}
+""")
+        self.assertEqual(engine.action("abcccdc"), 0)
+        self.assertEqual(engine.action("xyzzzz对对对对讲机机abcc对讲机机mmmmm对对对讲机机aa"), 3)
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -266,7 +266,7 @@ action:
   - re.count: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
         self.assertEqual(engine.action("abcccdc"), 0)
-        self.assertEqual(engine.action("xyzzzz对讲机机机abcc对讲机机机mmmmm对讲机机aa"), 3)
+        self.assertEqual(engine.action("xyzzzz\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xba\xe6\x9c\xbaabcc\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xba\xe6\x9c\xbammmmm\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaaa"), 3)
 
 
     def testrIndex(self):
@@ -292,14 +292,14 @@ action:
 
 
 # check non-ascii string input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: int}
-#action:
-#  - {re.rindex: [input, [对讲机(讲|机)*]]}
-#""")
-#        self.assertEqual(engine.action("abcccdc"), [])
-#        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [23,27])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: int}
+action:
+ - {re.rindex: [input, [对讲机(讲|机)*]]}
+""")
+        self.assertEqual(engine.action("abcccdc"), [])
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [23,27])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -309,7 +309,7 @@ action:
   - re.rindex: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
         self.assertEqual(engine.action("abcccdc"), [])
-        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [39,51])
+        self.assertEqual(engine.action("xyzzzz\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaabcc\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbammmmm\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaaa"), [39,51])
 
 
     def testGroups(self):
@@ -346,14 +346,14 @@ action:
         self.assertEqual(engine.action("abcdefghijk"), [[0,11], [0,0], [0,1], [3,6]])
 
 # check non-ascii string input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: {type: array, items: int}}
-#action:
-#  - {re.groups: [input, [对讲机(讲|机)*]]}
-#""")
-#        self.assertEqual(engine.action("abcccdc"), [])
-#        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,10], [9,10]])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: {type: array, items: int}}
+action:
+ - {re.groups: [input, [对讲机(讲|机)*]]}
+""")
+        self.assertEqual(engine.action("abcccdc"), [])
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,10], [9,10]])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -363,7 +363,7 @@ action:
   - re.groups: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
         self.assertEqual(engine.action("abcccdc"), [])
-        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,18], [15,18]])
+        self.assertEqual(engine.action("xyzzzz\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaabcc\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbammmmm\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaaa"), [[6,18], [15,18]])
 
 
     def testindexAll(self):
@@ -387,14 +387,14 @@ action:
 
 
 # check non-ascii string input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: {type: array, items: int}}
-#action:
-#  - {re.indexall: [input, [对讲机(讲|机)*]]}
-#""")
-#        self.assertEqual(engine.action("abcccdc"), [])
-#        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,10], [14,18], [23,27]])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: {type: array, items: int}}
+action:
+ - {re.indexall: [input, [对讲机(讲|机)*]]}
+""")
+        self.assertEqual(engine.action("abcccdc"), [])
+        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,10], [14,18], [23,27]])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -404,7 +404,7 @@ action:
   - re.indexall: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]   
 """)
         self.assertEqual(engine.action("abcccdc"), [])
-        self.assertEqual(engine.action("xyzzzz对讲机机abcc对讲机机mmmmm对讲机机aa"), [[6,18], [22,34], [39,51]])
+        self.assertEqual(engine.action("xyzzzz\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaabcc\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbammmmm\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe6\x9c\xbaaa"), [[6,18], [22,34], [39,51]])
 
 
     def testfindAll(self):
@@ -419,13 +419,13 @@ action:
 
 
 # check non-ascii string input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: string}
-#action:
-#  - {re.findall: [input, [猫机+猫]]}
-#""")
-#        self.assertEqual(engine.action("猫机猫oooo猫机机猫ppp猫机机机猫bbbb猫机aaaa猫机机"), ["猫机猫" ,"猫机机猫","猫机机机猫"])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: string}
+action:
+ - {re.findall: [input, [猫机+猫]]}
+""")
+        self.assertEqual(engine.action("猫机猫oooo猫机机猫ppp猫机机机猫bbbb猫机aaaa猫机机"), ["猫机猫" ,"猫机机猫","猫机机机猫"])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -435,7 +435,7 @@ action:
   - re.findall: [input, {bytes.encodeUtf8: {string: "ab+"}}]
 """)
         self.assertEqual(engine.action("xyz"), [])
-        self.assertEqual(engine.action("abc机机abcabc"), ["ab", "ab", "ab"] )
+        self.assertEqual(engine.action("abc\xe6\x9c\xba\xe6\x9c\xbaabcabc"), ["ab", "ab", "ab"] )
 
 
     def testfindFirst(self):
@@ -449,14 +449,14 @@ action:
         self.assertEqual(engine.action("abcabcabc"), {"string": "ab"})
 
 # check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: [string, "null"]
-#action:
-#  - {re.findfirst: [input, [机机+]]}
-#""")
-#        self.assertEqual(engine.action("abc机机机abca机机bc  asdkj 机机机sd"), "机机机")
-#        self.assertEqual(engine.action("abdefg"), None)
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: [string, "null"]
+action:
+ - {re.findfirst: [input, [机机+]]}
+""")
+        self.assertEqual(engine.action("abc机机机abca机机bc  asdkj 机机机sd"), "机机机")
+        self.assertEqual(engine.action("abdefg"), None)
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -465,7 +465,7 @@ output: [bytes, "null"]
 action:
   - re.findfirst: [input, {bytes.encodeUtf8: {string: "对讲机(讲|机)*"}}]
 """)
-        self.assertEqual(engine.action("abcde对讲机讲fgg对讲机讲h"), {"bytes": "对讲机讲"})
+        self.assertEqual(engine.action("abcde\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe8\xae\xb2fgg\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe8\xae\xb2h"), {"bytes": "\xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba\xe8\xae\xb2"})
         self.assertEqual(engine.action("abcdefghijk"), None)
 
 
@@ -496,14 +496,14 @@ action:
         self.assertEqual(engine.action("Paris in the the spring"), ["the the ", "the "])
 
 # check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: string}
-#action:
-#  - {re.findgroupsfirst: [input, [机+(机)]]}
-#""")
-#        self.assertEqual(engine.action("abc机机机机abca机机bc"), ["机机机机","机"] )
-#        self.assertEqual(engine.action("abcd"), [])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: string}
+action:
+ - {re.findgroupsfirst: [input, [机+(机)]]}
+""")
+        self.assertEqual(engine.action("abc机机机机abca机机bc"), ["机机机机","机"] )
+        self.assertEqual(engine.action("abcd"), [])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -512,7 +512,7 @@ output: {type: array, items: bytes}
 action:
   - re.findgroupsfirst: [input, {bytes.encodeUtf8: {string: "机(机)"}}]
 """)
-        self.assertEqual(engine.action("abc机机abca机机bc"), ["机机","机"] )
+        self.assertEqual(engine.action("abc\xe6\x9c\xba\xe6\x9c\xbaabca\xe6\x9c\xba\xe6\x9c\xbabc"), ["\xe6\x9c\xba\xe6\x9c\xba","\xe6\x9c\xba"] )
         self.assertEqual(engine.action("abcd"), [])
 
 
@@ -535,13 +535,13 @@ action:
         self.assertEqual(engine.action("abcdefghijkMMMMMabcdefghijkMMMM"), [["abcdefghijk", "", "a", "def"], ["abcdefghijk","", "a", "def"]])
 
 # check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: {type: array, items: string}}
-#action:
-#  - {re.findgroupsall: [input, [机+(机)]]}
-#""")
-#        self.assertEqual(engine.action("abc机机机机abca机机bc"), [["机机机机", "机"], ["机机", "机"]])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: {type: array, items: string}}
+action:
+ - {re.findgroupsall: [input, [机+(机)]]}
+""")
+        self.assertEqual(engine.action("abc机机机机abca机机bc"), [["机机机机", "机"], ["机机", "机"]])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -550,7 +550,7 @@ output: {type: array, items: {type: array, items: bytes}}
 action:
   - re.findgroupsall: [input, {bytes.encodeUtf8: {string: "机(机)"}}]
 """)
-        self.assertEqual(engine.action("abc机机abca机机bc"), [["机机", "机"], ["机机", "机"]])
+        self.assertEqual(engine.action('abc\xe6\x9c\xba\xe6\x9c\xbaabca\xe6\x9c\xba\xe6\x9c\xbabc'), [['\xe6\x9c\xba\xe6\x9c\xba', '\xe6\x9c\xba'], ['\xe6\x9c\xba\xe6\x9c\xba', '\xe6\x9c\xba']])
         self.assertEqual(engine.action("abcd"), [])
 
 
@@ -564,13 +564,13 @@ action:
         self.assertEqual(engine.action("abcdefghijkMMMMMabcdefghijkMMMM"), [[[0,11], [0,0], [0,1], [3,6]], [[16, 27],[16,16],[16,17], [19,22]]])
 
 ## check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: {type: array, items: {type: array, items: int}}}
-#action:
-#  - {re.groupsall: [input, [(机)机]]}
-#""")
-#        self.assertEqual(engine.action("abc机机abca机机bc"), [[[3,5], [3,4]], [[9,11], [9,10]]])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: {type: array, items: {type: array, items: int}}}
+action:
+ - {re.groupsall: [input, [(机)机]]}
+""")
+        self.assertEqual(engine.action("abc机机abca机机bc"), [[[3,5], [3,4]], [[9,11], [9,10]]])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -579,7 +579,7 @@ output: {type: array, items: {type: array, items: {type: array, items: int}}}
 action:
   - re.groupsall: [input, {bytes.encodeUtf8: {string: "(机)机"}}]
 """)
-        self.assertEqual(engine.action("abc机机abca机机bc"), [[[3,9], [3,6]], [[13,19], [13,16]]])
+        self.assertEqual(engine.action('abc\xe6\x9c\xba\xe6\x9c\xbaabca\xe6\x9c\xba\xe6\x9c\xbabc'), [[[3,9], [3,6]], [[13,19], [13,16]]])
 
 
     def testreplaceFirst(self):
@@ -601,13 +601,13 @@ action:
 """)
         self.assertEqual(engine.action("This abcccdc works better than that abcccdc."), "This walkie talkie works better than that abcccdc.")
 # check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: string
-#action:
-#  - {re.replacefirst: [input, [对讲机+], ["walkie talkie"]]}
-#""")
-#        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This walkie talkie works better than that 对讲机.")
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: string
+action:
+ - {re.replacefirst: [input, [对讲机+], ["walkie talkie"]]}
+""")
+        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This walkie talkie works better than that 对讲机.")
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -616,7 +616,7 @@ output: bytes
 action:
   - {re.replacefirst: [input, {bytes.encodeUtf8: {string: "对讲机+"}}, {bytes.encodeUtf8: {string: "walkie talkie"}}]}
 """)
-        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This walkie talkie works better than that 对讲机.")
+        self.assertEqual(engine.action('This \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba works better than that \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba.'), 'This walkie talkie works better than that \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba.')
 
 
     def testreplaceLast(self):
@@ -630,13 +630,13 @@ action:
         self.assertEqual(engine.action("abcccdcPPPPabcccdcPPPP"), "abcccdcPPPPpersonPPPP")
 
 # check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: string
-#action:
-#  - {re.replacelast: [input, [对讲机+], ["walkie talkie"]]}
-#""")
-#        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This 对讲机 works better than that walkie talkie.")
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: string
+action:
+ - {re.replacelast: [input, [对讲机+], ["walkie talkie"]]}
+""")
+        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This 对讲机 works better than that walkie talkie.")
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -645,7 +645,7 @@ output: bytes
 action:
   - {re.replacelast: [input, {bytes.encodeUtf8: {string: "对讲机+"}}, {bytes.encodeUtf8: {string: "walkie talkie"}}]}
 """)
-        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This 对讲机 works better than that walkie talkie.")
+        self.assertEqual(engine.action('This \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba works better than that \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba.'), 'This \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba works better than that walkie talkie.')
 
 
     def testreplaceAll(self):
@@ -678,13 +678,13 @@ action:
         self.assertEqual(engine.action("PPabcdddcPPabcccdcPPabcccdcPP"), "PPcowPPcowPPcowPP")
 
 # check non-ascii input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: string
-#action:
-#  - {re.replaceall: [input, [对讲机+], ["walkie talkie"]]}
-#""")
-#        self.assertEqual(engine.action("This 对讲机机 works better than that 对讲机机."), "This walkie talkie works better than that walkie talkie.")
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: string
+action:
+ - {re.replaceall: [input, [对讲机+], ["walkie talkie"]]}
+""")
+        self.assertEqual(engine.action("This 对讲机机 works better than that 对讲机机."), "This walkie talkie works better than that walkie talkie.")
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -693,7 +693,7 @@ output: bytes
 action:
   - {re.replaceall: [input, {bytes.encodeUtf8: {string: "对讲机+"}}, {bytes.encodeUtf8: {string: "walkie talkie"}}]}
 """)
-        self.assertEqual(engine.action("This 对讲机 works better than that 对讲机."), "This walkie talkie works better than that walkie talkie.")
+        self.assertEqual(engine.action('This \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba works better than that \xe5\xaf\xb9\xe8\xae\xb2\xe6\x9c\xba.'), "This walkie talkie works better than that walkie talkie.")
 
 
     def testsplit(self):
@@ -717,13 +717,13 @@ action:
         self.assertEqual(engine.action("PPabcccdcPPabcccdcPPabcccdcPP"), ["PP","PP","PP","PP"])
 
 # check non-ascii string input
-#        engine, = PFAEngine.fromYaml("""
-#input: string
-#output: {type: array, items: string}
-#action:
-#  - {re.split: [input, [机+]]}
-#""")
-#        self.assertEqual(engine.action("abc机机机abca机机机bc  asdkj 机机sd"), ["abc","abca","bc  asdkj ", "sd" ])
+        engine, = PFAEngine.fromYaml("""
+input: string
+output: {type: array, items: string}
+action:
+ - {re.split: [input, [机+]]}
+""")
+        self.assertEqual(engine.action("abc机机机abca机机机bc  asdkj 机机sd"), ["abc","abca","bc  asdkj ", "sd" ])
 
 # check byte input
         engine, = PFAEngine.fromYaml("""
@@ -733,7 +733,7 @@ action:
   - re.split: [input, {bytes.encodeUtf8: {string: "机机+"}}]
 """)
         self.assertEqual(engine.action("xyz"), ["xyz"])
-        self.assertEqual(engine.action("ab机机ab机机abc机机abc"), ["ab", "ab", "abc", "abc"])
+        self.assertEqual(engine.action("ab\xe6\x9c\xba\xe6\x9c\xbaab\xe6\x9c\xba\xe6\x9c\xbaabc\xe6\x9c\xba\xe6\x9c\xbaabc"), ["ab", "ab", "abc", "abc"])
 
 
 
