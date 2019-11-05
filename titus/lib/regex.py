@@ -535,6 +535,8 @@ class ReplaceAll(LibFcn):
     errcodeBase = 35140
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         original = haystack
+        if isinstance(original, bytes):
+            original = "".join(map(chr, list(original)))
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
         if isinstance(replacement, bytes):
             replacement = "".join(map(chr, list(replacement)))
