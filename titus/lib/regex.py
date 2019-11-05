@@ -452,6 +452,8 @@ class ReplaceFirst(LibFcn):
     errcodeBase = 35110
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
+        if isinstance(replacement, bytes):
+            replacement = "".join(map(chr, list(replacement)))        
         re = Regexer(haystack, pattern, self.errcodeBase + 0, self.name, pos)
         found = re.search(0)
         region = re.getRegion()
@@ -471,6 +473,8 @@ class ReplaceLast(LibFcn):
     errcodeBase = 35120
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
+        if isinstance(replacement, bytes):
+            replacement = "".join(map(chr, list(replacement)))
         re = Regexer(haystack, pattern, self.errcodeBase + 0, self.name, pos)
         found = re.search(0)
         region = re.getRegion()
