@@ -532,12 +532,14 @@ class ReplaceAll(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         original = haystack
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
+        if isinstance(replacement, bytes):
+            replacement = "".join(map(chr, list(replacement)))
         re = Regexer(haystack, pattern, self.errcodeBase + 0, self.name, pos)
         found = re.search(0)
         region = re.getRegion()
         beg = 0
         end = region.beg[0]
-        out = "" if paramTypes[0] == "string" else b""
+        out = ""
         if found:
             while found:
                 out = out + to(haystack[beg:end]) + replacement
