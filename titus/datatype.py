@@ -454,7 +454,7 @@ class AvroEnum(AvroIdentifier, AvroCompiled):
     @property
     def symbols(self):
         """Allowed values for instances of this type."""
-        return self.schema.symbols
+        return list(self.schema.symbols)
     def jsonNode(self, memo):
         if self.fullName in memo:
             return self.fullName
