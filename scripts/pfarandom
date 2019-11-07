@@ -40,7 +40,7 @@ unicodeRanges = [
     (0x0384, 0x038A),
     (0x038C, 0x038C)
     ]
-unicodeAlphabet = [unichr(cp) for current in unicodeRanges for cp in range(current[0], current[1] + 1)]
+unicodeAlphabet = [chr(cp) for current in unicodeRanges for cp in range(current[0], current[1] + 1)]
 
 def typeName(avroType):
     if isinstance(avroType, (AvroFixed, AvroEnum, AvroRecord)):
@@ -68,17 +68,17 @@ def makeData(avroType):
     elif isinstance(avroType, AvroDouble):
         return random.random()
     elif isinstance(avroType, AvroBytes):
-        return "".join(chr(random.randint(0, 255)) for x in xrange(10))
+        return "".join(chr(random.randint(0, 255)) for x in range(10))
     elif isinstance(avroType, AvroFixed):
-        return "".join(chr(random.randint(0, 255)) for x in xrange(avroType.size))
+        return "".join(chr(random.randint(0, 255)) for x in range(avroType.size))
     elif isinstance(avroType, AvroString):
-        return "".join(random.choice(unicodeAlphabet) for x in xrange(10))
+        return "".join(random.choice(unicodeAlphabet) for x in range(10))
     elif isinstance(avroType, AvroEnum):
         return random.choice(avroType.symbols)
     elif isinstance(avroType, AvroArray):
-        return [makeData(avroType.items) for x in xrange(0, random.randint(0, 10))]
+        return [makeData(avroType.items) for x in range(0, random.randint(0, 10))]
     elif isinstance(avroType, AvroMap):
-        return dict(("".join(random.choice(unicodeAlphabet) for x in xrange(10)), makeData(avroType.values)) for x in xrange(0, random.randint(0, 10)))
+        return dict(("".join(random.choice(unicodeAlphabet) for x in range(10)), makeData(avroType.values)) for x in range(0, random.randint(0, 10)))
     elif isinstance(avroType, AvroRecord):
         return dict((f.name, makeData(f.avroType)) for f in avroType.fields)
     elif isinstance(avroType, AvroUnion):
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         arguments.metadata = json.loads(arguments.metadata)
     except ValueError:
         argparser.error("Metadata must be JSON formatted.")
-    if not isinstance(arguments.metadata, dict) or any(not isinstance(x, basestring) for x in arguments.metadata.values()):
+    if not isinstance(arguments.metadata, dict) or any(not isinstance(x, str) for x in arguments.metadata.values()):
         argparser.error("Metadata must be a JSON object of strings.")
 
     try:
@@ -202,7 +202,7 @@ if __name__ == "__main__":
     if arguments.check:
         engine, = PFAEngine.fromJson(pfaDocument)
         engine.begin()
-        for i in xrange(100):
+        for i in range(100):
             datum = makeData(inputType)
             sys.stderr.write("INPUT: " + repr(datum) + "\n")
             result = engine.action(datum)
@@ -210,6 +210,6 @@ if __name__ == "__main__":
         engine.end()
             
     if arguments.fileName == "-":
-        print json.dumps(pfaDocument)
+        print(json.dumps(pfaDocument))
     else:
         json.dump(pfaDocument, open(arguments.fileName, "w"))
