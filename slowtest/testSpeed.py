@@ -25,12 +25,19 @@ from titus.errors import *
     
 class TestSpeed(unittest.TestCase):
     def testTree(self):
-        engine, = PFAEngine.fromJson(open("test/hipparcos_numerical_10.pfa"))
+        pfa_file = open("test/hipparcos_numerical_10.pfa")
+        pfa = pfa_file.read()
+        pfa_file.close()
+        engine, = PFAEngine.fromJson(pfa)
 
         data = []
-        for line in open("test/hipparcos_numerical.csv"):
+        data_file = open("test/hipparcos_numerical.csv")
+        lines = data_file.readlines()
+        data_file.close()
+        for line in lines:
             ra, dec, dist, mag, absmag, x, y, z, vx, vy, vz, spectrum = line.split(",")
-            data.append({"ra": float(ra), "dec": float(dec), "dist": float(dist), "mag": float(mag), "absmag": float(absmag), "x": float(x), "y": float(y), "z": float(z), "vx": float(vx), "vy": float(vy), "vz": float(vz)})
+            data.append({"ra": float(ra), "dec": float(dec), "dist": float(dist), "mag": float(mag), "absmag": float(absmag), 
+                         "x": float(x), "y": float(y), "z": float(z), "vx": float(vx), "vy": float(vy), "vz": float(vz)})
 
         i = 0
         startTime = time.time()
@@ -38,7 +45,7 @@ class TestSpeed(unittest.TestCase):
             engine.action(datum)
             i += 1
             if i % 5000 == 0:
-                print "{0}, {1}".format(time.time() - startTime, i)
+                print("{0}, {1}".format(time.time() - startTime, i))
 
 if __name__ == "__main__":
     unittest.main()
