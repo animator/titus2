@@ -295,7 +295,7 @@ class LabelData(object):
         out = LabelData.broadestType(self.members)
         if self.expectedFields is not None:
             if isinstance(out, AvroRecord):
-                if self.expectedFields != [x.name for x in out.fields]:
+                if self.expectedFields != tuple(x.name for x in out.fields):
                     raise IncompatibleTypes("fields do not agree with EnumFields symbols (same names, same order)")
             else:
                 raise IncompatibleTypes("EnumFields.wildRecord does not point to a record")
