@@ -65,7 +65,7 @@ from titus.signature import Sig
 from titus.signature import PFAVersion
 from titus.datatype import *
 import titus.options
-from titus.util import ts
+from titus.util import ts, stringToBytes
 
 ############################################################ utils
 
@@ -2483,8 +2483,8 @@ class LiteralBase64(LiteralValue):
         if not isinstance(pos, str) and not pos is None:
             raise PFASyntaxException("\"pos\" must be a string or None", None)
 
-        if not isinstance(value, bytes):
-            raise PFASyntaxException("\"value\" must be a bytes", pos)
+        if not isinstance(value, str):
+            raise PFASyntaxException("\"value\" must be a string", pos)
 
     def walk(self, task, symbolTable, functionTable, engineOptions, version):
         """Walk over tree applying a titus.pfaast.Task while checking for semantic errors.
@@ -2518,7 +2518,7 @@ class LiteralBase64(LiteralValue):
         :return: JSON representation
         """
         out = self.startDict(lineNumbers)
-        out["base64"] = base64.b64encode(self.value).decode()
+        out["base64"] = base64.b64encode(stringToBytes(self.value)).decode()
         return out
 
     desc = "(bytes)"

@@ -89,7 +89,7 @@ from titus.errors import PrettyPfaException
 from titus.genpy import PFAEngine
 import titus.pfaast
 import titus.util
-from titus.util import avscToPretty
+from titus.util import avscToPretty, bytesToString
 from titus.reader import jsonToAst
 
 class Token(object):
@@ -550,7 +550,7 @@ class MiniCall(MiniAst):
             elif td == "string":
                 return LiteralString(v, self.pos)
             elif td == "bytes":
-                return LiteralBase64(base64.b64decode(v), self.pos)
+                return LiteralBase64(bytesToString(base64.b64decode(v)), self.pos)
             else:
                 return Literal(state.avroTypeBuilder.makePlaceholder(jsonlib.dumps(td), state.avroTypeMemo), jsonlib.dumps(v), self.pos)
 
@@ -582,7 +582,8 @@ class MiniCall(MiniAst):
         elif self.name == "bytes":
             if len(self.args) != 1:
                 raise PrettyPfaException("bytes function must have 1 argument, not {0}, at {1}".format(len(self.args), self.pos))
-            return LiteralBase64(base64.b64decode(self.args[0].asJson()), self.pos)
+            b64decodedString = bytesToString(base64.b64decode(self.args[0].asJson()))
+            return LiteralBase64(b64decodedString, self.pos)
 
         elif self.name == "do":
             return Do([x.asExpr(state) for x in self.args])

@@ -22,6 +22,7 @@ import unittest
 
 from titus.pfaast import *
 from titus.datatype import *
+from titus.util import bytesToString
 
 class TestAstToJson(unittest.TestCase):
     def testEngineConfig(self):
@@ -353,7 +354,8 @@ class TestAstToJson(unittest.TestCase):
         self.assertEqual(json.loads(LiteralString("hello").toJson(lineNumbers=False)), json.loads('''{"string":"hello"}'''))
 
     def testBase64(self):
-        self.assertEqual(json.loads(LiteralBase64("hello".encode("utf-8")).toJson(lineNumbers=False)), json.loads('''{"base64":"aGVsbG8="}'''))
+        self.assertEqual(json.loads(LiteralBase64(bytesToString("hello".encode('utf-8'))).toJson(lineNumbers=False)), json.loads('''{"base64":"aGVsbG8="}'''))
+        self.assertEqual(json.loads(LiteralBase64(bytesToString('Δ'.encode('utf-8'))).toJson(lineNumbers=False)), json.loads('''{"base64":"zpQ="}'''))
 
     def testLiteral(self):
         self.assertEqual(json.loads(Literal(AvroRecord([AvroField("one", AvroInt()), AvroField("two", AvroDouble()), AvroField("three", AvroString())], "SimpleRecord"), '''{"one": 1, "two": 2.2, "three": "THREE"}''').toJson(lineNumbers=False)),

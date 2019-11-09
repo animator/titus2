@@ -248,14 +248,13 @@ input: "null"
 output: bytes
 randseed: 12345
 action: {rand.bytes: [10, {base64: "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXowMTIzNDU2Nzg5"}]}
-
 ''')
         x = engine2.action(None)
-        self.assertTrue(set(list(x)).issubset(set(list(base64.b64decode("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXowMTIzNDU2Nzg5").decode()))) and len(x)==10)
+        self.assertTrue(set(list(x)).issubset(set(list('abcdefghijklmnopqrstuvwxyz0123456789'))) and len(x)==10)
         x = engine2.action(None)
-        self.assertTrue(set(list(x)).issubset(set(list(base64.b64decode("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXowMTIzNDU2Nzg5").decode()))) and len(x)==10)
+        self.assertTrue(set(list(x)).issubset(set(list('abcdefghijklmnopqrstuvwxyz0123456789'))) and len(x)==10)
         x = engine2.action(None)
-        self.assertTrue(set(list(x)).issubset(set(list(base64.b64decode("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXowMTIzNDU2Nzg5").decode()))) and len(x)==10)
+        self.assertTrue(set(list(x)).issubset(set(list('abcdefghijklmnopqrstuvwxyz0123456789'))) and len(x)==10)
 
         engine3, = PFAEngine.fromYaml('''
 input: "null"

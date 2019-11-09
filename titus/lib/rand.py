@@ -28,6 +28,7 @@ from titus.signature import PFAVersion
 from titus.datatype import *
 from titus.errors import *
 from titus.lib.core import INT_MIN_VALUE, INT_MAX_VALUE, LONG_MIN_VALUE, LONG_MAX_VALUE
+from titus.util import bytesToString
 import titus.P as P
 
 provides = {}
@@ -183,8 +184,11 @@ class RandomBytes(LibFcn):
         elif len(args) == 1:
             if len(args[0]) == 0:
                 raise PFARuntimeException("population must be non-empty", self.errcodeBase + 3, self.name, pos)
-            population = list(args[0])
-            return "".join(chr(population[state.rand.randint(0, len(args[0]) - 1)]) for x in range(size))
+            if isinstance(args[0], str):
+                population = list(args[0])
+            elif isinstance(args[0], bytes):
+                population = list(bytesToString(args[0]))
+            return "".join(population[state.rand.randint(0, len(args[0]) - 1)] for x in range(size))
         else:
             low, high = args
             if high <= low: raise PFARuntimeException("high must be greater than low", self.errcodeBase + 1, self.name, pos)

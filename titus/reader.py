@@ -27,7 +27,7 @@ from avro.datafile import DataFileReader
 from avro.io import DatumReader
 
 import titus.util
-from titus.util import pos
+from titus.util import pos, bytesToString
 
 from titus.pfaast import validSymbolName
 from titus.pfaast import validFunctionName
@@ -494,7 +494,7 @@ def _readStringOrInt(data, dot):
 
 def _readBase64(data, dot):
     if isinstance(data, str):
-        return base64.b64decode(data)
+        return bytesToString(base64.b64decode(data))
     else:
         raise PFASyntaxException("expected base64 data, not " + _trunc(repr(data)), dot)
 

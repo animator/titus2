@@ -397,3 +397,37 @@ def avscToPretty(avsc, indent=0):
 
     else:
         raise TypeError("malformed Avro schema")
+
+def bytesToString(value):
+    """Coverts value in bytes to corresponding string representation.
+
+    b'hello' -> 'hello'
+    b'\x80abc' -> '\x80abc'
+
+    :type value: bytes
+    :param value: the value
+    :rtype: string
+    :return: value in string
+    """
+
+    try:
+        return ''.join(map(chr, list(value)))
+    except:
+        raise TypeError("value is not of type bytes")
+
+def stringToBytes(value):
+    """Coverts value in string to corresponding bytes representation.
+
+    'hello' -> b'hello'
+    '\x80abc' -> b'\x80abc'
+
+    :type value: string
+    :param value: the value
+    :rtype: bytes
+    :return: value in bytes
+    """
+
+    try:
+        return bytes(map(ord, list(value)))
+    except:
+        raise TypeError("value is not of type string")           

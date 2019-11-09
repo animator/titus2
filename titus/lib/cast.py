@@ -24,7 +24,7 @@ import json
 import avro.schema
 from avro.io import BinaryEncoder, DatumWriter
 
-from titus.util import untagUnion
+from titus.util import untagUnion, bytesToString
 from titus.datatype import schemaToAvroType
 from titus.datatype import jsonNodeToAvroType
 from titus.fcn import Fcn
@@ -280,7 +280,7 @@ class CastAvro(LibFcn):
         writer = DatumWriter(schema)
         writer.write(x, BinaryEncoder(bytes_io))
         bytes_io.flush()
-        return ''.join(map(chr, list(bytes_io.getvalue())))
+        return bytesToString(bytes_io.getvalue())
 provide(CastAvro())
 
 class CastJson(LibFcn):

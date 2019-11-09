@@ -23,7 +23,7 @@ from titus.signature import Sig
 from titus.signature import Sigs
 from titus.datatype import *
 from titus.errors import *
-from titus.util import callfcn, negativeIndex, startEnd
+from titus.util import callfcn, negativeIndex, startEnd, stringToBytes, bytesToString
 import titus.P as P
 
 import sys
@@ -187,12 +187,12 @@ def convert(haystack, pattern, paramType0):
         if isinstance(haystack, bytes):
             cnvtHaystack = haystack
         else:
-            cnvtHaystack = bytes(map(ord, list(haystack)))
+            cnvtHaystack = stringToBytes(haystack)
         if isinstance(pattern, bytes):
             cnvtPattern = pattern
         else:
-            cnvtPattern = bytes(map(ord, list(pattern)))        
-        return cnvtHaystack, cnvtPattern, lambda x: "".join(map(chr, list(x)))
+            cnvtPattern = stringToBytes(pattern)       
+        return cnvtHaystack, cnvtPattern, lambda x: bytesToString(x)
 
 ############################################################# Index
 class Index(LibFcn):
@@ -453,7 +453,7 @@ class ReplaceFirst(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
         if isinstance(replacement, bytes):
-            replacement = "".join(map(chr, list(replacement)))        
+            replacement = bytesToString(replacement)      
         re = Regexer(haystack, pattern, self.errcodeBase + 0, self.name, pos)
         found = re.search(0)
         region = re.getRegion()
@@ -474,7 +474,7 @@ class ReplaceLast(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
         if isinstance(replacement, bytes):
-            replacement = "".join(map(chr, list(replacement)))
+            replacement = bytesToString(replacement)
         re = Regexer(haystack, pattern, self.errcodeBase + 0, self.name, pos)
         found = re.search(0)
         region = re.getRegion()
@@ -536,10 +536,10 @@ class ReplaceAll(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, haystack, pattern, replacement):
         original = haystack
         if isinstance(original, bytes):
-            original = "".join(map(chr, list(original)))
+            original = bytesToString(original)
         haystack, pattern, to = convert(haystack, pattern, paramTypes[0])
         if isinstance(replacement, bytes):
-            replacement = "".join(map(chr, list(replacement)))
+            replacement = bytesToString(replacement)
         re = Regexer(haystack, pattern, self.errcodeBase + 0, self.name, pos)
         found = re.search(0)
         region = re.getRegion()

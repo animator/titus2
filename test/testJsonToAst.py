@@ -23,6 +23,7 @@ import unittest
 from titus.pfaast import *
 from titus.reader import jsonToAst
 from titus.datatype import *
+from titus.util import bytesToString
 
 class TestJsonToAst(unittest.TestCase):
     def testEngineConfig(self):
@@ -597,7 +598,7 @@ class TestJsonToAst(unittest.TestCase):
         AvroInt(),
         AvroString(),
         [],
-        [LiteralBase64("hello".encode("utf-8"))],
+        [LiteralBase64(bytesToString("hello".encode("utf-8")))],
         [],
         {},
         None,

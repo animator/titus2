@@ -22,6 +22,7 @@ from titus.fcn import LibFcn
 from titus.signature import Sig
 from titus.signature import Sigs
 from titus.datatype import *
+from titus.util import bytesToString
 import titus.P as P
 
 provides = {}
@@ -36,7 +37,7 @@ class ToBytes(LibFcn):
     errcodeBase = 20000
     def __call__(self, state, scope, pos, paramTypes, x):
         if isinstance(x, bytes):
-            return ''.join(map(chr, list(x)))
+            return bytesToString(x)
         return x
 provide(ToBytes())
 
@@ -46,9 +47,9 @@ class FromBytes(LibFcn):
     errcodeBase = 20010
     def __call__(self, state, scope, pos, paramTypes, original, replacement):
         if isinstance(original, bytes):
-            original = ''.join(map(chr, list(original)))
+            original = bytesToString(original)
         if isinstance(replacement, bytes):
-            replacement = ''.join(map(chr, list(replacement)))    
+            replacement = bytesToString(replacement)   
         length = min(len(original), len(replacement))
         return replacement[0:length] + original[length:len(original)]
 provide(FromBytes())

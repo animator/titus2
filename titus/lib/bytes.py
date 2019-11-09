@@ -27,7 +27,7 @@ from titus.signature import Sig
 from titus.signature import Sigs
 from titus.datatype import *
 from titus.errors import *
-from titus.util import startEnd
+from titus.util import startEnd, stringToBytes, bytesToString
 import titus.P as P
 
 provides = {}
@@ -56,7 +56,7 @@ class Subseq(LibFcn):
         if isinstance(x, str):
             return x[start:end]
         else:
-            return ''.join(map(chr, list(x[start:end])))
+            return bytesToString(x[start:end])
 provide(Subseq())
 
 class SubseqTo(LibFcn):
@@ -65,13 +65,13 @@ class SubseqTo(LibFcn):
     errcodeBase = 16020
     def __call__(self, state, scope, pos, paramTypes, x, start, end, replacement):
         if isinstance(replacement, str):
-            replacement = bytes(map(ord, list(replacement)))
+            replacement = stringToBytes(replacement)
         if isinstance(x, str):
-            x = bytes(map(ord, list(x)))
+            x = stringToBytes(x)
         normStart, normEnd = startEnd(len(x), start, end)
         before = x[:normStart]
         after = x[normEnd:]
-        return ''.join(map(chr, list(before + replacement + after)))
+        return bytesToString(before + replacement + after)
 provide(SubseqTo())
 
 #################################################################### testers
@@ -140,7 +140,7 @@ class Decoder(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, x):
         try:
             if isinstance(x, str):
-                x = bytes(map(ord, list(x)))
+                x = stringToBytes(x)
             return codecs.decode(x, self.codec, "strict")
         except UnicodeDecodeError as err:
             raise PFARuntimeException("invalid bytes", self.errcodeBase + 0, self.name, pos)
@@ -189,7 +189,7 @@ class Encoder(LibFcn):
     def __call__(self, state, scope, pos, paramTypes, x):
         try:
             out_bytes = codecs.encode(x, self.codec, "strict")
-            return ''.join(map(chr, list(out_bytes)))
+            return bytesToString(out_bytes)
         except UnicodeEncodeError:
             raise PFARuntimeException("invalid string", self.errcodeBase + 0, self.name, pos)
 
@@ -237,7 +237,7 @@ class ToBase64(LibFcn):
     errcodeBase = 16210
     def __call__(self, state, scope, pos, paramTypes, x):
         if isinstance(x, str):
-            x = bytes(map(ord, list(x)))
+            x = stringToBytes(x)
         return base64.b64encode(x).decode()
 provide(ToBase64())
 
@@ -250,7 +250,7 @@ class FromBase64(LibFcn):
             if re.match("^[A-Za-z0-9\+/]*=*$", s) is None:
                 raise TypeError
             out = base64.b64decode(s)
-            return ''.join(map(chr, list(out)))
+            return bytesToString(out)
         except TypeError:
             raise PFARuntimeException("invalid base64", self.errcodeBase + 0, self.name, pos)
 provide(FromBase64())

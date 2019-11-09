@@ -25,7 +25,7 @@ import avro.schema
 
 import titus.errors
 import titus.util
-from titus.util import ts
+from titus.util import ts, stringToBytes
 
 ######################################################### the most general types
 
@@ -1263,7 +1263,7 @@ def checkData(data, avroType):
         if isinstance(data, bytes):
             return data
         elif isinstance(data, str):
-            return bytes(map(ord, list(data)))
+            return stringToBytes(data)
         else:
             raise TypeError("expecting {0}, found {1}".format(ts(avroType), data))
 
