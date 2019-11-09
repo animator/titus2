@@ -256,7 +256,10 @@ def ast(pfas, check=True, name=None, randseed=None, doc=None, version=None, meta
     for i, pfa in enumerate(pfas):
         originalNameToNewName[i] = {}
         for typeName in list(pfa.inputPlaceholder.parser.names.names.keys()):
-            originalNameToNewName[i][typeName] = prefixType(i, pfa, typeName)
+            keyTypeName = typeName
+            if(typeName[0] == "."):
+                keyTypeName = keyTypeName[1:]
+            originalNameToNewName[i][keyTypeName] = prefixType(i, pfa, typeName)
 
     # but any names in the input to the first and the output from the last should not be changed
     def trivialName(i, avroType, memo):
