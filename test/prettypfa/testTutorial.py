@@ -474,8 +474,11 @@ action:
     foreach (x : input)
         emit(x);
 
-    foreach (k, v : new(map(int), one: 1, two: 2, three: 3))
-        emit(k);
+    foreach (k, v : new(map(int), one: 1, two: 2, three: 3)){
+        for (i = 1;  i < 4;  i = i + 1){
+            if(i == v) emit(k);
+        }
+    }
 
 ''', '''
 "hello"
