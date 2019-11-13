@@ -23,12 +23,13 @@ import unittest
 from titus.reader import yamlToAst
 from titus.genpy import PFAEngine
 from titus.errors import *
-    
+from titus.util import bytesToString
+
 def unsigned(x):
     if x < 0:
-        return bytes([x + 256])
+        return bytesToString(bytes([x + 256]))
     else:
-        return bytes([x])
+        return bytesToString(bytes([x]))
     
 def signed(x):
     if isinstance(x, int):
@@ -2094,9 +2095,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [10]))), None)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [10]))), None)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2]))))
 
     def testUnpackBoolean(self):
         engine, = PFAEngine.fromYaml('''
@@ -2108,11 +2109,11 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [0]))), False)
-        self.assertEqual(engine.action(b"".join(map(unsigned, [1]))), True)
-        self.assertEqual(engine.action(b"".join(map(unsigned, [8]))), True)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [0]))), False)
+        self.assertEqual(engine.action("".join(map(unsigned, [1]))), True)
+        self.assertEqual(engine.action("".join(map(unsigned, [8]))), True)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2]))))
 
     def testUnpackByte(self):
         engine, = PFAEngine.fromYaml('''
@@ -2124,9 +2125,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [10]))), 10)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [10]))), 10)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2]))))
 
         engineUnsigned, = PFAEngine.fromYaml('''
 input: bytes
@@ -2137,9 +2138,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [127]))), 127)
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [-128]))), 128)
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [-1]))), 255)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [127]))), 127)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [-128]))), 128)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [-1]))), 255)
 
     def testUnpackShort(self):
         engine, = PFAEngine.fromYaml('''
@@ -2151,9 +2152,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [0, 4]))), 4)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [0, 4]))), 4)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3]))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2164,7 +2165,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineLittleEndian.action(b"".join(map(unsigned, [4, 0]))), 4)
+        self.assertEqual(engineLittleEndian.action("".join(map(unsigned, [4, 0]))), 4)
 
         engineUnsigned, = PFAEngine.fromYaml('''
 input: bytes
@@ -2175,9 +2176,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [127, -1]))), 32767)
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [-128, 0]))), 32768)
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [-1, -1]))), 65535)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [127, -1]))), 32767)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [-128, 0]))), 32768)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [-1, -1]))), 65535)
 
         engineUnsignedLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2188,9 +2189,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [-1, 127]))), 32767)
-        self.assertEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [0, -128]))), 32768)
-        self.assertEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [-1, -1]))), 65535)
+        self.assertEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [-1, 127]))), 32767)
+        self.assertEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [0, -128]))), 32768)
+        self.assertEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [-1, -1]))), 65535)
 
     def testUnpackInt(self):
         engine, = PFAEngine.fromYaml('''
@@ -2202,9 +2203,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [0, 0, 0, 4]))), 4)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [0, 0, 0, 4]))), 4)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5]))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2215,7 +2216,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineLittleEndian.action(b"".join(map(unsigned, [4, 0, 0, 0]))), 4)
+        self.assertEqual(engineLittleEndian.action("".join(map(unsigned, [4, 0, 0, 0]))), 4)
 
         engineUnsigned, = PFAEngine.fromYaml('''
 input: bytes
@@ -2226,9 +2227,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [127, -1, -1, -1]))), 2147483647)
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [-128, 0, 0, 0]))), 2147483648)
-        self.assertEqual(engineUnsigned.action(b"".join(map(unsigned, [-1, -1, -1, -1]))), 4294967295)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [127, -1, -1, -1]))), 2147483647)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [-128, 0, 0, 0]))), 2147483648)
+        self.assertEqual(engineUnsigned.action("".join(map(unsigned, [-1, -1, -1, -1]))), 4294967295)
 
         engineUnsignedLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2239,9 +2240,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [-1, -1, -1, 127]))), 2147483647)
-        self.assertEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, -128]))), 2147483648)
-        self.assertEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [-1, -1, -1, -1]))), 4294967295)
+        self.assertEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [-1, -1, -1, 127]))), 2147483647)
+        self.assertEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [0, 0, 0, -128]))), 2147483648)
+        self.assertEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [-1, -1, -1, -1]))), 4294967295)
 
     def testUnpackLong(self):
         engine, = PFAEngine.fromYaml('''
@@ -2253,9 +2254,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [0, 0, 0, 0, 0, 0, 0, 4]))), 4)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7, 8, 9]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [0, 0, 0, 0, 0, 0, 0, 4]))), 4)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7, 8, 9]))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2266,7 +2267,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineLittleEndian.action(b"".join(map(unsigned, [4, 0, 0, 0, 0, 0, 0, 0]))), 4)
+        self.assertEqual(engineLittleEndian.action("".join(map(unsigned, [4, 0, 0, 0, 0, 0, 0, 0]))), 4)
 
         engineUnsigned, = PFAEngine.fromYaml('''
 input: bytes
@@ -2277,7 +2278,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertAlmostEqual(engineUnsigned.action(b"".join(map(unsigned, [0, 0, 0, 0, 0, 0, 0, 4]))), 4, places=4)
+        self.assertAlmostEqual(engineUnsigned.action("".join(map(unsigned, [0, 0, 0, 0, 0, 0, 0, 4]))), 4, places=4)
 
         engineUnsignedLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2288,7 +2289,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertAlmostEqual(engineUnsignedLittleEndian.action(b"".join(map(unsigned, [4, 0, 0, 0, 0, 0, 0, 0]))), 4, places=4)
+        self.assertAlmostEqual(engineUnsignedLittleEndian.action("".join(map(unsigned, [4, 0, 0, 0, 0, 0, 0, 0]))), 4, places=4)
 
     def testUnpackFloat(self):
         engine, = PFAEngine.fromYaml('''
@@ -2300,9 +2301,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertAlmostEqual(engine.action(b"".join(map(unsigned, [64, 72, -11, -61]))), 3.14, places=6)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5]))))
+        self.assertAlmostEqual(engine.action("".join(map(unsigned, [64, 72, -11, -61]))), 3.14, places=6)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5]))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2313,7 +2314,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertAlmostEqual(engineLittleEndian.action(b"".join(map(unsigned, [-61, -11, 72, 64]))), 3.14, places=6)
+        self.assertAlmostEqual(engineLittleEndian.action("".join(map(unsigned, [-61, -11, 72, 64]))), 3.14, places=6)
 
     def testUnpackDouble(self):
         engine, = PFAEngine.fromYaml('''
@@ -2325,9 +2326,9 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertAlmostEqual(engine.action(b"".join(map(unsigned, [64, 9, 30, -72, 81, -21, -123, 31]))), 3.14, places=6)
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7, 8, 9]))))
+        self.assertAlmostEqual(engine.action("".join(map(unsigned, [64, 9, 30, -72, 81, -21, -123, 31]))), 3.14, places=6)
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5, 6, 7, 8, 9]))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2338,7 +2339,7 @@ action:
   then: x
   else: {error: "Ack!"}
 ''')
-        self.assertAlmostEqual(engineLittleEndian.action(b"".join(map(unsigned, [31, -123, -21, 81, -72, 30, 9, 64]))), 3.14, places=6)
+        self.assertAlmostEqual(engineLittleEndian.action("".join(map(unsigned, [31, -123, -21, 81, -72, 30, 9, 64]))), 3.14, places=6)
 
     def testUnpackRaw(self):
         engine, = PFAEngine.fromYaml('''
@@ -2350,9 +2351,9 @@ action:
   then: {bytes.decodeAscii: x}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [104, 101, 108, 108, 111]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [1, 2, 3, 4, 5, 6]))))
+        self.assertEqual(engine.action("".join(map(unsigned, [104, 101, 108, 108, 111]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [1, 2, 3, 4, 5, 6]))))
 
     def testUnpackToNull(self):
         engine, = PFAEngine.fromYaml('''
@@ -2364,9 +2365,9 @@ action:
   then: {bytes.decodeAscii: x}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [104, 101, 108, 108, 111, 0]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [104, 101, 108, 108, 111]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engine.action("".join(map(unsigned, [104, 101, 108, 108, 111, 0]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [104, 101, 108, 108, 111]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
 
     def testUnpackLengthPrefixed(self):
         engine, = PFAEngine.fromYaml('''
@@ -2378,10 +2379,10 @@ action:
   then: {bytes.decodeAscii: x}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [5, 104, 101, 108, 108, 111]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [5, 104, 101, 108, 108, 111, 99]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [5, 104, 101, 108, 108]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engine.action("".join(map(unsigned, [5, 104, 101, 108, 108, 111]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [5, 104, 101, 108, 108, 111, 99]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [5, 104, 101, 108, 108]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
 
     def testUnpackMultipleWithRaw(self):
         engine, = PFAEngine.fromYaml('''
@@ -2393,10 +2394,10 @@ action:
   then: {bytes.decodeAscii: y}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engine.action("".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2407,10 +2408,10 @@ action:
   then: {bytes.decodeAscii: y}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0]))))
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0]))))
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, []))))
 
     def testUnpackMultipleWithToNull(self):
         engine, = PFAEngine.fromYaml('''
@@ -2422,10 +2423,10 @@ action:
   then: {bytes.decodeAscii: y}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4, 1]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 0]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engine.action("".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4, 1]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [99, 104, 101, 108, 108, 111, 0, 0, 0, 0]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2436,10 +2437,10 @@ action:
   then: {bytes.decodeAscii: y}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4, 1]))))
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 0]))))
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 0, 4, 1]))))
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 104, 101, 108, 108, 111, 0, 0, 0, 0]))))
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, []))))
 
     def testUnpackMultipleWithLengthPrefixed(self):
         engine, = PFAEngine.fromYaml('''
@@ -2451,10 +2452,10 @@ action:
   then: {bytes.decodeAscii: y}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0]))))
-        self.assertRaises(PFAUserException, lambda: engine.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engine.action("".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0]))))
+        self.assertRaises(PFAUserException, lambda: engine.action("".join(map(unsigned, []))))
 
         engineLittleEndian, = PFAEngine.fromYaml('''
 input: bytes
@@ -2465,10 +2466,10 @@ action:
   then: {bytes.decodeAscii: y}
   else: {error: "Ack!"}
 ''')
-        self.assertEqual(engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, [0, 0, 0, 4, 5, 104, 101, 108, 108, 111, 0, 0, 0]))))
-        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action(b"".join(map(unsigned, []))))
+        self.assertEqual(engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), "hello")
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4, 1]))))
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, [0, 0, 0, 4, 5, 104, 101, 108, 108, 111, 0, 0, 0]))))
+        self.assertRaises(PFAUserException, lambda: engineLittleEndian.action("".join(map(unsigned, []))))
 
     def testUnpackNotBreakOtherVariables(self):
         engine, = PFAEngine.fromYaml('''
@@ -2482,7 +2483,7 @@ action:
     else: {error: "Ack!"}
   - successful
 ''')
-        self.assertEqual(engine.action(b"".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), False)
+        self.assertEqual(engine.action("".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), False)
 
         engine2, = PFAEngine.fromYaml('''
 input: bytes
@@ -2495,7 +2496,7 @@ action:
     else: {error: "Ack!"}
   - tmpInteger
 ''')
-        self.assertEqual(engine2.action(b"".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), 12)
+        self.assertEqual(engine2.action("".join(map(unsigned, [99, 5, 104, 101, 108, 108, 111, 0, 0, 0, 4]))), 12)
 
     def testDoc(self):
         engine, = PFAEngine.fromYaml('''
