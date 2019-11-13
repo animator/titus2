@@ -21,6 +21,10 @@ and the push to production pang continues ..
   - Supports Python 3.4+
   - `scripts/pfachain` can combine 2 or more PFA documents
 
+### Changes in titus v1.0.0
+
+View the complete changelog [here](https://github.com/animator/python3-titus/blob/master/CHANGELOG.md).
+
 Titus for Python 3.4+ - Portable Format for Analytics (PFA) implementation 
 ========
 

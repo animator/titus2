@@ -8,3 +8,4 @@ titus.egg-info/*
 backup/*
 htmlcov/*
 .coverage
+misc/*
