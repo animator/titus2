@@ -1,7 +1,7 @@
 
 build/*
 dist/*
-titus.egg-info/*
+titus2.egg-info/*
 *.pyc
 *.py.bak
 .eggs/*

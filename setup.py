@@ -16,7 +16,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from os import path, walk
 from setuptools import setup
 
 import titus.version
@@ -29,11 +29,13 @@ import titus.version
 
 ### To install in a home directory (~/lib):
 # python setup.py install --home=~
+LONG_DESCRIPTION = open(path.join(path.dirname(__file__), 'README.md')).read()
 
-setup(name="titus",
+setup(name="titus2",
       version=titus.version.__version__,
       author="Ankit Mahato",
       author_email="ankmahato@gmail.com",
+      keywords='pfa scoring inference pmml titus hadrian machine learning data mining',
       packages=["titus",
                 "titus.producer",
                 "titus.lib",
@@ -44,9 +46,34 @@ setup(name="titus",
                 "titus.inspector"],
       scripts = ["scripts/pfainspector", "scripts/pfachain", "scripts/pfaexternalize", "scripts/pfarandom", "scripts/pfasize"],
       description="Python 3 implementation of Portable Format for Analytics (PFA): producer, converter, and consumer.",
+      long_description=LONG_DESCRIPTION,
+      long_description_content_type="text/markdown",
+      url="https://github.com/animator/titus2",
       test_suite="test",
-      install_requires=["avro-python3 >= 1.8.2", "ply >= 3.4", "pyyaml >= 3.10", "numpy >= 1.6.1", "pytz >= 2015.4"],
-      tests_require=["avro-python3 >= 1.8.2", "ply >= 3.4", "pyyaml >= 3.10", "numpy >= 1.6.1", "pytz >= 2015.4"],
+      install_requires=["avro-python3>=1.8.2", "ply>=3.11", "pyyaml>=5.1.2", "numpy>=1.16.0", "pytz>=2019.1"],
+      tests_require=["avro-python3>=1.8.2", "ply>=3.11", "pyyaml>=5.1.2", "numpy>=1.16.0", "pytz>=2019.1"],
+      python_requires='>=3.4',
+      classifiers=[  
+            'Development Status :: 5 - Production/Stable', 
+            'Intended Audience :: Developers',
+            'Intended Audience :: Education',
+            'Intended Audience :: Information Technology',
+            'Intended Audience :: Science/Research',
+            'Topic :: Scientific/Engineering',
+            'Topic :: Scientific/Engineering :: Artificial Intelligence',
+            'Topic :: Software Development',
+            'Topic :: Software Development :: Libraries',
+            'Topic :: Software Development :: Libraries :: Python Modules',
+            'License :: OSI Approved :: Apache Software License',
+            'Programming Language :: Python :: 3 :: Only',
+            'Programming Language :: Python :: 3',
+            'Programming Language :: Python :: 3.4',
+            'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Natural Language :: English',
+      ],      
       )
 
 ### details of dependencies:
@@ -54,8 +81,8 @@ setup(name="titus",
 # Tested in Python 3.4-3.8.
 # Will not work in Python 2.x.
 # 
-# Avro is required; it is an integral part of PFA.
-# PLY is required; it is used to parse PrettyPFA and Inspector commandlines.
+# avro-python3 is required; it is an integral part of PFA.
+# ply is required; it is used to parse PrettyPFA and Inspector commandlines.
 # 
 # PyYAML is an optional dependency; it is only used by the titus.reader.yamlToAst function.
 # Numpy is an optional dependency; it is only used by the "interp", "la", "stat.test", and "model.reg" PFA libraries, as well as Titus producers.

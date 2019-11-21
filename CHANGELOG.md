@@ -1,3 +1,9 @@
+**v1.0.1:**
+
+  * Package renamed as titus2
+
+  * Now available in PyPI - `pip install titus2`
+
 **v1.0.0:**
 
   * Continues development on Titus v0.8.4 which was maintained by Open Data Group.
