@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2)
-[![](https://img.shields.io/badge/python-3.4%20|%203.5%20|%203.6%20|%203.7%20|%203.8-blue.svg)](https://www.python.org/download/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/titus2)
+[![PyPI version](https://badge.fury.io/py/titus2.svg)](https://badge.fury.io/py/titus2)
 ![Maintenance](https://img.shields.io/maintenance/yes/2019)
 ![GitHub](https://img.shields.io/github/license/animator/titus2)
 ![Twitter Follow](https://img.shields.io/twitter/follow/ankitmahato?label=Follow&style=social)
@@ -34,17 +35,17 @@ The [Portable Format for Analytics (PFA)](http://dmg.org/pfa) is a specification
 
 ![PFA](http://dmg.org/pfa/docs/motivation/pfatoeverything.png)
 
-**Titus** (Python 2) ([API](http://opendatagroup.github.io/hadrian/titus-0.8.3/titus.genpy.PFAEngine)) was originally Open Data's complete implementation of PFA for Python. It can be used for model development as well as to execute the scoring engine. Titus 2 is a fork of Titus which is actively being maintained. 
+**Titus** (Python 2) ([API](http://opendatagroup.github.io/hadrian/titus-0.8.3/titus.genpy.PFAEngine)) was originally Open Data's complete implementation of PFA for Python. It can be used for model development as well as to execute the scoring engine. Titus 2 is a fork of Titus which is being maintained actively. 
 
 ### Requirements
 
 Titus 2 uses a number of open source projects to work properly:
 
-* avro-python3
-* numpy
-* pytz
-* pyyaml
-* ply
+* avro-python3 >= 1.8.2
+* numpy >= 1.15.0
+* pytz >= 2019.1
+* pyyaml >= 5.1.2
+* ply >= 3.11
 
 The above packages are available via `pip` and are automatically installed during setup.
 
@@ -87,15 +88,15 @@ See the [Hadrian wiki](https://github.com/opendatagroup/hadrian/wiki) for user g
   - Unit testing status available [here](https://travis-ci.org/animator/titus2) [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2) 
   - Conformance testing status available [here](https://travis-ci.org/animator/pfa) [![Build Status](https://travis-ci.org/animator/pfa.svg?branch=master)](https://travis-ci.org/animator/pfa) 
 
-### Issues and Feature Requests
+### Issues, Questions and Feature Requests
 
-Please raise an issue [here](https://github.com/animator/titus2/issues).
+Please raise an issue/question/request [here](https://github.com/animator/titus2/issues).
 
 ### Development
 
 Want to contribute? Great!
 
-Please raise an [issue](https://github.com/animator/titus2/issues) and send a [pull request](https://github.com/animator/titus2/pulls).
+Please raise an [issue](https://github.com/animator/titus2/issues) to discuss your ideas and send a [pull request](https://github.com/animator/titus2/pulls).
 
 ### Todos
 
