@@ -19,7 +19,7 @@ and the push to production pang continues ..
 
 # New Features!
 
-  - `PFAEngine.fromPmml(pmmlDocument)` support is now dropped begining v1.1.0 as its implementation was originally not matured in [titus](https://github.com/opendatagroup/hadrian). Only 2/40 examples listed in the DMG PMML website was compatible with `PFAEngine.fromPmml(pmmlDocument)` in the original titus package.   
+  - `PFAEngine.fromPmml(pmmlDocument)` support is now dropped begining v1.1.0 as its implementation was originally not matured in [titus](https://github.com/opendatagroup/hadrian). Only 2/40 examples listed in the DMG PMML website were compatible with `PFAEngine.fromPmml(pmmlDocument)` in the original titus package.   
 
 ### Changes in titus2 v1.1.0
 
