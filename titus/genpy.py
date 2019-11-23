@@ -94,8 +94,6 @@ from titus.pfaast import ArrayIndex
 from titus.pfaast import MapIndex
 from titus.pfaast import RecordIndex
 
-from titus.pmml.reader import pmmlToAst
-
 class GeneratePython(titus.pfaast.Task):
     """A ``titus.pfaast.Task`` for turning PFA into executable Python."""
 
@@ -1629,7 +1627,7 @@ class PFAEngine(object):
         :rtype: PFAEngine
         :return: a list of scoring engine instances
         """
-        return PFAEngine.fromAst(pmmlToAst(src, pmmlOptions), pfaOptions, version, sharedState, multiplicity, style, debug)
+        raise NotImplementedError("PMML to PFA conversion is not supported in titus2.")
 
     def snapshot(self):
         """take a snapshot of the entire scoring engine (all cells and pools) and represent it as an abstract syntax tree that can be used to make new scoring engines.
