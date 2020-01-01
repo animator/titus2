@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/titus2)
 [![PyPI version](https://badge.fury.io/py/titus2.svg)](https://badge.fury.io/py/titus2)
-![Maintenance](https://img.shields.io/maintenance/yes/2019)
+![Maintenance](https://img.shields.io/maintenance/yes/2020)
 ![GitHub](https://img.shields.io/github/license/animator/titus2)
 ![Twitter Follow](https://img.shields.io/twitter/follow/ankitmahato?label=Follow&style=social)
 
