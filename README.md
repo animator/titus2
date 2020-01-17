@@ -25,7 +25,7 @@ and the push to production pang continues ..
 
 View the complete changelog [here](https://github.com/animator/titus2/blob/master/CHANGELOG.md).
 
-Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.4+ 
+Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.5+ 
 ========
 
 
@@ -51,7 +51,7 @@ The above packages are available via `pip` and are automatically installed durin
 
 ### Installation
 
-Titus requires [Python 3.4+](https://www.python.org/download/) to run.
+Titus requires [Python 3.5+](https://www.python.org/download/) to run.
 It can be installed via pip/pip3 as follows:
 ```sh
 $ pip install titus2
