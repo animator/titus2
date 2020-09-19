@@ -4,6 +4,8 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2020)
 [![GitHub](https://img.shields.io/github/license/animator/titus2)](https://github.com/animator/titus2/blob/master/LICENSE)
 
+# Project Documentation - [Link](https://realworldpython.guide/titus2/)
+
 > **Data Scientist**: Why is my cutting edge model still not in production?
 >
 Scenario 1:
@@ -24,7 +26,7 @@ and the push to production pang continues ..
 
 View the complete changelog [here](https://github.com/animator/titus2/blob/master/CHANGELOG.md).
 
-Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.5+ 
+Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.4+ 
 ========
 
 
@@ -50,7 +52,7 @@ The above packages are available via `pip` and are automatically installed durin
 
 ### Installation
 
-Titus requires [Python 3.5+](https://www.python.org/download/) to run.
+Titus requires [Python 3.4+](https://www.python.org/download/) to run.
 It can be installed via pip/pip3 as follows:
 ```sh
 $ pip install titus2
@@ -81,7 +83,7 @@ for num in l:
 
 ### User Guide and Tutorials
 
-See the [Hadrian wiki](https://github.com/opendatagroup/hadrian/wiki) for user guide and tutorials.
+See the [Project Documentation](https://realworldpython.guide/titus2/) for user guide and tutorials.
 
 ### Current Testing Framework
   - Unit testing status available [here](https://travis-ci.org/animator/titus2) [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2) 
