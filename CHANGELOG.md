@@ -1,3 +1,7 @@
+**v1.2.0:**
+
+  * `titus2` home page and documentation has been migrated to [https://realworldpython.guide](https://realworldpython.guide/titus2/)
+  
 **v1.1.0:**
 
   * `PFAEngine.fromPmml(pmmlDocument)` support is now dropped begining v1.1.0 as its implementation was originally not matured in [titus](https://github.com/opendatagroup/hadrian). Only 2/40 examples listed in the DMG PMML website were compatible with `PFAEngine.fromPmml(pmmlDocument)` in the original titus package.
