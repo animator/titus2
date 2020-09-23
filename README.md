@@ -1,3 +1,5 @@
+![titus2 logo](https://realworldpython.guide/titus2/images/logo-text.png)
+
 [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/titus2)](https://pypi.org/project/titus2)
 [![PyPI version](https://badge.fury.io/py/titus2.svg)](https://pypi.org/project/titus2)
@@ -29,14 +31,9 @@ View the complete changelog [here](https://github.com/animator/titus2/blob/maste
 Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.4+ 
 ========
 
+Titus 2 is a fork of the original Titus python library which resides in the (now defunct) [Hadrian repository](https://github.com/opendatagroup/hadrian). Titus is not actively maintained by the Open Data Group and only supports Python 2, so this fork was created to actively support its development for Python 3.
 
-This is a subset-fork of the [original repository](https://github.com/opendatagroup/hadrian) which has been completely migrated to Python 3.
-
-The [Portable Format for Analytics (PFA)](http://dmg.org/pfa) is a specification for scoring/inference engines: event-based processors that perform predictive or analytic calculations. It is a model interchange format which helps smoothen the transition from statistical model development to large-scale and/or online production. 
-
-![PFA](http://dmg.org/pfa/docs/motivation/pfatoeverything.png)
-
-**Titus** (Python 2) ([API](http://opendatagroup.github.io/hadrian/titus-0.8.3/titus.genpy.PFAEngine)) was originally Open Data's complete implementation of PFA for Python. It can be used for model development as well as to execute the scoring engine. Titus 2 is a fork of Titus which is being maintained actively. 
+Titus 2 is a complete, independent implementation of [Portable Format for Analytics (PFA)](https://realworldpython.guide/titus2/pfa/) in pure Python. PFA is a specification for scoring/inference engines: event-based processors that perform predictive or analytic calculations. It is a model interchange format which helps smoothen the transition from statistical model development to large-scale and/or online production. `titus2` also focuses on model development, so it includes model producers and PFA manipulation tools in addition to runtime execution (scoring) engine.
 
 ### Requirements
 
