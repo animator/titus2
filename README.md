@@ -1,4 +1,6 @@
-![titus2 logo](https://realworldpython.guide/titus2/images/logo-text.png)
+<div align="center">
+  <img src="https://realworldpython.guide/titus2/images/logo-text.png" alt="titus2 logo">
+</div>
 
 [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/titus2)](https://pypi.org/project/titus2)
