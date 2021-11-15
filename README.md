@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://realworldpython.guide/titus2/images/logo-text.png" alt="titus2 logo">
+  <img src="https://realworldpython.github.io/titus2/images/logo-text.png" alt="titus2 logo">
 </div>
 
 [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2)
@@ -8,7 +8,7 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2020)
 [![GitHub](https://img.shields.io/github/license/animator/titus2)](https://github.com/animator/titus2/blob/master/LICENSE)
 
-# Project Documentation - [Link](https://realworldpython.guide/titus2/)
+# Project Documentation - [Link](https://realworldpython.github.io/titus2/)
 
 > **Data Scientist**: Why is my cutting edge model still not in production?
 >
@@ -24,7 +24,7 @@ and the push to production pang continues ..
 
 # New Features!
 
-  - `titus2` home page and documentation has been migrated to [https://realworldpython.guide](https://realworldpython.guide/titus2/).   
+  - `titus2` home page and documentation has been migrated to [https://realworldpython.github.io](https://realworldpython.github.io/titus2/).   
 
 ### Changes in titus2 v1.2.0
 
@@ -82,7 +82,7 @@ for num in l:
 
 ### User Guide and Tutorials
 
-See the [Project Documentation](https://realworldpython.guide/titus2/) for user guide and tutorials.
+See the [Project Documentation](https://realworldpython.github.io/titus2/) for user guide and tutorials.
 
 ### Current Testing Framework
   - Unit testing status available [here](https://travis-ci.org/animator/titus2) [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2) 
