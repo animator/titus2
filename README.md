@@ -2,10 +2,9 @@
   <img src="https://realworldpython.github.io/titus2/images/logo-text.png" alt="titus2 logo">
 </div>
 
-[![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/titus2)](https://pypi.org/project/titus2)
 [![PyPI version](https://badge.fury.io/py/titus2.svg)](https://pypi.org/project/titus2)
-![Maintenance](https://img.shields.io/maintenance/yes/2020)
+![Maintenance](https://img.shields.io/maintenance/yes/2023)
 [![GitHub](https://img.shields.io/github/license/animator/titus2)](https://github.com/animator/titus2/blob/master/LICENSE)
 
 # Project Documentation - [Link](https://realworldpython.github.io/titus2/)
@@ -26,11 +25,11 @@ and the push to production pang continues ..
 
   - `titus2` home page and documentation has been migrated to [https://realworldpython.github.io](https://realworldpython.github.io/titus2/).   
 
-### Changes in titus2 v1.2.0
+### Changes in titus2 v1.2.1
 
 View the complete changelog [here](https://github.com/animator/titus2/blob/master/CHANGELOG.md).
 
-Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.4+ 
+Titus 2 - Portable Format for Analytics (PFA) implementation for Python 3.4-3.9 
 ========
 
 Titus 2 is a fork of the original Titus python library which resides in the (now defunct) [Hadrian repository](https://github.com/opendatagroup/hadrian). Titus is not actively maintained by the Open Data Group and only supports Python 2, so this fork was created to actively support its development for Python 3.
@@ -41,11 +40,11 @@ Titus 2 is a complete, independent implementation of [Portable Format for Analyt
 
 Titus 2 uses a number of open source projects to work properly:
 
-* avro-python3 >= 1.8.2
-* numpy >= 1.15.0
-* pytz >= 2019.1
-* pyyaml >= 5.1.2
-* ply >= 3.11
+* `avro-python3 >= 1.8.2`
+* `numpy == 1.14.0` (python 3.4 & 3.5) or `numpy >=1.15.0, <1.20` (python 3.6+)
+* `pytz >= 2019.1`
+* `pyyaml >= 5.1.2`
+* `ply >= 3.11`
 
 The above packages are available via `pip` and are automatically installed during setup.
 
@@ -85,6 +84,23 @@ for num in l:
 See the [Project Documentation](https://realworldpython.github.io/titus2/) for user guide and tutorials.
 
 ### Current Testing Framework
+
+To run the tests, you can execute
+
+```
+python3 setup.py test
+```
+
+To generate the coverage report, you can execute
+
+```
+pip3 install coverage
+coverage run setup.py test
+coverage report
+```
+
+**Testing Status**:
+
   - Unit testing status available [here](https://travis-ci.org/animator/titus2) [![Build Status](https://travis-ci.org/animator/titus2.svg?branch=master)](https://travis-ci.org/animator/titus2) 
   - Conformance testing status available [here](https://travis-ci.org/animator/pfa) [![Build Status](https://travis-ci.org/animator/pfa.svg?branch=master)](https://travis-ci.org/animator/pfa) 
 

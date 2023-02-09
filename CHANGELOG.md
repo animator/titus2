@@ -1,6 +1,10 @@
+**v1.2.1:**
+
+  * Support for Python 3.9.x
+  
 **v1.2.0:**
 
-  * `titus2` home page and documentation has been migrated to [https://realworldpython.guide](https://realworldpython.guide/titus2/)
+  * `titus2` home page and documentation has been migrated to [https://realworldpython.github.io](https://realworldpython.github.io/titus2/)
   
 **v1.1.0:**
 

@@ -31,6 +31,13 @@ import titus.version
 # python setup.py install --home=~
 LONG_DESCRIPTION = open(path.join(path.dirname(__file__), 'README.md')).read()
 
+requires = ["numpy==1.14.0; python_version < '3.6'",
+            "numpy>=1.15.0, <1.20; python_version >= '3.6'", 
+            "avro-python3>=1.8.2", 
+            "ply>=3.11", 
+            "pyyaml>=5.1.2", 
+            "pytz>=2019.1"]
+
 setup(name="titus2",
       version=titus.version.__version__,
       author="Ankit Mahato",
@@ -54,9 +61,9 @@ setup(name="titus2",
             "Documentation": "https://realworldpython.guide/titus2/",
       },
       test_suite="test",
-      install_requires=["avro-python3>=1.8.2", "ply>=3.11", "pyyaml>=5.1.2", "numpy>=1.15.0", "pytz>=2019.1"],
-      tests_require=["avro-python3>=1.8.2", "ply>=3.11", "pyyaml>=5.1.2", "numpy>=1.15.0", "pytz>=2019.1"],
-      python_requires='>=3.4',
+      install_requires=requires,
+      tests_require=requires,
+      python_requires='>=3.4,<3.10',
       classifiers=[  
             'Development Status :: 5 - Production/Stable', 
             'Intended Audience :: Developers',
@@ -71,17 +78,19 @@ setup(name="titus2",
             'License :: OSI Approved :: Apache Software License',
             'Programming Language :: Python :: 3 :: Only',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.4',
+            'Programming Language :: Python :: 3.5',            
             'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9',
             'Natural Language :: English',
       ],      
       )
 
 ### details of dependencies:
 # 
-# Tested in Python 3.4-3.8.
+# Tested in Python 3.4-3.9.
 # Will not work in Python 2.x.
 # 
 # avro-python3 is required; it is an integral part of PFA.
